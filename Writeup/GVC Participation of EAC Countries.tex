@@ -1,0 +1,1684 @@
+\textbf{\textbf{•}}\documentclass[a4paper]{article}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{apacite}
+\AtBeginDocument{\urlstyle{APACsame}}
+\usepackage[section]{placeins}
+%\usepackage{hyperref}
+% \usepackage{multirow}
+\usepackage{tabulary}
+\usepackage{adjustbox}
+\usepackage{mathtools}
+\usepackage{natbib}
+\usepackage{booktabs}
+%\usepackage{array}
+%\usepackage{tablefootnote}
+%\usepackage{threeparttable}
+%\usepackage{xcolor}
+\addto\captionsenglish{\renewcommand*\contentsname{Table of Contents}}
+
+
+\title{\textbf{Patterns of Regional and Global Value Chain Participation in the EAC}}
+\author{Sebastian Krantz}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Using global Multi-Region Input-Output (MRIO) data from 2001-2015, this paper empirically investigates the extent and patterns by which EAC countries have integrated into international production and Global Value Chains (GVC's), and the share of this integration accounted for by regional value chains. The detailed exposition is followed by an econometric analysis seeking to quantify the economic effects of this integration on member countries. Results imply that foreign value added makes up about 20\% of exports in most EAC countires, and a significant development in the 2001-2015 period is only visible in Tanzania and Kenya. Regional Value Chains are very small, only making up about 3\% of value-added trade. Regressions suggests that higher fore ign content in exports increases productivity with an elasticity of around 0.3 within 2 years time. Increased future integration into GVC's is thus likely to benefit growth in the EAC.    
+\end{abstract}
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+Global Value Chains (GVCs) have become a central topic in trade and development policy. GVC's refer to the quickly expanding internationalization of production networks. While some work has been done on regional value chains in East Africa such as \citet{daly2016maize}, there has not been a detailed exposition of the GVC participation of East African Countries. \newline
+
+One of the few comprehensive analyses of GVC's in Africa is provided by \citet{foster2015global}, also using the EORA 25 sector database over the periods from 2000-2011. \todo{See summary}. 
+They find that Africa as a region is heavily more involved in GVCs than many other developing regions but much of the GVC involvement of Africa is in upstream production, and involves in particular, the supply of primary goods into production of final goods in other regions and countries. Downstream involvement in GVCs is relatively small, and has shown little sign of improving in the last 15 years. Furthermore they find that there is a great deal of heterogeneity in GVC involvement across African countries, with a number of relatively successful countries that are heavily involved in GVCs and with a relatively large share of their involvement being in downstream GVCs. 
+
+At a sectoral level, \citet{foster2015global} state that manufacturing and high-tech sectors are typically not major contributors to GVC participation in African countries. While manufacturing tends to play a larger role in downstream involvement in GVCs, the agricultural sector still accounts for the largest part of downstream GVC involvement across African countries. Changes over time in GVC participation tend to be driven by agriculture and services sectors, with high-tech services being particularly relevant for many African countries. Much of the change in GVC participation over time is driven by upstream production, with evidence to suggest that low-tech manufacturing has become less important in downstream production for a number of African countries. \todo[inline]{shorten this}.
+
+\citet{foster2015global} also note that Intra-African GVCs are not particularly important for most African countries, with a number of exceptions in southern Africa. The EU tends to be the biggest GVC partner for Africa, with some evidence to suggest that the contributions of East and South-East Asia, and Transition countries are increasing.
+
+Finally the authors not that due to the overall low volume of exports in some countries, the importance  of GVCs may be overstated. 
+
+Also on export sophistication: 
+Overall therefore, the results from the export sophistication measure provide mixed results. While developments for Africa as a whole have tended to be positive, Africa remains the region with the lowest values of this export sophistication index. Within Africa there have been a number of relative successes in terms of export sophistication development (examples being Benin, Madagascar, Mauritius and Tunisia), but a significant number of cases where export sophistication has regressed (the most notable
+examples being Mauritania, Sudan and
+Zimbabwe).
+
+The authors also compute various indicators on social upgrading indicating that a minority of African countries have been able to upgrade according to a number of the indicators of upgrading considered (prominent examples including Egypt, Nigeria and Tunisia). Despite some evidence of upgrading across particular dimensions however, for most African countries we observe that the extent of upgrading tends to be lower than that for the average developing country.
+
+
+\citet{kwizera2019factors} provides a gravity analysis. 
+
+More broadly developing country focussed reviews are contained in \citet{foster2015global} and \citet{kowalski2015participation}
+%Most goods we use nowadays consist of parts that are sourced from different corners of the planet and are assembled across different continents. A popular example of this development is the iPhone, which uses in- puts from at least five countries (USA, China, Germany, Taiwan, South Korea) and is assembled in two (USA and China) \citep{Kummritz2014}. \newline
+
+% \newline 
+A proader research perspective for developing countries is provided in \citet{Kummritz20162} and \citet{Kummritz20161}. \citet{Kummritz20162} examines pattens of GVC integration in low-and middle income countries added in a newer release of the OECD TiVA database covering 61 countries and 34 industries for the years 1995, 2000, 2005, and 2008 to 2011. They find that, with exception of the agricultural sector, developing countries are typically located more downstream in the value chain, and export more final goods than high-income countries. They take this as evidence of high-income economies using GVCs to outsource low value added downstream production stages and eventually reimport the final goods. Lioking over time they find evidence suggesting that many developing economies have succeeded in moving up the value chain and that the general trend points to a more even distribution of value added across the different countries. Examining different regions, they find that South-East Asia has as expected the highest levels of GVC integration while Latin America and the Caribbean is more heterogenous with Chile and Costa Rica performing very well. In Africa, Tunisia has developed backward linkages into GVCs, especially with the EU. Their overall finding suggest that low- and middle-income countries have become an integral part of GVCs, are increasingly becoming the driver of their expansion and are proceeding up the value chain to more upstream tasks. 
+\todo[inline]{Integrate commented out.}
+%he i2e share of countries classified as low- or lower middle-income in total i2e has increased from 9\% in 1995 to 24\% in 2011. Similarly, the e2r share has increased from 9\% to 23\%.
+%
+%
+%f fva_fin in i2e has fallen by about 4\%. This gain accrues to the double counting part, which rises by 6\%. This means that production has become more fragmented and that developing economies increasingly occupy more upstream tasks
+%
+The authors stipulate that moving upstream should bring greater gains for developing country industrialization.
+\newline 
+
+This paper uses the EORA Global MRIO tables \citet{lenzen2012mapping, lenzen2013building} to analyze patterns of production in the EAC and compute standard GVC indicators for the years 2005-2015. The goal of this research is to map the structure of regional and international production and exports in the EAC, and to produce some first evidence of the potential benefits of GVC integration for East Africa at the aggregate and sector level. 
+
+The analysis will follow for the most part the seminal work of \citet{hummels2001nature}, as well as \citet{Kummritz20161,Kummritz20162}. 
+
+\section{Data}
+Most GVC analysis uses Inter-Country Input-Output tables (ICIOs), such as those
+published by the OECD and WTO (TiVA), the World Input Output Database (Timmer et al. 2012). These tables state supply and demand relationships in gross terms between industries within and across countries \citep{Kummritz2014}. The former two databases are however limited to high-income or larger developing countries, with limited or no coverage of Sub-Saharan Africa. \newline
+
+This research therefore uses the EORA Global MRIO tables \citet{lenzen2012mapping, lenzen2013building}, which have an extensive coverage of 189 countries but rely on more sophisticated supercomputing methods to harmonize data across countries and are therefore considered less reliable than the OECD or WIOD tables. \newline
+
+The EORA database comes in a Full version with heterogenous sector disaggregations as provided by country SUT tables, and an aggregated 26 sector version that is harmonized across countries. This research considers the EORA 26 databse, of which data until 2015 is available without a premium plan. Since GVC's are a recent phenomenon, particularly in Africa, and the EAC customs union only became operational in 2005, with Rwanda and Burundi becoming full EAC members in 2007, this research considers the sequence of EORA 26 tables from 2005-2015. \newline
+
+To increase the interpretation of results while preserving some level of detail about the non-EAC world, as well as reduce the strain on computational resources required to obtain results, the non-EAC countries are aggregated into 11 geographic and trade regions as summarized in Table \ref{tab:ctry}. This reduces the size of the transaction tables from $189 \times 25 = 4915$ rows and columns to $(6 + 11)\times 26 = 442$ rows and columns. The 26 sectors are summarized in Table \ref{tab:sec} \footnote{Sector codes are assigned and used throughout the paper, but are not found in the EORA 26 database.}. \newline
+
+
+
+
+
+
+
+\begin{table}[h!]
+\centering
+\caption{\textsc{Countries and Regions}}
+
+\label{tab:ctry}
+\vspace{2mm}
+\begin{tabular}{llp{6cm}} \toprule
+\textit{Region} & \textit{Description} & \textit{Countries} \\ \midrule
+EAC & East African Community & UGA, TZA, KEN, RWA, BDI, SSD \\ \\
+SSA & Sub-Saharan Africa (Excluding EAC) & AGO, BEN, BFA, BWA, CAF, CIV, CMR, COD, COG, COM, CPV, ERI, ETH, GAB, GHA, GIN, GMB, GNB, GNQ, LBR, LSO, MDG, MLI, MOZ, MRT, MUS, MWI, NAM, NER, NGA, SDN, SEN, SLE, SOM, STP, SWZ, SYC, TCD, TGO, ZAF, ZMB, ZWE \\ \\
+EUU & European Union + GBR & AUT, BEL, BGR, CYP, CZE, DEU, DNK, ESP, EST, FIN, FRA, GBR, GRC, HRV, HUN, IRL, ITA, LTU, LUX, LVA, NLD, POL, PRT, ROU, SVK, SVN, SWE, MLT \\ \\
+ECA & Europe and Central Asia (Non-EU) & ALB, AND, ARM, AZE, BIH, BLR, CHE, CHI, FRO, GEO, GIB, GRL, IMN, ISL, KAZ, KGZ, LIE, MCO, MDA, MKD, MNE, NOR, RUS, SMR, SRB, TJK, TKM, TUR, UKR, UZB, XKX \\ \\
+MEA & Middel East and North Africa & ARE, BHR, DJI, DZA, EGY, IRN, IRQ, ISR, JOR, KWT, LBN, LBY, MAR, OMN, PSE, QAT, SAU, SYR, TUN, YEM \\ \\
+NAC & North America and Canada & BMU, CAN, USA \\ \\
+LAC & Latin America and Carribean & ABW, ARG, ATG, BHS, BLZ, BOL, BRA, BRB, CHL, COL, CRI, CUB, CUW, CYM, DMA, DOM, ECU, GRD, GTM, GUY, HND, HTI, JAM, KNA, LCA, MAF, MEX, NIC, PAN, PER, PRI, PRY, SLV, SUR, SXM, TCA, TTO, URY, VCT, VEN, VGB, VIR \\ \\
+ASE & ASEAN & BRN, IDN, KHM, LAO, MMR, MYS, PHL, SGP, THA, VNM \\ \\
+SAS & South Asia & AFG, BGD, BTN, IND, LKA, MDV, NPL, PAK \\ \\
+CHN & China & CHN, HKG, TWN \\ \\
+ROA & Rest of Asia & ASM, GUM, JPN, KOR, MAC, MNG, MNP, NCL, PRK, PYF, TLS \\ \\
+OCE & Oceania & AUS, FJI, FSM, KIR, MHL, NRU, NZL, PLW, PNG, SLB, TON, TUV, VUT, WSM
+ \\ \bottomrule
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h!]
+\centering
+\caption{\textsc{Sectors}}
+
+\label{tab:sec}
+\vspace{2mm}
+\begin{tabular}{ll} \toprule
+\textit{Sector Code} & \textit{Description} \\ \midrule
+AGR & Agriculture \\
+ FIS & Fishing \\
+ MIN & Mining and Quarrying \\
+ FBE & Food \& Beverages \\
+ TEX & Textiles and Wearing Apparel \\
+ WAP & Wood and Paper \\
+ PCM & Petroleum, Chemical and Non-Metallic Mineral Products \\
+ MPR & Metal Products \\
+ ELM & Electrical and Machinery \\
+ TEQ & Transport Equipment \\
+ MAN & Other Manufacturing \\
+ REC & Recycling \\
+ EGW & Electricity, Gas and Water \\
+ CON & Construction \\
+ MRE & Maintenance and Repair \\
+ WTR & Wholesale Trade \\
+ RTR & Retail Trade \\
+ AFS & Hotels and Restraurants \\
+ TRA & Transport \\
+ PTE & Post and Telecommunications \\
+ FIB & Finacial Intermediation and Business Activities \\
+ PAD & Public Administration \\
+ EHO & Education, Health and Other Services \\
+ PHH & Private Households \\
+ OTH & Others \\
+ REI & Re-export \& Re-import \\ \bottomrule
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+
+The values recorded in EORA are in thousands of current USD at basic prices. As a first thing to examine the data, we can compute global GDP by region and sector as well as EAC GDP by sector. Figure \ref{fig:wld_GDP_reg} shows Global GDP by region. The impact of the 2009 global financial crisis is clearly visible and GDP also has declined in 2015\todo{why?}. According to this data EAC GDP at basic prices has increased both in absolute value from 43.6 billion USD in 2005 to 101.6 billion USD in 2015, and as a share of global GDP from 0.096\% in 2005 to 0.137\% in 2015. \newline
+
+Figure \ref{fig:wld_GDP_sec} shows global GDP by sector. In 2015, 25\% of global GDP was produced by financial and business services (FIB), followed by the education, health and other services category at 11.7\%.
+
+\todo[inline]{Add World Bank GDP line.}
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:wld_GDP_reg}\textsc{Global GDP by Region}}
+\small{\textit{Millions of current USD at Basic Prices}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/global_GDP_region".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:wld_GDP_sec}\textsc{Global GDP by Sector}}
+\small{\textit{Millions of current USD at Basic Prices}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/global_GDP_sector".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Figure \ref{fig:EAC_GDP_sec} shows EAC GDP by sector. Here the discrepancies between this harmonized data and the real world are very visible. By 2015, agricultural value added in Uganda was still around 30\% of GDP, whereas it is blow 20\% of GDP in the EORA data. The level of GDP at basic prices seems to be broadly in line, as GDP was around 27 billion USD at current prices in 2015, up from 9 Billion in 2005. The growth path however seems to be too strong in the years 2005-2008, and too flat from 2009-2015 compared to the real trajectory. Of the other countries, apart from moderate mismatches in sectoral value added shares present for all EAC countries, there seems to be a major problem with the data for Tanzania. Tanzanian GDP was at 18.4 Billion in 2005 and increased to 47.4 Billion in 2015. The EORA data show an initial GDP for Tanzania of 10.5 Billion in 2005, which declines over the sample period to 8.5 Billion. \newline
+
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EAC_GDP_sec}\textsc{EAC GDP by Sector}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/EAC_GDP_sector".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+All of this of course strongly calls into question the reliability of this data to analyze developments in the EAC. The creators of this database write:
+
+\begin{quote}
+The current Eora tables that have been constructed with emphasis on a) representing large data items and b) fulfilling balancing conditions for large countries.
+
+The goal of Eora is to to make a consistent global model. When smaller or developing economies have inconsistent or missing data the tables for these countries can become distorted during the process of building a consistent global model. %These problems can be identified using the Table Balancing Check reports. In some cases countries raw macroeonomic data is highly unreliable or conflicting. This can occur especially during periods of war, government transition, or hyperinflation. Eora is built by combining and reconciling various data sources, but these processes are purely algorithmic; there is no manual intervention in the raw data. Thus missing, incomplete, and conflicting raw data can mean that we are unable to realize a consistent, balanced, IO table for a country in a given year.
+\end{quote}
+
+Thus the analysis and results presented below should be treated with caution, particularly for Tanzania, as the data analyzed was not constructed to accurately reflect macroeconomic aggregates in developing countries. Nevertheless EORA is the only global IO database currently in existence and may be used to get a rough idea about production sharing and integration into Global Value Chains in the EAC. 
+
+\section{Gross Flows}
+In light of the macroeconomic inconsistencies flagged above and the fact that value added flows are estimated from gross flows, it is useful to first consider the raw data in more detail before diving into detailed decompositions of trade flows. 
+
+\subsection{Intermediate Inputs}
+An aggregated EORA 26 MRIO Table for the year 2015 is shown in Figure \ref{fig:wld}.  The columns of the table constitute production functions showing the intermediate inputs required by each of the column-countries or regions from each of the row-countries or regions to produce their output. Conversely the rows show quantities supplied by each row-country or region to each column-country or region. Flows are reported on a log10 scale due to their vastly different magnitudes. Among the EAC countries, the table shows a significant intermediate input supplier role of Kenya, supplying $10^{2.82} = 661$ million USD to Uganda, $10^{2.42} = 263$ million USD to Tanzania and  $10^{1.85} = 71$ million USD to Rwanda. Tanzania and Uganda have less of a supplier role with Tanziania supplyzing 12 million USD to Uganda, 40 million to Kenya and 8 million to Rwanda, and Uganda supplying 8 million to Uganda, 44 million to Kenya and 34 million to Rwanda. Rwanda appears to be insignificant in terms of it supplier role, supplying less than 1 million USD in inputs to any of its EAC partners. Burundi and South Sudan appear insignificant both as suppliers and consumers of intermediate inputs. With the rest of the World, Uganda, Tanzania and Kenya each import between 250 and 800 million USD if intermediate imports from the rest of Sub-Saharan Africa, and a similar magnitude from the Middle East, South Asia and China. The larges supplier of Inputs to each of the EAC countries appears to be the European Union supplying $10^2.74 = 550$ million USD to Uganda, $10^2.97 = 993$ million to Tanzania, $10^3.44 = 2754$ million to Kenya, $10^2.48 = 302$ million to Rwanda  $10^1.96 = 91$ million to Burundi and $10^1.11 = 13$ million to South Sudan. 
+\todo[inline]{Discuss EAC Supplier Roles as well, and perhaps percentages table??}.
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:wld}\textsc{Aggregated MRIO Table: EAC and World Regions}}
+\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_AG".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Visualizing global flows to the EAC at the sector level is not feasible, but below I examine first sector level flows between the EAC and the rest of the World, and then inter-EAC flows. Table \ref{tab:weaclfl} shows the 20 largest flows between EAC sectors and sectors outside the EAC, with and without Kenia. The left column shows that the largest flow of almost 460 million USD is Kenyan agricultural inputs into EU food processing industries.  followed by inputs from Middle Easter and EU transport industries to the Kenyan transport industry. The remaining largest flows in the left panel comprise mostly of EU inputs into Kenyan petro-chemicals, construction and electrical machinery.  It is also notable that Kenya provides food processing intermediates worth 137 million USD for EU food processing, in addition to the 460 million raw agricultural input. \newline
+
+If Kenya is taken out, the largest flows, shown on the right hand side of Table \ref{tab:weaclfl} are EU inputs to Tanzanian and Ugandan electric machinery. Tanzania provides agricultural inputs worth 67 million USD to the food processing industries in the rest of Asia (including Japan and South Korea), and Uganda provides agricultural inputs worth 49 million to EU food-processing industries.  
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 08, 2021 - 1:27:29 PM
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Largest Intermediates Flows Between the EAC and the World}} 
+  \small{\textit{Millions of 2015 USD at Basic Prices}}
+  \label{tab:weaclfl} 
+\begin{tabular}{@{\extracolsep{5pt}} lllll} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\textbf{\#} & \textbf{Flow} & \textbf{Value} & \textbf{Non-Kenia Flow} & \textbf{Value} \\ 
+\hline \\[-1.8ex] 
+1 & KEN.AGR $\to$  EUU.FBE & $459.214$ & EUU.ELM $\to$  TZA.ELM & $128.665$ \\ 
+2 & KEN.AGR $\to$  EUU.REI & $271.547$ & EUU.ELM $\to$  UGA.ELM & $86.675$ \\ 
+3 & MEA.TRA $\to$  KEN.TRA & $186.499$ & SAS.PCM $\to$  TZA.PCM & $73.558$ \\ 
+4 & EUU.TRA $\to$  KEN.TRA & $178.775$ & TZA.AGR $\to$  ROA.FBE & $66.674$ \\ 
+5 & EUU.ELM $\to$  KEN.CON & $165.829$ & EUU.PCM $\to$  TZA.PCM & $62.432$ \\ 
+6 & EUU.PCM $\to$  KEN.PCM & $142.660$ & MEA.ELM $\to$  UGA.ELM & $62.200$ \\ 
+7 & KEN.FBE $\to$  EUU.FBE & $137.057$ & SAS.ELM $\to$  TZA.ELM & $49.312$ \\ 
+8 & EUU.ELM $\to$  TZA.ELM & $128.665$ & UGA.AGR $\to$  EUU.FBE & $48.568$ \\ 
+9 & OCE.AGR $\to$  KEN.FBE & $128.317$ & SSA.ELM $\to$  TZA.ELM & $44.663$ \\ 
+10 & EUU.PCM $\to$  KEN.AGR & $118.039$ & SSA.PCM $\to$  TZA.PCM & $43.131$ \\ 
+11 & EUU.PCM $\to$  KEN.CON & $103.888$ & ROA.WTR $\to$  TZA.WTR & $41.891$ \\ 
+12 & EUU.REI $\to$  KEN.CON & $95.865$ & MEA.ELM $\to$  TZA.ELM & $41.537$ \\ 
+13 & MEA.PCM $\to$  KEN.CON & $95.677$ & TZA.AGR $\to$  EUU.FBE & $39.506$ \\ 
+14 & EUU.ELM $\to$  KEN.ELM & $93.319$ & SAS.ELM $\to$  UGA.ELM & $37.466$ \\ 
+15 & SAS.PCM $\to$  KEN.PCM & $90.327$ & EUU.ELM $\to$  TZA.TEQ & $35.433$ \\ 
+16 & EUU.FBE $\to$  KEN.FBE & $88.536$ & EUU.ELM $\to$  RWA.ELM & $33.555$ \\ 
+17 & KEN.FBE $\to$  EUU.REI & $88.051$ & CHN.ELM $\to$  TZA.ELM & $31.674$ \\ 
+18 & EUU.ELM $\to$  UGA.ELM & $86.675$ & OCE.ELM $\to$  TZA.ELM & $31.160$ \\ 
+19 & SAS.ELM $\to$  KEN.CON & $82.360$ & SAS.PCM $\to$  UGA.PCM & $30.212$ \\ 
+20 & EUU.PCM $\to$  KEN.FBE & $77.832$ & EUU.PCM $\to$  UGA.PCM & $29.267$ \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+
+A disaggregated sector-levels view of the inter-EAC part of Figure \ref{fig:wld} is presented in Figure \ref{fig:eac}. It confirms the supplier role of Kenya, particularly in petrol, chemical and mineral products, and other manuracturing sectors such as Metral Products, Electrical machinery, transport equipment as well as trade, transoort, telecommunications, financial and business services. As Figure \ref{fig:eac} is difficult to interpret in detail, Table \ref{tab:eaclfl} additionally records the 20 largest inter-country intermediate input flows, with and without Kenyan participation.
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:eac}\textsc{Disaggregated MRIO Table: EAC}}
+\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Table \ref{tab:eaclfl} shows that the 3 largest inter-country intermediate input flows in the EAC, with values betwen 37 and 95 million USD, are inputs from Kenyan mining and petrol, chemical and mineral industries to Ugandan and Tanzanian petrol, chemical and mineral industries. The only of the largest 20 inter-EAC flows not originating from Kenya  is the flow of Ugandan Agricultural inputs into Kenyan food processing industries, worth 24 million USD. When Kenya is taken out, Uganda becomes the largest supplier of inputs, particularly to Rwandan manufacturing industries. Tanzania supplies mining worth about one million to Ugandan petro-chmeicals and food and bevarages wirth less than 1 million to Ugandan food processing and hotels / restaurants. All other flows in the right-hand side of Table \ref{tab:eaclfl} originate from Uganda. Both Rwanda and Tanzania appear to play an insignificant supplier role in the EAC, although it could be dangerous to conclude this about Tanzania given the mismatch of value added shown in Figure \ref{fig:EAC_GDP_sec}. 
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 08, 2021 - 12:39:05 PM
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Largest Inter-Country Intermediate Flows within the EAC}} 
+  \small{\textit{Millions of 2015 USD at Basic Prices}}
+  \label{tab:eaclfl} 
+\begin{tabular}{@{\extracolsep{5pt}} lllll} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\textbf{\#} & \textbf{Flow} & \textbf{Value} & \textbf{Non-Kenia Flow} & \textbf{Value} \\ 
+\hline \\[-1.8ex] 
+1 & KEN.MIN $\to$ UGA.PCM & $95.270$ & UGA.PCM $\to$ RWA.PCM & $2.539$ \\ 
+2 & KEN.PCM $\to$ UGA.PCM & $63.854$ & UGA.TRA $\to$ RWA.PAD & $2.497$ \\ 
+3 & KEN.PCM $\to$ TZA.PCM & $37.412$ & UGA.MPR $\to$ RWA.MPR & $2.091$ \\ 
+4 & KEN.WAP $\to$ UGA.WAP & $29.109$ & UGA.TRA $\to$ RWA.TRA & $2.003$ \\ 
+5 & KEN.ELM $\to$ UGA.ELM & $25.912$ & UGA.FBE $\to$ RWA.FBE & $1.958$ \\ 
+6 & UGA.AGR $\to$ KEN.FBE & $24.319$ & UGA.MPR $\to$ RWA.ELM & $1.443$ \\ 
+7 & KEN.TRA $\to$ UGA.PAD & $23.140$ & UGA.ELM $\to$ RWA.ELM & $1.346$ \\ 
+8 & KEN.PCM $\to$ UGA.EHO & $20.892$ & UGA.FBE $\to$ RWA.AFS & $1.175$ \\ 
+9 & KEN.TRA $\to$ UGA.TRA & $20.085$ & UGA.WTR $\to$ RWA.WTR & $1.124$ \\ 
+10 & KEN.MIN $\to$ UGA.EGW & $18.863$ & UGA.PCM $\to$ TZA.PCM & $1.088$ \\ 
+11 & KEN.MIN $\to$ TZA.PCM & $18.044$ & TZA.MIN $\to$ UGA.PCM & $0.992$ \\ 
+12 & KEN.WAP $\to$ TZA.WAP & $15.156$ & UGA.AGR $\to$ RWA.FBE & $0.824$ \\ 
+13 & KEN.FBE $\to$ UGA.FBE & $14.913$ & UGA.PCM $\to$ RWA.EHO & $0.817$ \\ 
+14 & KEN.WAP $\to$ UGA.CON & $14.288$ & UGA.WAP $\to$ RWA.WAP & $0.813$ \\ 
+15 & KEN.MPR $\to$ UGA.ELM & $13.857$ & TZA.FBE $\to$ UGA.FBE & $0.742$ \\ 
+16 & KEN.PCM $\to$ TZA.EHO & $11.961$ & UGA.ELM $\to$ TZA.ELM & $0.631$ \\ 
+17 & KEN.ELM $\to$ UGA.MPR & $11.708$ & UGA.MPR $\to$ RWA.CON & $0.535$ \\ 
+18 & KEN.ELM $\to$ TZA.ELM & $11.688$ & UGA.MPR $\to$ RWA.TEQ & $0.479$ \\ 
+19 & KEN.ELM $\to$ UGA.TEQ & $11.555$ & TZA.FBE $\to$ UGA.AFS & $0.471$ \\ 
+20 & KEN.PCM $\to$ UGA.PAD & $11.140$ & UGA.PCM $\to$ RWA.PAD & $0.453$ \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+\FloatBarrier
+
+\subsection{Exports}
+
+The gross exports of EAC countries are shown in Figure \ref{fig:exp}. Here the level of Tanzanian exports is more in line with the level recorded by the World Bank. In terms of composition, it is evident that Uganda focuses on agricultural exports, comprising 38\% of exports over the analyzed period, while Rwanda has a disproportionate share in mining exports of about 24\%. The other EAC countries have a more balanced export mix, with Tanzania and Kenya also maintaining shares of 24\% and 29\%, respectively in agriculture. 
+
+\todo[inline]{Add World Bank Exports line.}
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:exp}\textsc{EAC Gross Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/exports_stacked_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Figure \ref{fig:exp_EAC_share} shows the percentage of gross exports going to EAC member countries. It is evident that Uganda and Kenya both have shares of 30\% of their exports to the EAC, and that for Uganda the largest part of these exports are agricultural, while for Kenya the largest part is manufacturing, in particular petro-chemicals, metal products and electric machinery.  The other EAC members don't export very much to the EAC, in particular Rwanda, Buruindi and South Sudan where the data suggests an EAC export share below 2\% in 2015. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:exp_EAC_share}\textsc{Percentage of Gross Exports Going to EAC Members}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/exports_EAC_perc_stacked_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\subsection{Decompositions}
+
+
+
+% Note: This figure is presented as a stacked area chart in th eIntroduction Section. 
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:outDVAtot}\textsc{Direct Value Added (GDP)}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/output_DVA_tot".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:outDVA}\textsc{Direct Value Added Content of Output}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/output_DVA".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+Figure \ref{fig:outshares_ag_ts} shows an aggregate decomposition of output and exports into import and export shares, and shares from the EAC. Value Added gives the total share of domestic value added in output (VAS), which appears to be stable around 50-60\% for all countries apart from Tanzania where it seems to have dropped down to 40\% (which might be due to inconsistencies in domestic data for Tanzania). The remainder of output (1-VAS) is comprised of domestic or imported intermediate goods. The Percent of Inputs Imported gives the share of intermediate inputs that is imported. It is a gross measure of vertical specialization and backward GVC integration, although not the measure proposed by \citet{hummels2001nature}, which is defined in value added terms. Of those imported inputs, the Percent of Imports from EAC shows the percentage coming from the EAC. It is a measure of regional integration relative to the overall level of a countries international integration.    Similarly on the export side Figure \ref{fig:outshares_ag_ts} reports both the overall percentage of output exported (i.e. not consumed domestically) and the percentage of exports going to the EAC neighbours. \newline
+
+The most curious finding presented by Figure \ref{fig:outshares_ag_ts} is the remarkable stability of shares, with few exceptions, suggesting only a very moderate increase in regional and global economic supply chains at the aggregate level. The starting levels of the countries are very different, with Uganda maintaining a share of exports and imports of 30\% with the EAC, whereas Tanzania, Rwanda and Burundi show much lower levels of integration. In Uganda and Kenya the percent of exports going to the EAC increased slightly over the sample period, while maintaining overall stable in terms of VS and percent of output exported. The overall increase in the percent of inputs imported in Tanzania may be due to a decline in domestic intermediates reflecting the decline in GDP, and should thus also be taken with extreme caution.  
+
+\todo[inline]{Put Value Added on the right axis.}
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:outshares_ag_ts}\textsc{Decomposition of Output and Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/output_shares_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+An industry level view of these metrics for the year 2015 is provided in Figure \ref{fig:outshares}. It shows some similarities but also some quite stong differences in the structure of production of different EAC countries. For example Agriculture is a high domestic value added and low imported inputs sector in all EAC countries. Uganda and Tanzania export 37 and 55\% of their Agricultural produce, while Kenya only appears to export around 13\% of its production , and the remaining EAC countries have export shares below 10\%. A major difference between Uganda and Tanzania is that Uganda obtains 27\% of its imported inputs for Agriculture from the EAC, and sends 48\% of its agricultural exports to the EAC, whereas Tanzania only imports 9\% of imported intermediates from the EAC and only exports 2\% of its agricultural exports to the EAC. \newline
+
+A pattern visible across most manufacturing sectors and supporting services is that Uganda maintains overall lower export and import shares in it's production, but in those has significant shares of 20-40\% with it's EAC partners. Tanzania appears to have high shares of imported intermediates in it's core manufacturing sectors, ranging from 30-45\% of inputs being imported. Only around 5-15\% of these imports are however from the EAC. The sectoral data also show that Tanzania does not export much of it's manufacturing output, with the exception of textiles (56\%), other manufacturing (49\%) and recycling (53\%). Thus Tanzania does not appear to engage in significant processing trade but produces manufactured goods with high imported content mostly for domestic consumption. In Kenya, the domestic value added shares in manufacturing are higher and the share of imported intermediates lower than in Tanzania, with around 10-25\% of intermediates imported in the core manufacturing sectors. In contrast to Tanzania, Kenya also exports around 15-25\% of its output, and most of these exports (around 60\%) are to it's EAC neighbours. Thus Kenya figures as an imported supplier of manufacturing goods in the EAC. Rwanda imports around 10-20\% of its manufacturing inputs of which about 10-30\% are obtained from it's EAC neighbours. Rwanda however exports only a negligible fraction of it's manufacturing outputs, and of these exports also only a negligible amount goes to the EAC. \newline
+
+
+
+\begin{figure}[!h]
+\centering
+\vspace{-2cm}
+\caption{\label{fig:outshares}\textsc{Decomposition of Sectoral Output and Exports}}
+\vspace*{\fill}
+\begin{adjustbox}{center}
+\includegraphics[width=1.75\textwidth, angle =270, trim= {1cm 0 0 0}, clip]{"../Figures/output_shares".pdf} %trim={<left> <lower> <right> <upper>}
+\end{adjustbox}
+\vspace*{\fill}
+\end{figure}
+\FloatBarrier
+
+To summarize, the decomposed gross flows data presented in Figures \ref{fig:outshares_ag_ts} and \ref{fig:outshares} suggest that economic integration from the production side has proceeded very gradually, both with the rest of the World and inside the EAC. The various EAC countries take on quite different roles in the process, with Kenya being the major EAC supplier of manufacturing inputs, and Tanzania the country that imports most inputs from abroad to produce for domestic consumption. Uganda shows modest amounts of overall economic integration, but retrieves a significant share of it's imported inputs from the EAC, and also exports a significant share of is exports to the EAC - in particular agricultural exports feeding into Kenyan food processing industries. Rwanda and Burundi import around 10-15\% of their intermediates, of which about 10-20\% come from the EAC. These countries hardly export any intermediate goods. South Sudan does not appear to be economically integrated with EAC production. 
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:outshares}\textsc{Direct Value Added Content of Output}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/output_shares".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+\section{Value Added Flows}
+While gross flows provide useful information about direct productive relationships and the amounts of goods traded therein, a problem of gross flows IO tables, is that they do not reveal how much of the value was added in the supplying industry, and how much of the value was added in previous stages of production, performed by other industries or even countries. % \citep{Kummritz2014}. 
+The Leontief decomposition of gross trade flows solves this problem by real-
+locating the value of intermediate goods used by industries to the original producers \citep{Kummritz2014}. %In our example, the use of Argentinian agricultural produce (raw hides) is subtracted from the Turkish leather industry and added to the Argentinian agricultural industry \citep{Kummritz2014}. 
+%\newline
+
+\subsection{The Leontief Decomposition of Gross Trade Flows}
+
+Let $\textbf{A}$ be a row-normalized ICIO table where each element $a_{ij}$ gives the units of sector (row) $i$'s output required for the production of one unit of sector (column) $j$'s output, $\textbf{x}$ the vector of outputs of each country-industry and $\textbf{d}$ a vector of final demands such that the following productive relationship holds:
+
+\begin{equation}
+\textbf{x} = \textbf{A}\textbf{x} + \textbf{d}.
+\end{equation}
+
+The classical Leontief 1936 insight was that one can solve this equation for $\textbf{x}$ to get the amount of output each industry should produce given a certain amount of final demand:
+
+\begin{equation} \label{eq:leontief}
+\textbf{x} = (\textbf{I}-\textbf{A})^{-1} \textbf{d} = \textbf{B}\textbf{d},
+\end{equation}
+
+where the Leontief Inverse was denoted $\textbf{B} = (\textbf{I}-\textbf{A})^{-1}$. This matrix is also often called the total requirement matrix since it gives the total productive input requirement from each sector to produce one unit of final output. Specifically each element in $b_{ij}$ in \textbf{B} gives the output required from sector $i$ for the production  of one unit of the final good $j$. Thus the first column of \textbf{B} gives all the productive input required from all sectors for the production of one unit of the final good in sector 1, and the first column of \textbf{B} gives all the input required from sector 1 to produce one unit of the final good in each sector. Now the amount of direct value added in each unit of output for each sector is given by:
+
+\begin{equation}
+\textbf{v} = \textbf{1} - \textbf{A}'\textbf{1}
+\end{equation}
+where $\textbf{1} = (1, 1, 1, ..., 1)'$ is a column-vector of 1's such that the above expression amounts to summing up the entries in each column of \textbf{A} (representing the intermediate input shares for 1 unit of output) and subtracting them from 1. Let \textbf{V} be the matrix with \textbf{v} along the diagonal and 0's in the off-diagonal elements. Multiplying Eq. \ref{eq:leontief} with $\textbf{V}$ therefore gives the value added in each sector:
+
+\begin{equation} \label{eq:VB}
+\textbf{V}\textbf{x} = \textbf{V}(\textbf{I}-\textbf{A})^{-1} \textbf{d} = \textbf{VBd}.
+\end{equation}
+The term $\textbf{VB} = \textbf{V}(\textbf{I}-\textbf{A})^{-1}$ is known as the matrix of value added multipliers or value added shares, which can be used to obtain the amount of value added generated in each industry (\textbf{Vx}) when producting to satisfy final demand (\textbf{d}). More generally, the matrix $\textbf{VB}$ contains the amount of valued added by each sector (row) to the production of one unit of each sector's (column's) output.  To see this, note first that it can be proven that the columns of \textbf{VB} sum to 1:
+
+\begin{equation} \label{eq:VBproof}
+(\textbf{VB})'\textbf{1} = \textbf{B}'\textbf{V}'\textbf{1} =  \textbf{B}'\textbf{v}  = (\textbf{I}-\textbf{A}')^{-1}  (\textbf{1}-\textbf{A}'\textbf{1}) = (\textbf{I}-\textbf{A}')^{-1}  (\textbf{I}-\textbf{A}')\textbf{1} = \textbf{1}.
+\end{equation}
+
+
+%\begin{equation}
+%\textbf{x} - \textbf{A}'\textbf{x} = \textbf{V}(\textbf{I}-\textbf{A})^{-1} \textbf{d}.
+%\end{equation}
+%Take \textbf{D} a diagonal matrix diagonal matrix with the elements of \textbf{d} along the diagonal, then the matrix \textbf{VBD} shows the total value added contributions to final consumption of each sector's (row's) output by each other sector (column).
+ %\begin{equation}
+%2\textbf{x} - \textbf{d}= \textbf{A}\textbf{x} + \textbf{x}.
+%\end{equation}
+
+It can also easily be proven that the sum $\textbf{(Vx)}'\textbf{1}$ is equal to the sum $\textbf{d}'\textbf{1}$: Using Eq. (1) yields $\textbf{d} = \textbf{x} - \textbf{Ax}$, and Eq. (3) yields $\textbf{Vx} = \textbf{vx} = \textbf{x} - \textbf{A}'\textbf{x}$, so that $\textbf{(Vx)}'\textbf{1} = \textbf{x}'\textbf{1} - \textbf{x}'\textbf{A}\textbf{1}$ and $\textbf{d}'\textbf{1} = \textbf{x}'\textbf{1} - (\textbf{A}\textbf{x})'\textbf{1}$. Now since \textbf{A} is row-normalized by output \textbf{x}, \textbf{Ax} simply gives the vector of intermediate use of each industries output, which is summed across industries through transposing and multiplication by \textbf{1}.  \textbf{A}\textbf{1} gives the vector of intermediate shares in each industries output, which is converted to quantity and summed through pre-multiplying by $\textbf{x}'$. \newline
+
+Thus Eq. \ref{eq:VB} actually gives us a transformation of the finally demanded quantities \textbf{d} to the value added origins of those same quantities \textbf{Vx}. As mentioned before, each element of \textbf{VB} represents the share of value added of the row country-industry to the production of one unit of the column country-industry's final product.  \newline
+
+
+ %\todo[inline]{Finish this More Classical Derivation commented out below}
+Another way to arrive at this, following \citet{Wang2014}, is to consider the value added generated by producing one unit of final output in each sector. The direct value added at the final stage of production in each sector is \textbf{V}, but this would exclude the value added by suppliers supplying intermediate inputs to this output. The additional value added by other sectors supplying intermediate inputs to this final output is $\textbf{V}\textbf{A}$ \footnote{\textbf{A} gives the units of intermediate input required from each sector (row) for the production of one unit of the sector's (column's) output.}, which needs to be added to the final value added \textbf{V}. 
+Now in order to generate inputs, the supplying sectors also require intermediate inputs from other sectors, of magnitude \textbf{AA}, generating a value added \textbf{VAA}.  The process continues through many rounds of production needed to produce those final intermediates needed to produce one unit of output, and the value added generated can be expressed as an infinite geometric series:
+
+\begin{equation}
+\textbf{V} +\textbf{VA} + \textbf{VAA}+ \textbf{VAAA} + \dots = \textbf{V} \sum_{i=0}^\infty \textbf{VA}^i = \textbf{V}(\textbf{I}-\textbf{A})^{-1} = \textbf{VB}\ \ \ \text{as}\ \ \ a_{ij} \leq 1\ \ \ \forall\ i,j.
+\end{equation}
+
+Thus \textbf{VB} is the value added matrix which sums up the total value added generated by each sector both as a final producer and as a supplier of inputs that is needed to produce one unit of final output in each sector.  \newline
+
+%for column sector $j$ producing final output, these row sectors $i$ also require intermediate inputs as required by their own production (column). The matrix \textbf{AA} provides in each entry the units of intermediate input supplied by each sector $i$ for the generation of its own.... \newline
+
+
+If we assume that the production technology of goods is the same no matter whether they are domestically consumed or exported, then we may also apply the matrix \textbf{VB} to exports to obtain the value added origins thereof. Before analyzing quantities, let us visualize the matrix \textbf{VB} at both the aggregate and EAC disaggregated levels. \newline
+
+\subsection{Value Added in Final Production}
+
+
+ \todo[inline]{Decompositions of output and FD + heatmaps commented out}
+% A first basic application is to decompose output \textbf{x} into it's value added origins by country-industry. The expression \textbf{VBx} would provide the total value added origins of \textbf{x} by supplying industries, but to obtain the disaggregated flows for each using industry, we compute \textbf{VBX}, where \textbf{X} is a diagonal matrix with \textbf{x} along the diagonal. The value added flows are shown in Figures \ref{fig:wldfvax} and \ref{fig:eacfvax}. 
+
+%A first basic application is to decompose finally demanded output \textbf{d} into it's value added origins by country-industry. The expression \textbf{VBd} would provide the total value added origins of \textbf{d} by supplying industries, but to obtain the disaggregated flows for each using industry, we compute \textbf{VBD}, where \textbf{D} is a diagonal matrix with \textbf{d} along the diagonal. The value added flows are shown in Figures \ref{fig:wldfvax} and \ref{fig:eacfvax}. Each element of \textbf{VBD} represents the value added of the row country(-industry) to the production of the column country(-industry)'s final product. The column sums of  \textbf{VBD} therefore equal the final demand \textbf{d}:
+
+%\begin{equation}
+%(\textbf{VBD})'\textbf{1} = \textbf{D}'\textbf{B}'\textbf{V}'\textbf{1} =  \textbf{D}'\textbf{B}'\textbf{v}  = \textbf{D}'(\textbf{I}-\textbf{A})'^{-1}  (\textbf{1}-\textbf{A}'\textbf{1}) = \textbf{D}'\textbf{1} = \textbf{d}.
+%\end{equation}
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:wldfvax}\textsc{Aggregated VA Table: EAC and World Regions}}
+%\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_AG_FVAX".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+%
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:eacfvax}\textsc{Disaggregated VA Table: EAC}}
+%\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_EAC_FVAX".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+Figure \ref{fig:wldVB} shows the aggregate value added share matrix at the EAC country and world region level. In most EAC countries (Uganda, Kenya, Rwanda and Burundi), approx. 85-90 percent of the value is added by domestic producers. Notable exceptions are Tanzania with 69 percent domestic value added and South Sudan with 98 percent domestic value added. On the supply side, the EU is the largest supplier of intermediate inputs to the production of most EAC countries, followed by South Asia, the Middle east and Kenya, with significant supplier roles also taken by China, North America, and the rest of Sub-Saharan Africa. Within the EAC, Kenya clearly takes on the largest supplier role, adding 2.24 percent of the value in Ugandan production, 1.7 percent in Tanzanias production and 0.83 percent in Rwanda's  production. Of the other EAC nations, only Uganda seems to play a non-negligible supplier role for Rwanda, where it supplies 0.38 percent of value added in Rwandan production. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:wldVB}\textsc{Aggregated Value Added Share Matrix (\textbf{VB}) 2015}}
+\small{\textit{Shares in Percentage Terms, Columns Sum to 100 Percent}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_AG_VB".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:eacfvax}\textsc{Disaggregated VA Table: EAC}}
+%\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_EAC_VB".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+The foreign value added share in domestic production and exports is what \citet{hummels2001nature} termed 'Vertical Specialization' (VS), and is the most widely used measure of backward GVC integration. Consider the VA share matrix \textbf{VB} with elements $vb_{oi,dj}$ where $o$ is the VA origin country and $i$ the VA origin industry (along the rows) and $d$ is the VA using country and $j$ the VA using industry (along the columns). Then the VS ratio for a particular country-industry may be expressed as:
+
+\begin{equation} \label{eq:VS}
+VS_{uj} = \sum_{oi,\ o \neq  u} vb_{oi, uj}\ \ \forall uj,
+\end{equation}
+
+in other words we are summing the elements of \textbf{VB} in each column, excluding any VA shares components from domestic country-industries. Figure \ref{fig:EACVB_ts} gives a breakdown of the VS for EAC countries by supplier country-region over the sample period. When comparing it to the foreign intermediates share in gross flows shown in Figure \ref{fig:outshares_ag_ts}, it is evident that the VS computed from value added data is about 1.5 times greater in nearly all EAC countries, owing to the fact that the foreign content in domestic intermediates which is now taken into account is a lot greater than the domestic content in foreign intermediates which is subtracted in value added flows data. \newline
+
+Figure \ref{fig:EACVB_ts} shows that the share of foreign value added in Ugandan production has been fluctuating between 10 and 12\% over the analyzed period. 2\% of the value of Ugandan produce comes from Kenya, about 1\% from the rest of Sub-Saharan Africa, 1.5\% from the MENA region, about 3-4\% from the EU and 1-1.5\% from South Asia. The other regions make up the remaining 2\%. Tanzania and Kenya have similar relative VA contributions of SSA and MENA, EU and SAS regions to their production, through at higher shares of around 19\% foreign VA content in Tanzanian production by 2015, and around 15\% in Kenya. Kenya adds around 1-2\% to Tanzanian production, and Uganda adds about 0.25\% to Kenyan produce. The value added share of Kenya and Uganda in Rwandan production of around and 1\% and 0.5\%, respectively is also visible. It is curious to observe the VS appears to have declined in Uganda, Kenya, Randa and Burundi from 2011 onwards, whereas in Tanzania it appears to have increased \todo{Why is that?}.
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EACVB_ts}\textsc{Foreign Value Added Shares in EAC Production (VS)}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_area".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+To better summarize the movements in VA shares by different origins over the analyzed period, Figure \ref{fig:EACVB_ts_bar} shows  bars giving the value added share in 2005 and in 2015, and above the two bars the annualized average growth rate in the share over this period. The annualized average growth rate of the domestic value added share is also reported in round brackets behind the country code for each EAC country. Figure \ref{fig:EACVB_ts_bar} makes it clear that the foreign value added share has increased substantially in Tanzania and also in Rwanda, but decreased slightly in Kenya and Uganda between 2005 and 2015.  Examining more closely the inner EAC shares, it appears that Tanzania's VA share in Ugandan production has halved between 2005 and 2015, whereas Kenya's share has increased by 0.8\% annually. For Tanzania the VA share of Kenya has almost doubled from about 0.8\% to 1.8\%. Rwanda has also seen increases in the shares of Ugandan and Kenyan VA of about 5\% each year. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EACVB_ts_bar}\textsc{Foreign Value Added Shares in EAC Production}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_bar".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+A full sector level view of \textbf{VB} for the EAC is not very informative due to the prevalence of very low shares. Figure \ref{fig:eacVB} gives a partial sector disaggregation showing the value added in each EAC sector from different EAC countries. Across the different countries the domestic value added shares are lowest in the manufacturing sectors, coming as low as 30-35\%  in Tanzanian electrical machinery and transport equipment. Kenya is an important supplier of inputs and therefore of VA to these manufactured outputs, accounting for as much as 9\% of the VA in Ugandan petro-chemicals. It was mentioned above than Uganda supplies a significant part of its Agricultural exports to Kenyan food and beverage industries. In VA terms Figure \ref{fig:eacVB} suggests these inputs nevertheless only account for 0.5\% of the VA in this industry in Kenya, which is likely explained by the high amount of VA in processing as well as by other inputs. Uganda has a greater role in Rwandan production, accounting for around 0.5-1\% of the value added in several Rwandan manufacturing sectors. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:eacVB}\textsc{Disaggregated VA Table: EAC}}
+\small{\textit{Shares in Percentage Terms, Columns Sum to 100 Percent}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_VB_AG_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+\subsection{Value Added Exports}
+
+The matrix \textbf{VB}, reflecting the structure of international production, allows us to decompose any gross flow coming from any country-industry into it's value-added origins by country-industry. The literature frequently considers a decomposition of gross exports into its VA origins, given by the matrix \textbf{VBE} where \textbf{E} is a diagonal matrix with exports by country-industry along the diagonal. %This can be useful to analyze, for example, how much of the value added in a countries exports was generated in that country. Since \textbf{VB} is the same for domestic production and exports, the domestic value added share can just be read from Figures \ref{eq:VB} and \ref{fig:eacVB}. % In terms of VA being consumed, \textbf{VAE}, being a decomposition of gross exports which service both final demand and production, overstates the amount of global value added distributed to the final consumer by means of exports. \newline
+
+\todo[inline]{Referring to commented out bit: Yeah, but even exports of non final goods may be produced into final goods by the receiving country and then consumed there, or processed into intermediates exported to another country and then consumed there. The only exports that do not feed into consumption abroad are exports that are ultimately consumed at home. So using $\textbf{VBE}_{FD}$ is a stark underestimation of exports actually servicing foreign consumption. Perhaps also explain this in writing..}
+%A more sensible decomposition in terms of quantity is thus to consider the matrix $\textbf{VAE}_{FD}$, where $\textbf{E}_{FD}$ contains only the exports for final demand / consumption. Figure \ref{fig:VAFDexp} shows the EAC value added in global finally consumed exports. Note that this includes exports to other EAC countries as well as exports that are ultimately consumed at home.
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:VAFDexp}\textsc{EAC Value Added in Global Final Exports}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_FD_exports_stacked_ts".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+Figure \ref{fig:VAexp} shows the EAC value added in global exports, which is obtained, for each country-industry, by simply summing the corresponding row of \textbf{VBE}.
+
+\begin{equation} \label{eq:VAE}
+VAE_{oi} = \sum_{uj} vbe_{oi, uj}\ \ \forall\ oi.
+\end{equation}
+
+ Note that this therefore includes VA in exports to other EAC countries as well as VA in exports that are ultimately consumed at home. Figure \ref{fig:VAexp} shows that the Ugandan VA in globally exported goods at the end of 2015 was around 1 billion USD in basic prices, whereas Kenya contributed around 6 billion USD to the value of gloabal exports in that year. 
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VAexp}\textsc{EAC Domestic Value Added in Global Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_exports_stacked_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Next to VS or the imported content of production and exports visualized in detail in Figure \ref{fig:EACVB_ts} which functions as a measure of backward GVC integration, \citet{hummels2001nature} also introduced the share of domestic exports that enters foreign countries exports, which they called VS1, as a measure of forward GVC Integration. This measure was first computed and explored by \citet{daudin2011produces}. It is defined as 
+
+\begin{equation} \label{eq:VS1}
+VS1_{oi} = \frac{1}{E_{oi}} \sum_{uj, u \neq  o} vbe_{oi, uj}\ \ \forall\ oi,
+\end{equation}
+where $E_{oi}$ are the gross exports of country-industry $oi$ which is used to normalize the sum along the rows of \textbf{VBE} (excluding domestic industries) which capture the use of VA from a domestic sector $oi$ in the exports of all foreign sectors $uj$. For completeness I note that VS can be defined in an analogous way as
+
+\begin{equation} \label{eq:VSE}
+VS_{uj} = \frac{1}{E_{uj}} \sum_{oi, o \neq  u} vbe_{oi, uj}\ \ \forall\ uj,
+\end{equation}
+
+however since $\sum_{oi} vb_{oi, uj} = 1\ \forall\ uj$, the exports cancel out and Eq. \ref{eq:VSE} reduces to \ref{eq:VS}. \newline
+
+Figure \ref{fig:VSag_ts} shows the aggregate VS and VS1 for each EAC member country over time. VS1 is called E2R (export to re-exports), and VS I2E (import to exports) by \citet{Kummritz20162} (following \citet{baldwin2015supply}), which also developed the $gvc$ R package to compute these measures. For Uganda, both VS and VS1 are at 11-12\% of exports towards the end of 2015, whereas VS1 was higher at around 14\% of exports in 2005. Tanzania, as already noted shows a remarkable increase in backward GVC participation to above 30\% of VA in its produce generated abroad, but a slight decline in forward GVC participation down to 11\% of exports being re-exported in 2015 - similar to Uganda. Kenya exhibits a stable development with VS of around 17\% and VSI around 12.5\%. Rwanda increased in VS from 15\% in 2005 to 22.5\% in 2015, but at the same time showed a decrease in VS1 from initially 22.5\% down to 16\% in 2015. It is noteworthy that while a few members like Tanzania and Rwanda appear to have succesfully increased their use of foreign intermediates, none of the members significantly increased it's role as supplier of inputs in the global market. Overall the GVC situation appears stagnant in Uganda, Kenya and Burundi. 
+
+\todo[inline]{Global i2e (VS) share is taken by \citep{Kummritz20162} as measure of increase in GVCs over time: "the nomial value of i2e has grown by approximately 350\% and as a share of total exports, it has grown by 35\%, from around 17\% to over 23\% of total exports, Thus, countries increasingly rely on inputs produced abroad for their export production."}. 
+
+\todo[inline]{Also from \citep{Kummritz20162}: Another way to examine the expansion of GVCs from 1995 to 2011 is to look
+at their length instead of their trade volume. WWZ propose to use the amount of double counted trade, pdc, as a proxy for GVC length, since its value goes up with back-and-forth trade, which is equivalent to an increase in the number of production stages. They show that its value has increased for 40 selected countries. "In Figure 2, we observe in our larger sample similarly that pdc as a share of total exports has increased over the examined period by 73\% and thus more than i2e. Therefore, GVCs do not only channel more trade but also have become longer over time."}
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VSag_ts}\textsc{GVC Integration of EAC Members: Aggregate}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\todo[inline]{Compare growth of i2e and e2r to world growth in these ratios. Also: Is VS1 the same as E2R?}
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:VSag}\textsc{Vertical Specialization: Aggregate}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS_aggregate".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+A sector-level snapshot of VS and VS1 for the year 2015 is provided in Figure \ref{fig:VS}. It shows the large amount of VS in manufacturing, particularly in Tanzania. Rwanda appears to recycle a lot of foreign garbage. In terms of VS1,  aroud 48\% of Ugandan mining exports are manufactured into goods that are re-exported by receiving countries. Wholesale and retail trade also appears to have shares above 20\% of exported goods being re-exported in all countries. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VS}\textsc{GVC Integration of EAC Members: Sector Level: 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+To provide at least a rough overview of the sector-level dynamics over the last 10 years, Figure \ref{fig:VSgr} shows the annualized average growth rate of VS and VS1 over the period. The axes are now on different scales fro each country to reflect the large differences in sector level changes between countries. In Uganda and Kenya, developments are very moderate. Most Ugandan manufacturing sectors increased their imported content (VS) by 1-2\% per annum, while at the same time reducing the share of intermediates for re-export (VS1) by 2-4\% per annum. in Kenya the picture is more diverse, but al similarly small annual changes of 1-4\%. A similarity share by Uganda and Kenya is that both countries reduced their VS in Agriculture by around 3\% per annum while increasing the share amount exports for re-export (VS1) by 2\% each year. In Tanzania nearly all manufacturing sectors exhibit annual gains in VS of 8-10\%. I note again that the data reliability for Tanzania is very low and these estimates should not be interpreted as factual truths. Rwanda shows a similar development to Tanzania, but on a smaller scale. Here most manufacturing sectors appear to have increased their VS by 4-5\% per annum, while reducing VS1 by a similar amount.
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VSgr}\textsc{GVC Integration of EAC Members: Annual Growth 2005-2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS_growth".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+\todo[inline]{Compute the previous 2 figures for the EAC only!}.
+
+
+\subsection{Regional Integration in Value Added Trade}
+So far we have explored standard country and industry level metrics of backward and forward GVC integration, VS and VS1 and examined the overall level of GVC integration of EAC countries and sectors. The result of this examination was that apart from increases in the import content of production and exports (VS) in Tanzania and Rwanda, the situation is relatively stable over time, with moderate amounts of heterogeneity at the sector level. \newline
+
+This section builds on these findings and introduces some metrics to track regional EAC integration through VA in supply chains, relative to any global developments experience by each member country. The first such metric computed is the share of foreign VA in a members production / exports accounted for by it's EAC partner states. It is computed as
+
+\begin{equation} \label{eq:VS_EAC}
+VS_{uj}^{EAC} = \frac{1}{VS_{uj}}  \sum_{oi \in EAC,\ o \neq  u} vb_{oi, uj}   \ \ \forall\ uj \in EAC,
+\end{equation}
+where $VS_{uj}$ is defined as in Eq. \ref{eq:VS}. $VS^{EAC}$ is thus a relative measure tracking the EAC share in VS, such that the overall EAC VA share in domestic production can be computed as $VS_{uj}^{EAC} \times VS_{uj} \ \forall\ uj$. We can define an analogous measure for VS1 as the proportion of domestic VA in re-exported exports that is exported by EAC partner states. 
+
+\begin{equation} \label{eq:VS1_EAC}
+VS1_{oi}^{EAC} =  \sum_{uj \in EAC, u \neq  o} vbe_{oi, uj} \bigg/ \sum_{uj, u \neq  o} vbe_{oi, uj}\ \ \forall\ oi \in EAC.
+\end{equation}
+
+These two metrics effectively track the role of the EAC in forming the interaction of each member country with the rest of the world in terms of production and export linkages. They do however not account for the import side, that is the overall role of the EAC in providing goods and services to each member country relative to the rest of the world. Therefore we will compute two additional metrics to capture this aspect of regional integration. The first metric is the share of EAC VA in the imports received by each member, which we shall denote by $VAI^{EAC}$. Consider $E_u$ to the vector of VA exports to EAC using country $u \in EAC$ from each country-sector.%, and $\textbf{I}_u$ the matrix with  $I_u$ along the diagonal.
+\todo[inline]{Note that since we don't have final demand disaggregated by sector, we cannot compute $VAI^{EAC}$ by receiving sector, but only by receiving country.}
+Then we can find the VA origins of these exports to country $u$ by pre-multiplying with \textbf{VB} to give 
+\begin{equation}
+E_u^{VA} = \textbf{VB}E_u,
+\end{equation}
+ where $E_u^{VA}$ denotes the vector, with elements $e_{oi, u}^{VA}$, of VA supplied by each country-industry ($oi$) in these imports of country $u$. From  $E_u^{VA}$ the share of EAC VA is easily computed as 
+\begin{equation}
+VAI_{u}^{EAC} = \sum_{oi \in EAC, o \neq u}  e_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  e_{oi, u}^{VA}.  
+\end{equation}
+$VAI_u^{EAC}$ thus gives us a country-level measure of the VA by it's EAC partners in it's import mix, excluding any domestic VA in imports. This VA may however enter into produced goods and be exported again, thus it is a measure of the EAC contribution to (non-domestic) production and consumption in a particular member country. To single out the EAC share in imported consumption goods, we need to consider only exports for final demand, which exclude exports feeding into production as intermediates. Let $FE_u$ therefore denote the final exports to country $u$ from each country-industry. Then $FE_u^{VA} = \textbf{VB}FE_u$ denotes the decomposition of those exports into VA components, and we can define 
+\begin{equation}
+VAFI_{u}^{EAC} = \sum_{oi \in EAC, o \neq u}  fe_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  fe_{oi, u}^{VA}
+\end{equation}
+as the EAC VA share in final goods exported to a particular member $u$.
+
+%\begin{equation} \label{eq:VS1_EAC}
+%VS1_{oi}^{EAC} =  \sum_{uj \in EAC, u \neq  o} vbe_{oi, uj} \bigg/ \sum_{uj, u \neq  o} vbe_{oi, uj}\ \ \forall\ oi \in EAC.
+%\end{equation}
+%
+%
+%Other interesting metrics for EAC interegation are to consider the share of foreign value added in EAC exports coming from EAC partner states, as well as the share of EAC value added in final goods exports to the EAC, shown in Figure \ref{fig:VAFDexpEACshares}. 
+%
+%
+%The EAC\_FVAX metric shows the VA percentage  share of other EAC countries in the exports of a particular member country, whereas the FVAX\_EAC metric shows the percentage of VA from EAC countries in the exports to the respective country. Both metrics exclude exports that are ultimately consumed in the country of origin \todo{Does this therefore also exclude domestic VA?? Also Interpret graph still..}. Using the notation introduced for Eq. \ref{eq:VS}, we can define EAC\_FVAX for each country as
+%
+%\begin{equation} \label{eq:VS_EAC}
+%VS_{uj}^{EAC} = \frac{1}{VS_{uj}}  \sum_{oi \in EAC,\ o \neq  u} vb_{oi, uj}   \ \ \forall uj \in EAC,
+%\end{equation}
+
+Figure \ref{fig:VAEACshares} reports the results. It is evident that Uganda and Tanzania follow very similar regional integration patterns, though at very different levels. In Uganda, around 21\% of VS (the foreign content of production) is accounted for by the EAC, whereas in Tanzania this was 6.3\% at the end of 2015. In Uganda the EAC share of VS1 (re-exported exports) was close to 6\% end of 2015, whereas in Tanzania it ended at 2\%. In-between we have the EAC share in Ugandan imports (VAI) and final imports (VAFI) at around 16.5\% and 14.5\% in 2015, whereas for Tanzania these shares were 5.2\% and 4.5\%, respectively. 
+
+\todo[inline]{Another metric: Calculate each countries share in total EAC exports ??, or add EAC content in Final exports ??}
+
+Overall this suggests that both countries have stronger backward GVC linkages with the EAC, with EAC countries (in particularly Kenya), supplying inputs into the production, whereas both countries play only a moderate role as suppliers of intermediates for export. In Kenya we observe the opposite pattern, where around 7.4\% of Kenya's re-exported exports (VS1) are exported by it's EAC partners, but only about 0.9\% of its imported inputs (VS) is accounted for by EAC partners. On the import side, less than 3\% of the VA in Kenyan imports is generated by it's EAC partners, but it is interesting that the EAC content in final imports is higher at 2.3\% than the EAC share in overall imports at 1.5\%, confirming that Kenya imports relatively more final goods than intermediates from it's EAC partners. Rwanda and Burundi also follow a similar pattern of EAC integration. In both countries the final import share of the EAC is highest, at around 11\% in Randa and 4.3\% in Burundi in 2015. This is followed, with some distance, by the EAC share in VS, at 6.5\% in Rwanda and 2.2\% in Burundi. Both countries have a negligible supplier role for the EAC, with <1\% of their re-exported exports exported by EAC partners. 
+
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VAEACshares}\textsc{EAC VA Shares in Members VS, VS1, Imports and Final Imports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_EAC_shares_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+
+\todo[inline]{Compare direct domestic VA with total domestic VA}.
+\todo[inline]{Growth of VS relative to World Average, and percentage of export growth accounted for by VS growth, following Hummels. Also calculate VS trends in time. Also look at which industries are driving this growth.... ALso: VS growth accounted for bz regional EAC integration vs. other. ALso: Links between VS and FDI. And: VS and tarriffs / NTB's...}
+
+\todo[inline]{look at VS by firm size and owndership in each sector (combine ES with GVC data). Could also be interesting for economic integration in Uganda / East Africa. I.e. does the domestic economy benefit at all or is it just foreign firms assembling foreign inputs here.}
+
+\todo[inline]{KWW talk about effect of Exchange rate on bilateral trade atters and how it depends on VS -> understand it...}.
+
+\subsection{Koopman Wang Wei Decomposition of Gross Exports}
+One problem with the Leontief decomposition of gross exports into VA origins is that it also captures so called pure double counted items, which are items that that are traded two or more times between the same trading partners. For example if on a value chain for chemical products an intermediate product would be first exported from Uganda to Kenya, processed further in Kenya and then imported again by Uganda to produce a final good that is the exported. The Leontief decomposition will correctly allocate the share of VA in this product to Uganda and Kenya, but Ugandan gross exports themselves would overstate the amount of VA in either of the two countries, because it includes both the export the the intermediate produce to Kenya, and the export of the final good to the rest of the world. So this king of double counting in gross exports is incurred whethever there exists two-eay trade in intermediate goods. \newline
+
+Secondly, the Leontief decomposition provides no information as to where and how the VA in exports is absorbed, it only provides the origin of VA in gross exports. To account for double counted items in gross exports and also to better understand where and how VA is absorved, which indicates how countries integrate into GVCs, a number of increasingly complex GVC decompositions have been developed. The simplest and most well known of these is the Decomposition of country-level gross exports into 9 VA components proposed by Koopman, Wang and Wei (2014), henceforth KWW \citep{koopman2014tracing}. The 9 terms fo the KWW decompostion are given schematically in Figure \ref{fig:KWW}\footnote{A mathematical expression for each of the 9 terms is provided in Eq. 36 of the \citet{koopman2014tracing} paper.}.
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:KWW}\textsc{KWW Decomposition of Gross Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW".PNG} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{Aggregate KWW Decomposition}
+The KWW decomposition of gross exports is computed for each of the EAC members and shown in Figure \ref{fig:KWW_fill_ts}. To connect this decomposition to the aggregate measures of GVC integration VS and VS1 obtained from the Leontief decomposition and shown in Figure \ref{fig:VSag_ts}: VS the share of FVA in gross exports is the sum of FVA\_FIN, FVA\_INT  and FDC, while VS1 is nearly equivalent to DVA\_INTrex (since RDV\_FIN, and RDV\_INT are close to 0 in all EAC countries)\todo{Check with KWW paper}.  
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:KWW_fill_ts}\textsc{KWW Decomposition of Gross Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Figure \ref{fig:KWW_fill_ts} shows that double counted items constitute up to 10\% of gross exports in EAC countries, but that most of this double counting occurs with VA produced abroad. The domestic content in intermediate exports that finally returns home is practially 0 for all EAC members, indicating an overall insignificant role of these countries as suppliers of inputs to their own final imports\footnote{This is a prevalent feature in the export composition of high-income countries, see for example \citep{Kummritz20162}.}. In all members furthermore the largest share of exports is domestic VA in intermediate exports absorbed by direct importers. Only a small share of DVA in intermediate exports is re-exported indicating that EAC countries predominantly export basic inputs to products manufactured for home consumption in the importing countries. In Uganda furthermore around 40\% of exports constitute DVA in final goods exports. Apart from Tanzania, the share of DVA in final goods exports has increased over time. Tanzania is also the only country with a significant share of FVA in final goods exports, indicating some significant assembly and processing tasks. Rwanda on the other hand has a high share of FVA in intermediate exports\footnote{Primary the recycling sector as shown in Figure \ref{fig:KWW_fill_sec}.}. \newline  % suggesting moderate upstream integration in GVCs in some industries
+
+\subsubsection{Upstreamness and Downstreamness in GVC Participation}
+
+\todo[inline]{Make Separate charts for Final and Intermediate Exports: High FVA in final exports indicates downstreamness, while high DVA in intermediate exports indicates upstreamness. 
+By tracking these two variables over time we can see which countries have succeeded in moving up the value chain. See \citep{Kummritz20162}}
+
+The KWW decomposition also lets us asses the position of countries in GVCs regardless of their overall level of GVC integration\footnote{As measured by VS and VS1.}. According to \citet{Kummritz20162} and \citet{Wang2014}, High FVA in final exports relative to total foreign content in exports indicates downstreamness (assembly tasks), while high DVA in intermediate exports relative to total DVA in exports indicates upstreamness (specialization in tasks adding a lot of value to an unfinished product). I follow these authors by computing these ratios\footnote{More formally: $$\text{Upstreamness} = \frac{\text{DVA\_INT} + \text{DVA\_INTrex} + \text{DDC}}{\text{DVA\_FIN} + \text{DVA\_INT} + \text{DVA\_INTrex} + \text{RDV\_FIN} + \text{RDV\_INT} + \text{DDC}}$$  
+$$\text{Downstreamness} = \frac{\text{FVA\_FIN}}{\text{FVA\_FIN} + \text{FVA\_INT} + \text{FDC}}$$}, which are shown in Figure \ref{fig:UP_DOWN_ag_ts}\todo{Ratios are unintuitive, why not FVA\_FIN over total FIN exports (domestic and foreign)? Google more about upstreamness and downstreamness.}.
+
+\todo[inline]{also repeat VS and VS1 movements indicating overall GVC integration.}
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:UP_DOWN_ag_ts}\textsc{Upstreamness and Downstreamness Ratios}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+From Figure \ref{fig:UP_DOWN_ag_ts} it appears that the smaller countries are situated more upstream in GVCs, but this is also a consequence of them generally exporting less final goods. More meaningful than the levels of these ratios are their change over time. Figure \ref{fig:UP_DOWN_ag_ts} suggests that apart from Tanzania all EAC members became more downstream in their GVC integration, with less domestic content in intermediate exports and more FVA in final goods exports. To better exhibit these findings, Figure \ref{fig:UP_DOWN_ag_growth} shows the difference in the Upstreamness and Downstreamness ratios between 2005 and 2015. It is evident that Uganda and Kenya moved downstream in these years, with more foreign value added going into final goods than intermediate goods, and also more DVA going into final goods. This could, especially for the smaller countries Rwanda and Burundi, also indicate a general increase in Final goods exports that has nothing to do with GVCs\todo{right?}. Only Tanzania appears to have mived slightly upstream over this time period, with more domestic and foreign VA going into intermediate exports. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:UP_DOWN_ag_growth}\textsc{Upstreamness and Downstreamness Ratios, Difference 2005-2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_growth".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+\subsubsection{KWW Decomposition of EAC Exports to the EAC}
+
+Whereas the KWW decomposition is only defined at the country-level, \citet{Wang2014} derived a much more detailed decomposition that decomposes exports into 16 terms at the bilateral and sector-level. To consider 16 terms is a bit over the top given the very moderate data quality for developing countries. It is however possible to add up these 16 terms to get the 9 terms of KWW at a disaggregated level. Figure \ref{fig:KWW_fill_ts_EAC} shows the KWW decomposition of gross exports to other EAC countries. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:KWW_fill_ts_EAC}\textsc{KWW Decomposition of Gross Exports to the EAC}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_ts_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\todo[inline]{Double counted trade is low: Short GVC's following \citep{Kummritz20162}?.}
+
+\subsubsection{Sectoral-Level Decomposition}
+In addition, we can show the KWW at sector level for the year 2015 (derived from WWZ).
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:KWW_fill_sec}\textsc{KWW Decomposition of Sector-Level Gross Exports in 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_sec".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+It remains to investigate Upstreamness and Downstreamness at the sectoral level to gauge if amidst of the aggregate movement towards more downstream GVC integration in most EAC countries some sectors moved upstream. Figure \ref{fig:UP_DOWN_sec} shows the values of Upstreamness and Downstreamness for each sector in 2005 and 2015. It suggests that movements at the sector level are quite homogenous and in line with the aggregate movement towards final goods production. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:UP_DOWN_sec}\textsc{Upstreamness and Downstreamness by Sector, 2005 and 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_sec".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\subsection{New Revealed Comparative Advantage}
+A popular measure to empirically measure Ricardo's concept of comparative advantage in international trade is the measure of revealed comparative advantage proposed by \citet{balassa1965trade}. It is computed as the share of a sector in gross country exports, divided by the share that of that sector in gross World exports. A ratio above 1 indicates a comparative advantage of the country in this sector. The traditional index based on gross flows however does not take account of double counting in gross exports, and may thus be noisy and misleading. \citet{koopman2014tracing} therefore propose a new index based on VA flows, which considers the domestic value added in gross exports, no matter where it is absorbed (the sum of terms 1-5 of the KWW decomposition) to compute a new revealed comparative advantage (NRCA) index. \newline
+
+Figure \ref{fig:NRCA} shows the NRCA for EAC countries in the year 2015. It is evident that all EAC members have a NRCA in agriculture, which is higher than 10 in Uganda, Tanzania and Kenya. Also all EAC members have a comparative disadvantage in core manufacturing sectors such a petro-chemicals, metral products and electrical machinery. The remaining sectors show more heterogeneity across EAC countries, where Kenya appears to be different from the other countries. In Uganda, Tanzania, Rwanda, Burundi and South Sudan activities of private households (self-employment) seem to have a strong comparative advantage, and also maintenance and repair activities have a strong comparative advantage, whereas in Kenya both sectors appear to have a comparative disadvantage. \newline
+
+As we have 10 years of data, it will be interesting to see whether there were significant changes in the revealed comparative advantage of sectors. Figure \ref{fig:NRCA_ts} therefore shows the NRCA for each EAC country-sector over the 2005-2015 period. It is evident from the many straight lines in the graph that comparative advantage did not change much over this time period. In Uganda, Rwanda, Burundi and South Sudan there was no transition of a comparative disadvantage sector (NRCA < 1) to a comparative advantage sector (NRCA > 1) over this period. The gratest fluctuations are exhibited by Tanzania where the data suggest that NRCA in Agriculture and Fishing has increased from around 10 to around 13. 
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA}\textsc{New Revealed Comparative Advantage in 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA_ts}\textsc{New Revealed Comparative Advantage}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+In the other countries movements are very gradual, in Uganda comparative advantage in Agriculture has increased very slightly from 17.8 in 2005 to 18 in 2015, whereas in Kenya it has dropped from 15.2 to 13.3 over the same period. 
+
+
+\subsubsection{NRCA Relative to the EAC}
+Figures \ref{fig:NRCA} and \ref{fig:NRCA_ts} have shown that relative to the rest of the world EAC members exhibit similar patterns of comparative advantage with a general advantage in agriculture and disadvantage in manufacturing. This could be constitutive to forming a common trade block with the rest of the world, supported by a currency union as is currently planned for 2024/25. Nevertheless comparing the EAC with the rest of the world may mask rivalries and shifts in comparative advantage between member countries. A final exercise in this section of the paper is thus to compute comparative advantage relative to the EAC, as the share of a sector in country VA exports to the share of the sector in EAC VA exports\todo{Which also includes EAC countries, should it?}. 
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA_EAC}\textsc{NRCA Relative to EAC in 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{NRCA in Inner-EAC Trade}
+
+Finally, we can also compute NRCA for inner EAC trade, that is exports of EAC members to other EAC members, not taking into account any flows between the EAC and the rest of the World. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA_IEAC}\textsc{NRCA for Inner-EAC Trade}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_IEAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+\section{GVC's and Industrial Development in the EAC}
+Several papers have been written focussing on the global links between GVC integration and industrial development. As one of the first \citet{Kummritz20161} assessed the role of GVCs for labour productivity and domestic value added using a novel IV strategy. He showed that an increase in GVC participation leads to higher domestic value added and productivity for all countries independent of their income levels. His results imply that a 1 percent increase in backward GVC participation leads to 0.11\% higher domestic value added in the average industry, and  a 1 percent increase in forward GVC participation leads to 0.60\% higher domestic value added and to 0.33\% higher labour productivity \citep{Kummritz20161}. \newline
+
+
+The literature duscussed by \citet{Kummritz20161} outlines several channels through which GVC participation increases the value added and productivity of its participants. The main channels are learning-by-doing, technology transfer or spillovers, gains from specialization and as terms of trade effects  \citep{Kummritz20161}. He concludes that whether GVC integration provides net benefits for a particular country or sector is theoretically ambiguous. \newline
+
+
+\citet{foster2015global} discusses industrial development in Africa through GVC's in the context of upgrading, 
+
+Four types of upgrading are often distinguished (Humphrey, 2004), the four types being: (i) process upgrading, which involves increased productivity in existing activities within a GVC; (ii) product upgrading, which is the movement into higher value-added products within a GVC; (iii) functional upgrading, which involves the movement into more technologically sophisticated or more integrated aspects of a production process; and (iv) inter-sectoral or chain upgrading, which involves a movement into higher value-added supply chains. The.
+
+In theri analysis In our analysis \citet{foster2015global} construct three alternative indicators, intended to capture one or more aspects of upgrading within GVCs. 
+\todo[inline]{-> They compare export unit values to export market shares The use trade data aggregated to EORA Sectors. }. 
+
+\todo[inline]{Compute Herfindahl Index of Value added exports and see how it varies with GVC involvement (Sum of VS and VS1 like in GVC in Africa Paper). Also compute oher upgrading and export difersification indicators. Take total GVC Involvement measure as in paper VS + VS1.}
+
+\todo[inline]{Combine GVC with your ES Analysis and look at innovtion measures.}
+
+
+\subsection{GVC Integration and  Growth}
+
+A first natural idea would be to see if higher imported content in exports is associated with higher domestic value added produced and exported. This is examined using a simple specification regressing the log of VA on the imported content share (I2E) and the re-exported content share (E2R). The specification is
+
+\begin{equation} \label{eq:GROWTH_HDFE}
+log(VA_{cst}) = \sum_{i=0}^p \beta_{1i} I2E_{cs,t-i} + \sum_{i = 0}^p \beta_{2i} E2R_{cs,t-i}  + \alpha_{cs} + \beta_{ct} +\gamma_{st} + \epsilon_{cst},
+\end{equation}
+
+where $p$ is a suitable number of lags to include in the regression to allow changes in production (in particular I2E) to feed into greater productivity with a lag. In the most general setting we can control for 3 sets of unobservable effects: country-sector effects, country-year effects and sector-year effects. There is also the possibility to estimate a first-difference estimator which is more efficient if the autocorrelation in the error term is $> 0.5$\footnote{In particular, if $\epsilon_{cst} = \rho \epsilon_{cs,t-1} + u_{cst}$, then $var(\epsilon_{cst}) = \rho^2 \sigma^2_\epsilon + \sigma^2_u$ but for the first-differenced model $var(\Delta \epsilon_{cst}) = var(\epsilon_{cst} - \epsilon_{cs,t-1}) = var(\rho \epsilon_{cs,t-1} + u_{cst} - \epsilon_{cs,t-1}) = (\rho-1)^2 \sigma^2_\epsilon + \sigma^2_u$. So the FD estimator is more efficient if $(\rho-1)^2<\rho^2$ or if $\rho > 0.5$. } 
+
+\begin{equation} \label{eq:GROWTH_HDFE}
+\Delta log(VA_{cst}) = \sum_{i=0}^p \beta_{1i} \Delta I2E_{cs,t-i} + \sum_{i = 0}^p \beta_{2i} \Delta E2R_{cs,t-i}  + \Delta\beta_{ct} + \Delta\gamma_{st} + \Delta\epsilon_{cst}.
+\end{equation}
+
+For this regression I use data for Uganda, Tanzania, Kenya, Rwanda and Burundi, South Sudan was Excluded due to unreliable data. From the data for these countries I further remove sectors where $I2E$ or $E2R$ are greater or smaller than 1. This should usually not be the case but is the case in recycling and re-import/export sectors in Rwanda, Tanzania and Burundi, in the financial intermediation and business sectors in Burundi, Rwanda and Uganda, and in Kenyan and Ugandan electricity gas and water. This is likely due to both bad data quality and very unusual economic activity in these sectors. For the estimation these four sectors (REC, REI, FIB, EGW in Table \ref{tab:sec}) are removed from the sample. Other sectors which have a too high re-export ratio and are removed from the sample are are Kenyan private housholds and  Kenyan others (PHH and OTH). Summary statistics for the excluded sectors are shown in Table \ref{tab:EXCL_SEC}.
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, May 03, 2021 - 12:57:45 PM
+\begin{table}[h!] \centering 
+  \caption{\label{tab:EXCL_SEC}\textsc{Excluded Sectors}}
+  \vspace{2mm}
+\begin{tabular}{ llrrrrr} \toprule
+GVC Measure & Sector & N & Mean & SD & Min & Max \\ 
+\midrule
+I2E & EGW & $55$ & $0.143$ & $0.055$ & $0.063$ & $0.248$ \\ 
+I2E & FIB & $55$ & $0.059$ & $0.024$ & $0.027$ & $0.110$ \\ 
+I2E & REC & $55$ & $0.435$ & $0.258$ & $0.173$ & $1.018$ \\ 
+I2E & REI & $55$ & $0.821$ & $0.384$ & $0.352$ & $1.787$ \\ 
+I2E & OTH (KEN) & $11$ & $0.097$ & $0.010$ & $0.088$ & $0.113$ \\ 
+I2E & PHH (KEN) & $11$ & $0.097$ & $0.010$ & $0.088$ & $0.113$ \\ 
+E2R & EGW & $55$ & $0.750$ & $0.539$ & $0.158$ & $1.828$ \\ 
+E2R & FIB & $55$ & $4.603$ & $5.225$ & $0.294$ & $19.275$ \\ 
+E2R & REC & $55$ & $0.027$ & $0.058$ & -$0.108$ & $0.137$ \\ 
+E2R & REI & $55$ & $0.028$ & $0.100$ & -$0.223$ & $0.138$ \\ 
+E2R & OTH (KEN) & $11$ & $15.076$ & $3.473$ & $8.201$ & $21.512$ \\ 
+E2R & PHH (KEN) & $11$ & $15.076$ & $3.473$ & $8.201$ & $21.512$ \\ 
+\bottomrule
+\end{tabular} 
+\end{table} 
+
+I end up with a balanced panel of $N = 1188$ observations in $CS = 108$ country-sectors and $T = 11$ time periods. Summary statistics are shown in Table \ref{tab:SUMM_GROWTH}, where I also added a the domestic content in exports computed as $DVA_{EX} = EX \times (1 - I2E)$ where $EX$ is a country-sectors gross exports. 
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, May 03, 2021 - 2:18:27 PM
+\begin{table}[h!] \centering 
+  \caption{\label{tab:SUMM_GROWTH}\textsc{Summary Statistics of Variables}}
+  \vspace{2mm}
+  \begin{center}
+\begin{tabular}{ llrrrrr} \toprule
+Variable & Trans. & N/T & Mean & SD & Min & Max \\ \midrule
+VA & Overall & $1,188$ & $463,749$ & $964,556$ & -$1,501$ & $11,335,675$ \\ 
+VA & Between & $108$ & $463,749$ & $925,229$ & $3,247$ & $7,854,686$ \\ 
+VA & Within & $11$ & $463,749$ & $285,538$ & -$3,120,453$ & $3,944,737$ \\ 
+DVA$_{EX}$ & Overall & $1,188$ & $59,562$ & $170,744$ & $382$ & $1,727,299$ \\ 
+DVA$_{EX}$ & Between & $108$ & $59,562$ & $168,811$ & $627$ & $1,474,635$ \\ 
+DVA$_{EX}$ & Within & $11$ & $59,562$ & $29,941$ & -$416,992$ & $312,225$ \\ 
+I2E & Overall & $1,188$ & $0.2123$ & $0.1314$ & $0.0266$ & $0.7032$ \\ 
+I2E & Between & $108$ & $0.2123$ & $0.1250$ & $0.0402$ & $0.5879$ \\ 
+I2E & Within & $11$ & $0.2123$ & $0.0421$ & $0.0131$ & $0.3713$ \\ 
+E2R & Overall & $1,188$ & $0.1514$ & $0.0947$ & -$0.0598$ & $0.6161$ \\ 
+E2R & Between & $108$ & $0.1514$ & $0.0920$ & $0.0086$ & $0.5139$ \\ 
+E2R & Within & $11$ & $0.1514$ & $0.0240$ & -$0.0037$ & $0.2973$ \\ 
+\bottomrule
+\end{tabular} 
+ \end{center}
+% \footnotesize{\emph{Note:} $I2E_P = I2E \times 100$, $I2E_P = I2E \times 100$}
+\end{table} 
+\FloatBarrier 
+
+To further expose the manufacturing sectors in these countries whose productivity is likely most affected by changing integration in GVCs, I also run regressions for a subsample of manufacturing sectors (FBE, TEX, WAP, PCM, MPR, ELM, TEQ, MAN) in Table \ref{tab:sec}. To better understand the data and the manufacturing subsample of sectors, Figure \ref{fig:GROWTH_REG_TS} visualizes the data, where each orange line is a manufacturing sector in some EAC country, grey lines are other sectors, the red line represents the median value across all manufacturing sectors in a given year and the black line is the median across all sectors.  
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:GROWTH_REG_TS}\textsc{Time Series of Variables}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/GROWTH_REG_TS".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+It is evident from Figure \ref{fig:GROWTH_REG_TS} that manufacturing sectors have a lower than average VA, a higher I2E share, and a lower E2R share, indicating that these sectors import more inputs that other economic sectors but export more final goods. The trend line is broadly parallel to the overall trend, but in the VA chart it appears that manufacturing sectors grew slower than the average. For a final step of visual investigation, \ref{fig:GROWTH_REG_Hists} shows histograms conveying the same information as Figure \ref{fig:GROWTH_REG_TS}. They show that in terms of VA manufacturing is a bit lower but well-centered in the distribution. In terms of I2E manufacturing sectors make up the bulk of the upper part of the distrubution, but still form an acceptable distribution themselves. For E2R the opposite is the case, and one could have concern that the distribution is a bit strongly skewed to the right. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:GROWTH_REG_Hists}\textsc{Histograms of Variables}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/GROWTH_REG_Hists".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Now regarding the specification in Eq. \ref{eq:GROWTH_HDFE}, I first select the appropriate lag length by running the regression with fixed effects and first-differences and examining up to which order lags of I2E and E2R affect value added. Together with some judgement I opt for $p = 2$, which is a sensible choice as it might take up to 2 years for an innovation or change in supply chain to fully dissipate to output and productivity. Then, to determine whether the specification given in Eq. \ref{eq:GROWTH_HDFE} is appropriate, I run a series of Hausman tests, including 2 lags of I2E and E2R on the regression. The first test evaluated the consistency of the random effects estimator against the the  simple fixed effects estimator with country-sector fixed effects, using the original $\chi^2$ distributed quadratic form proposed by \citet{hausman1978specification}. It rejects the null of random effects consistency $\chi^2_6 = 73.05$, $P < 0.01$. Then, I demean the data by country-sector and run a second Hausman test with country-year fixed effects. This test also rejects $\chi^2_6 = 53.4$, $P < 0.01$. Finally, I iteratively demean the data by country-sector and country-year until convergence and run a third Hausman test against sector-year fixed effects. This test also rejects $\chi^2_6 = 48.55$, $P < 0.01$, but a robust version of the test based on an auxiliary regression as specified in \citet{wooldridge2010econometric}\footnote{This test is based on an auxiliary specification $\tilde{y}_{it} = \tilde{X}_{it}\beta + \dot{X}_{it}\gamma + \epsilon_{it}$ that can be estimated with robust standard errors, where  $\tilde{y}_{it} $ and $\tilde{X}_{it}\beta$ are the quasi-demeaned data for RE estimation and $\dot{X}_{it}$ are the time-demeaned predictors capturing the individual-variation in $X$. The test is an F-test of the exclusion restriction of $\dot{X}_{it}$. If the test rejects, RE is likely inconsistent. See \citet{wooldridge2010econometric} sec. 10.7.3.} fails to reject the null $\chi^2_6 = 9.37$, $P = 0.15$. I nevertheless keep the sector-year fixed effects in the model, as the coefficient is practically identical to the one without them, and keeping them reduces a bit the serial correlation in the error term. \newline
+
+Serial correlation in the error term, $\epsilon_{cst} = \rho \epsilon_{cs,t-1} + u_{cst}$ for $\rho > 0$ might obscure conducting inference on the model and render the first-difference estimator more efficient. In practice it is difficult to determine the value of $\rho$, given that the are errors in the fixed effects model are unobservable\footnote{$\hat{\epsilon}_{cst}$ is not a clean estimate of $\epsilon_{cst}$, but an estimate of the multiply-centered version of $\epsilon_{cst}$.}, but I use $\hat{\epsilon}_{cst}$ to obtain a crude estimate using OLS. After estimating Eq. \ref{eq:GROWTH_HDFE} with the full set of fixed effects, I estimate $\hat{\rho}_{FE} = 0.53$, $P<0.01$\footnote{\citet{wooldridge2010econometric} sec. 10.5.4 observes, under the null of no serial correlation in the errors, the residuals of a FE model must be negatively serially correlated, with $cor(\hat{u}_{it}, \hat{u}_{is})=-1/(T-1) = -0.1$ with $T = 11$ in this case.}. A formal panel-test based on the residuals of the first-differenced model also rejects the null of no serial correlation in the error term $\hat{\rho}_{FD} = -0.011$, $P=0.77$ and $P[\hat{\rho}_{FD} \neq -0.5]=<0.01$\footnote{This is the case because, for each $t > 1$, $var(\Delta u_{it}) = var(u_{it} - u_{i,t-1}) = var(u_{it}) + var(u_{i,t-1}) = 2\sigma^2$ with the assumptions of no serial correlation in $u_t$ and constant variance. Because the residual has a zero mean and symmetric ACF, the covariance is $E[\Delta u_{it}⋅\Delta u_{i,t+1}] = E[(u_{it} - u_{i,t-1})(u_{i,t+1} - u_{it})] = E[u_{it} u_{i,t+1}] - E[u_{it}^2] - E[u_{i,t-1} u_{i,t+1}] + E[u_{i,t-1} u_{it}] = -E[u_{it}^2] = -\sigma^2$, because of the no serial correlation assumption. Because the variance is constant across t, $cor(\Delta u_{it},  \Delta u_{i,t-1}) = cov(\Delta u_{it},  \Delta u_{i,t+1})/var(\Delta u_{it}) = -\sigma^2/2\sigma^2 = -0.5$.}. First-differencing in itself does not remove terms $\Delta\beta_{ct}$ and $\Delta\gamma_{st}$, corresponding to unobserved country-year or sector-year specific shocks from the equation, which may also be correlated with the explanatory variables and bias the coefficient estimates in the FD-equation. Running Hausman tests for the presence of these effects in the first-difference equation yields inconclusive results, the outcome depends on the method used to run the Hausman test. There is also a danger that putting fixed effects on a first-differenced equation estimated on data of not very high quality removes too much useful information.   \newline
+
+The approach I will adopt following this discussion is to estimate 3 models: The simple FD specification, the FD specification with country-year and sector-year FE, and a FE specification with the full set of fixed-effects. Table \ref{tab:VAGRREG} shows the results. %, including the FE model without sector-year fixed-effects. 
+These models are estimated in log-level form as specified in Eq. \ref{eq:GROWTH_HDFE}. To the right of these specifications, Table  \ref{tab:VAGRREG} also shows equivalent log-log / elasticity estimates where the log is also taken of the RHS variables. \newline 
+
+The coefficients from all specifications show a negative contemporaneous relationship between VA and I2E. This is probably a quite mechanical result by the nature of the close relation between VA and I2E being the foreign content share of VA. A domestic shock of any form may cause VA to increase/decrease and the imported share to fall/rise in the current period. It is therefore more interesting to examine the lagged relation of I2E and VA. Here the coefficients of the preferred FD specification signify a significant positive effect. The coefficients imply that a 0.01 unit increase in I2E is associated with a 0.7\% increase in VA after one year. The elasticity specification yields that a 1\% increase in I2E is associated with a 0.19\% increase in VA after one year. There is also a further effect after two years which is about half of the first year effect. The total effect of a 0.01 unit / 1\% increase in I2E after 2 years is thus a 1.16\% / 0.3\% increase in VA, as taken from the FD specifications. The FD-TFE and FE specifications do not pick up an effect after one year but a larger effect of comparable magnitude after 2 years. As noted because of significant serial correlation FD are more efficient here, but both estimators are consistent. The FE elasticity specification yields small and insignificant coefficients.    % this discrepancy between FD and FE indicates that the findings are not very robust. 
+
+
+\begin{table}[h!]
+\centering
+\caption{\label{tab:VAGRREG} \textsc{Value Added Regressions}}
+\resizebox{0.8\textwidth}{!}{
+\begin{tabular}[t]{lcccccc} \toprule
+% Dependent Variable:&\multicolumn{6}{c}{log\_VA}\\
+ \textit{Model:}  & FD & FD-TFE & FE & FD E & FD-TFE E & FE E\\
+& (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule &   &   &   &   &   &  \\
+(Intercept)&0.0718$^{***}$ &    &    & 0.0725$^{***}$ &    &   \\
+  &(0.0044) &    &    & (0.0028) &    &   \\\\
+I2E&-2.425$^{***}$ & -6.839$^{***}$ & -6.34$^{***}$ & -0.1314$^{***}$ & -0.6563$^{***}$ & -0.4517$^{***}$\\
+  &(0.7864) & (1.682) & (1.166) & (0.0443) & (0.1155) & (0.1053)\\\\
+L1.I2E&0.7023 & -0.0509 & -0.4972 & 0.1923$^{***}$ & 0.1229$^{*}$ & 0.0148\\
+  &(0.5121) & (0.6959) & (1.207) & (0.0203) & (0.0673) & (0.1175)\\\\
+L2.I2E&0.4633$^{**}$ & 1.318$^{*}$ & 1.691$^{**}$ & 0.1032$^{***}$ & 0.0677$^{**}$ & 0.0237\\
+  &(0.2330) & (0.7502) & (0.6582) & (0.0213) & (0.0278) & (0.0537)\\\\
+E2R&4.983$^{***}$ & 1.779$^{***}$ & 1.894$^{***}$ & 1.021$^{***}$ & 0.9252$^{***}$ & 0.9537$^{***}$\\
+  &(1.303) & (0.6449) & (0.6191) & (0.0189) & (0.0395) & (0.0365)\\\\
+L1.E2R&1.179$^{***}$ & 0.0801 & -0.1841 & 0.0419 & -0.0263 & -0.0082\\
+  &(0.3184) & (0.3969) & (0.3258) & (0.0347) & (0.0220) & (0.0455)\\\\
+L2.E2R&0.2633 & -0.0035 & -0.6123$^{*}$ & 0.0588$^{**}$ & -0.0156 & -0.0869$^{**}$\\
+  &(0.2915) & (0.2656) & (0.3061) & (0.0227) & (0.0179) & (0.0352)\\\\
+\midrule \emph{Fixed-Effects:} &   &   &   &   &   &  \\
+cs (N) & -- & -- & 108 & -- & -- & 108\\
+cy (N) & -- & 40 & 45 & -- & 40 & 45\\
+sy (N) & -- & 176 & 198 & -- & 176 & 198\\
+\midrule
+% \emph{Fit statistics}&  & & & & & \\
+Cluster SE & cs & cs cy sy & cs cy sy & cs & cs cy sy & cs cy sy\\
+Observations & 864&864&972&861&861&969\\
+R$^2$ & 0.328 & 0.735 & 0.997 & 0.823 &0.974 & 0.999 \\
+Within R$^2$ & & 0.445 & 0.473 & & 0.946 & 0.910 \\ \bottomrule \\[-1em]
+\textit{Note:}  & \multicolumn{6}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+%\multicolumn{7}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
+%\multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+}
+\end{table}
+\FloatBarrier
+
+% Old Table 7 ---
+%\begin{table}[h!]
+%\centering
+%\caption{\label{tab:VAGRREG} \textsc{Value Added Regressions}}
+%\resizebox{0.8\textwidth}{!}{
+%\begin{tabular}[t]{lcccccc}
+%\toprule
+%  & FD & FE & FE NoSY & FD Elas & FE Elas & FE NoSY Elas\\
+%\midrule \\
+%(Intercept) & 0.0718*** &  &  & 0.0725*** &  & \\
+% & (0.0048) &  &  & (0.0031) &  & \\\\
+%I2E & -2.4246*** & -6.3404*** & -6.1197*** & -0.1314*** & -0.4517*** & -0.4873***\\
+% & (0.8164) & (1.2153) & (1.3675) & (0.0448) & (0.1076) & (0.1244)\\\\
+%L1.I2E & 0.7023*** & -0.4972 & -0.4609 & 0.1923*** & 0.0148 & -0.0035\\
+% & (0.5346) & (1.1632) & (1.2765) & (0.0203) & (0.1185) & (0.1204)\\\\
+%L2.I2E & 0.4633** & 1.6905*** & 1.5325*** & 0.1032*** & 0.0237 & 0.0401\\
+% & (0.2392) & (0.5991) & (0.6536) & (0.0221) & (0.0679) & (0.0652)\\\\
+%E2R & 4.9830*** & 1.8940*** & 2.5861*** & 1.0208*** & 0.9537*** & 0.9679***\\
+% & (1.4559) & (0.6618) & (0.7313) & (0.0236) & (0.0380) & (0.0375)\\\\
+%L1.E2R & 1.1789*** & -0.1841 & -0.3436 & 0.0419** & -0.0082 & -0.0173\\
+% & (0.3505) & (0.3418) & (0.5162) & (0.0616) & (0.0447) & (0.0432)\\\\
+%L2.E2R & 0.2633 & -0.6123** & -0.8646*** & 0.0588*** & -0.0869** & -0.0986***\\
+% & (0.3048) & (0.3162) & (0.3267) & (0.0286) & (0.0349) & (0.0370)\\\\
+%\midrule
+%Obs. & 864 & 972 & 972 & 861 & 969 & 969\\
+%$R^2$ & 0.328 & 0.997 & 0.996 & 0.823 & 1.000 & 0.999\\
+%$R^2$ Adj. & 0.323 & 0.996 & 0.995 & 0.821 & 0.999 & 0.999\\
+%$R^2$ Within &  & 0.473 & 0.499 &  & 0.910 & 0.917\\
+%AIC &  & -1283.0 & -1215.0 &  & -2993.7 & -2958.7\\
+%BIC &  & 449.2 & -444.1 &  & -1262.6 & -2188.2\\
+%% $F$ &  &  &  & 659.985 &  & \\
+%Fixed-Effects &  & CS, CY, SY & CS, CY &  & CS, CY, SY & CS, CY\\
+%Clustered SE &  CS & CS, CY & CS, CY & CS & CS, CY & CS, CY \\
+%\bottomrule \\[-1em]
+%\multicolumn{7}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
+%\end{tabular}
+%}
+%\end{table}
+%\FloatBarrier
+
+
+For E2R, results also imply a large contemporaneous relationship with VA with an elasticity around 1. Also in this case caution needs to be exerted towards interpreting this as a structural shift in production, it could be for example that supply chain shocks contemporaneously lead all participating countries to export more and thus trigger an increase in both VA and E2R. However the contemporaneous relationship between VA and the E2R is less obvious than the relationship between VA and I2E. The lagged coefficients on E2R for the FD equation are not as robust between the log-level and the log-log specification as for I2E, and the FE coefficients are negative and largely insignificant. Combining the effects of the two lags on the FD coefficients imply that a 0.01 unit / 1\% increase in E2R yields a  1.44\% / 0.11\% increase in VA within 3 years time. It should be noted here that there are some significant outliers affecting especially the log-level regressions. The omission of these does not dramatically change the conclusion of the analysis but can shift the relative magnitude of coefficients on the lagged values a bit. For example excluding the 6 most influential data points in the first FD specification yields significant coefficients $0.91$ and $0.61$ on L1.E2R and L2.E2R, respectively, which are more in line with the decay pattern observed for I2E. \newline 
+
+To examine the effects of outliers on the coefficients in a more comprehensive manor, the regressions are re-estimated by a robust MM estimation method following \citet{yohai1987high} and \citet{koller2011sharpening}, that downweights outliers and high-leverage data points using a highly efficient Iteratively Reweighted Least Squares (IRLS) procedure with 50\% breakdown point and 95\% asymptotic efficiency for normal errors\footnote{Estimation is done by a robust MM proceudure using IRLS with a bi-square redescending score function, resulting in a highly robust and highly efficient estimator (with 50\% breakdown point and 95\% asymptotic efficiency for normal errors), Implemented in the R package \textit{robustbase} \citep{rousseeuw2009robustbase}.}. The robust coefficient estimates are reported in Table \ref{tab:VAGRREG_R}. 
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Sat, May 08, 2021 - 12:40:45 AM
+\begin{table}[!htbp] \centering 
+\caption{\label{tab:VAGRREG_R} \textsc{Value Added Regressions: Robust MM Estimates}}
+\resizebox{0.83\textwidth}{!}{
+\begin{tabular}[t]{lcccccc} \toprule
+% Dependent Variable:&\multicolumn{6}{c}{log\_VA}\\
+ \textit{Model:}  & FD & FD-TFE & FE & FD E & FD-TFE E & FE E\\
+& (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule &   &   &   &   &   &  \\
+ I2E & $-$1.0776$^{***}$ & $-$3.9504$^{***}$ & $-$4.9836$^{***}$ & $-$0.0973 & $-$0.6367$^{***}$ & $-$0.5007$^{***}$ \\ 
+  & (0.2114) & (0.2742) & (0.3027) &  & (0.0549) & (0.0673) \\ 
+  & & & & & & \\ 
+ L1.I2E & 0.5139$^{***}$ & 0.4860$^{***}$ & 0.2969 & 0.1549 & 0.1086$^{**}$ & $-$0.0826 \\ 
+  & (0.1594) & (0.1617) & (0.3397) &  & (0.0488) & (0.0718) \\ 
+  & & & & & & \\ 
+ L2.I2E & 0.3990$^{***}$ & 0.1665 & 0.8143$^{***}$ & 0.1220 & 0.0103 & 0.0181 \\ 
+  & (0.1372) & (0.1685) & (0.2270) &  & (0.0278) & (0.0326) \\ 
+  & & & & & & \\ 
+ E2R & 4.7265$^{***}$ & 1.0287$^{***}$ & 1.4117$^{***}$ & 1.0534 & 0.9158$^{***}$ & 0.9642$^{***}$ \\ 
+  & (0.5046) & (0.3114) & (0.2803) &  & (0.0211) & (0.0163) \\ 
+  & & & & & & \\ 
+ L1.E2R & 0.9430$^{***}$ & 0.2522$^{*}$ & $-$0.0355 & 0.0790 & $-$0.0166$^{*}$ & $-$0.0467$^{***}$ \\ 
+  & (0.2799) & (0.1483) & (0.2181) &  & (0.0087) & (0.0122) \\ 
+  & & & & & & \\ 
+ L2.E2R & 0.7037$^{***}$ & $-$0.0534 & $-$0.4540$^{***}$ & 0.0519 & $-$0.0088 & $-$0.0541$^{***}$ \\ 
+  & (0.2134) & (0.1385) & (0.1300) &  & (0.0066) & (0.0132) \\ 
+  & & & & & & \\ 
+ Constant & 0.0708$^{***}$ & 0.0010 & $-$0.0004 & 0.0696 & 0.0003 & $-$0.0002 \\ 
+  & (0.0032) & (0.0012) & (0.0012) &  & (0.0007) & (0.0009) \\ 
+  & & & & & & \\ 
+\midrule \emph{Fixed-Effects:} &   &   &   &   &   &  \\
+cs (N) & -- & -- & 108 & -- & -- & 108\\
+cy (N) & -- & 40 & 45 & -- & 40 & 45\\
+sy (N) & -- & 176 & 198 & -- & 176 & 198\\ \midrule
+SE & HAC & HAC & HAC &HAC &HAC &HAC \\
+Observations & 864 & 864 & 972 & 861 & 861 & 969 \\ 
+R$^{2}$ & 0.413 & 0.562 & 0.723 & 0.868 & 0.946 & 0.937 \\ 
+Adjusted R$^{2}$ & 0.409 & 0.560 & 0.721 & 0.867 & 0.946 & 0.937 \\ 
+Residual SE & 0.070 & 0.030 & 0.035 & 0.055 & 0.200 & 0.027 \\ 
+IRLS Coverged & Yes & Yes & Yes & No & Yes & Yes \\
+\bottomrule \\ [-1em]
+\textit{Note:}  & \multicolumn{6}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+In comparison to the OLS estimates in Table \ref{tab:VAGRREG}, the coefficients in Table \ref{tab:VAGRREG_R} spread the effect more evenly across the lags in the FD specification, and also let the FD specification with time fixed-effects move closer to the plain FD specification\todo{interpret furteher?}. It should also be noted here that multicollinearity between the various lagged values is low, at a maximum VIF of 1.3 in all models. \newline
+
+Tables \ref{tab:VAGRREG_MAN} and \ref{tab:VAGRREG_MAN_R} reports equivalent regressions run for the manufacturing sub-sample of sectors. 
+
+
+\begin{table}[h!]
+\centering
+\caption{\label{tab:VAGRREG_MAN} \textsc{Value Added Regressions: Manufacturing}}
+\resizebox{0.8\textwidth}{!}{
+\begin{tabular}[t]{lcccccc} \toprule
+% Dependent Variable:&\multicolumn{6}{c}{log\_VA}\\
+ \textit{Model:}  & FD & FD-TFE & FE & FD E & FD-TFE E & FE E\\
+& (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule &   &   &   &   &   &  \\
+(Intercept)&0.0678$^{***}$ &    &    & 0.0752$^{***}$ &    &   \\
+  &(0.0088) &    &    & (0.0038) &    &   \\\\
+I2E&-1.488$^{**}$ & -5.526$^{***}$ & -5.952$^{**}$ & -0.1546$^{*}$ & -0.8395$^{***}$ & -0.6364$^{**}$\\
+  &(0.5558) & (1.892) & (2.449) & (0.0901) & (0.2898) & (0.2812)\\\\
+L1.I2E&-0.9133 & -3.216 & -5.472 & 0.1360$^{***}$ & -0.3627$^{**}$ & -0.6820$^{***}$\\
+  &(0.5808) & (3.368) & (5.684) & (0.0337) & (0.1647) & (0.1900)\\\\
+L2.I2E&0.5380$^{**}$ & 2.48 & 6.195 & 0.1782$^{***}$ & 0.3872 & 0.4091$^{*}$\\
+  &(0.2403) & (1.625) & (4.257) & (0.0506) & (0.2602) & (0.2211)\\\\
+E2R&3.99$^{**}$ & 0.4527 & 1.434 & 0.9845$^{***}$ & 0.8140$^{***}$ & 0.8362$^{***}$\\
+  &(1.479) & (0.4625) & (1.001) & (0.0505) & (0.0867) & (0.0643)\\\\
+L1.E2R&2.446$^{***}$ & -0.2512 & -0.8829 & 0.2056$^{**}$ & 0.0725 & 0.1013\\
+  &(0.4453) & (0.4383) & (0.9402) & (0.0771) & (0.0519) & (0.0837)\\\\
+L2.E2R&0.2386 & -0.3984 & -0.8486 & 0.0417 & -0.0192 & -0.1399\\
+  &(0.2851) & (0.3696) & (0.5726) & (0.0337) & (0.0230) & (0.0908)\\\\
+\midrule \emph{Fixed-Effects:} &   &   &   &   &   &  \\
+cs (N) & -- & -- & 40 & -- & -- & 40\\
+cy (N) & -- & 40 & 45 & -- & 40 & 45\\
+sy (N) & -- & 64 & 72 & -- & 64 & 72\\
+\midrule
+% \emph{Fit statistics}&  & & & & & \\
+Cluster SE & cs & cs cy sy & cs cy sy & cs & cs cy sy & cs cy sy\\
+Observations & 320&320&360&320&320&360\\
+R$^2$ & 0.390 & 0.837 & 0.995 & 0.813 & 0.978 & 0.999 \\
+Within R$^2$ & & 0.173 & 0.178 & & 0.892 & 0.925 \\ \bottomrule \\[-1em]
+\textit{Note:}  & \multicolumn{6}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+%\multicolumn{7}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
+%\multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+}
+\end{table}
+\FloatBarrier
+
+
+% Old Table (2 FE specification, no fixest)
+%\begin{table}[h!]
+%\centering
+%\caption{\label{tab:VAGRREG_MAN} \textsc{Value Added Regressions: Manufacturing}}
+%\resizebox{0.8\textwidth}{!}{
+%\begin{tabular}[t]{lcccccc}
+%\toprule
+%  & FD & FE & FE NoSY & FD Elas & FE Elas & FE NoSY Elas\\
+%\midrule \\
+%(Intercept) & 0.0678*** &  &  & 0.0752*** &  & \\
+% & (0.0123) &  &  & (0.0039) &  & \\\\
+%I2E & -1.4875*** & -5.9522*** & -5.7534*** & -0.1546*** & -0.6364** & -0.3645\\
+% & (0.5752) & (1.8440) & (1.6897) & (0.0959) & (0.2968) & (0.2833)\\\\
+%L1.I2E & -0.9133** & -5.4718 & -4.8523 & 0.1360** & -0.6820** & -0.6722***\\
+% & (0.6092) & (5.6744) & (5.2282) & (0.0342) & (0.1829) & (0.2327)\\\\
+%L2.I2E & 0.5380 & 6.1948 & 8.6708* & 0.1782*** & 0.4091 & 0.4788**\\
+% & (0.2672) & (4.3177) & (5.2825) & (0.0539) & (0.2086) & (0.2375)\\\\
+%E2R & 3.9897*** & 1.4340 & 1.4549 & 0.9845*** & 0.8362*** & 0.8976***\\
+% & (2.3526) & (0.9323) & (1.0111) & (0.0722) & (0.0607) & (0.0469)\\\\
+%L1.E2R & 2.4464*** & -0.8829 & -1.0409 & 0.2056*** & 0.1013 & 0.0984\\
+% & (0.5188) & (0.9832) & (1.0892) & (0.1207) & (0.0786) & (0.0785)\\\\
+%L2.E2R & 0.2386 & -0.8486 & -0.9670 & 0.0417 & -0.1399 & -0.1648*\\
+% & (0.3005) & (0.4884) & (0.6691) & (0.0394) & (0.0935) & (0.1013)\\\\
+%
+%\midrule
+%Obs. & 320 & 360 & 360 & 320 & 360 & 360\\
+%$R^2$ & 0.309 & 0.995 & 0.992 & 0.813 & 0.999 & 0.999\\
+%$R^2$ Adj. & 0.296 & 0.990 & 0.990 & 0.810 & 0.999 & 0.999\\
+%$R^2$ Within &  & 0.178 & 0.216 &  & 0.925 & 0.930\\
+%AIC &  & -320.9 & -342.5 &  & -1180.7 & -1213.0\\
+%BIC &  & 304.8 & 7.2 &  & -555.1 & -863.2\\
+%% $F$ &  &  &  & 659.985 &  & \\
+%Fixed-Effects &  & CS, CY, SY & CS, CY &  & CS, CY, SY & CS, CY\\
+%Clustered SE &  CS & CS, CY & CS, CY & CS & CS, CY & CS, CY \\
+%\bottomrule \\[-1em]
+%\multicolumn{7}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
+%\end{tabular}
+%}
+%\end{table}
+%\FloatBarrier
+
+
+The results from the log-log specification are broadly in line with the equivalent regression in Table \ref{tab:VAGRREG} indicating a negative contemporaneous effect of I2E but a cumulative lagged elasticity of 0.3. For E2R, the cumulative lagged elasticity is 0.25, which is about twice as large as the 0.11 measured in Table \ref{tab:VAGRREG}. The log-level specification shows a sizeable effect of $2.45$ on L1.E2R than is 2 times larger than the effect measured in Table \ref{tab:VAGRREG}. However the log-level specification is again affected by outliers much more than the log-log specification. Removing the 6 most influential observations lets the coefficient on L1.I2E shrink to $-0.22$ and remain insignificant at the 10\% level, and the coefficient on L1.E2R decreases to $1.96$ while the coefficient on L2.E2R increases to $0.64$. The fixed effects specifications largely show insignificant lagged effects and again suffer from strong serial correlation. The robust estimates in Table \ref{tab:VAGRREG_MAN_R} again distributes the effect more evenly among the lagged coefficients in the FD specification. The robust FD-elasticity specification confirms a combined elasticity of around 0.3 on both lagged values of I2E and E2R. The robust FD specification with time-fixed effects and the FE specifications report mostly insignificant and negative coefficients. This could be interpreted as evidence that the true effect is negative or zero, but in this case, given that the necessity of time-fixed effects in the FD specification could not be conclusively established, I would favor an interpretation   holding that additional fixed effects just remove too much useful information from already low-quality data, and the negative coefficients may also be caused by attenuation bias from measurement error in the noisy data that remains after removing all cross-sectional variation and time series variation at the country and sector level.
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Sat, May 08, 2021 - 12:40:45 AM
+\begin{table}[!htbp] \centering 
+\caption{\label{tab:VAGRREG_MAN_R} \textsc{Value Added Regressions: Manufacturing: Robust MM Estimates}}
+\resizebox{0.83\textwidth}{!}{
+\begin{tabular}[t]{lcccccc} \toprule
+% Dependent Variable:&\multicolumn{6}{c}{log\_VA}\\
+ \textit{Model:}  & FD & FD-TFE & FE & FD E & FD-TFE E & FE E\\
+& (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule &   &   &   &   &   &  \\
+ I2E & $-$0.5524 & $-$2.4579$^{***}$ & $-$5.9545$^{***}$ & $-$0.0545 & $-$0.8511$^{***}$ & $-$0.7222$^{***}$ \\ 
+  & (0.3610) & (0.5795) & (1.1946) & (0.0678) & (0.1373) & (0.1886) \\ 
+  & & & & & & \\ 
+ L1.I2E & 0.1088 & 0.3573 & 0.8177 & 0.1185$^{***}$ & $-$0.2472$^{**}$ & $-$0.4732$^{*}$ \\ 
+  & (0.2573) & (0.6005) & (1.1756) & (0.0455) & (0.1249) & (0.2638) \\ 
+  & & & & & & \\ 
+ L2.I2E & 0.4730$^{**}$ & 0.8345$^{**}$ & 1.4843$^{**}$ & 0.1592$^{***}$ & 0.2535$^{*}$ & 0.1105 \\ 
+  & (0.2377) & (0.4161) & (0.7338) & (0.0458) & (0.1404) & (0.1833) \\ 
+  & & & & & & \\ 
+ E2R & 6.2433$^{***}$ & 0.1768 & 0.8435$^{**}$ & 0.9901$^{***}$ & 0.8081$^{***}$ & 0.8488$^{***}$ \\ 
+  & (0.5826) & (0.1489) & (0.3522) & (0.0465) & (0.0452) & (0.0543) \\ 
+  & & & & & & \\ 
+ L1.E2R & 1.6521$^{***}$ & $-$0.0723 & $-$0.2776 & 0.2336$^{***}$ & 0.0246 & 0.0897 \\ 
+  & (0.3461) & (0.1590) & (0.4348) & (0.0441) & (0.0215) & (0.0711) \\ 
+  & & & & & & \\ 
+ L2.E2R & 0.8146$^{***}$ & $-$0.1095 & $-$0.5303$^{*}$ & 0.0731$^{***}$ & $-$0.0168 & $-$0.0802 \\ 
+  & (0.2500) & (0.1171) & (0.3107) & (0.0210) & (0.0349) & (0.0920) \\ 
+  & & & & & & \\ 
+ Constant & 0.0718$^{***}$ & $-$0.0038$^{**}$ & $-$0.0040 & 0.0728$^{***}$ & 0.0006 & $-$0.0002 \\ 
+  & (0.0044) & (0.0015) & (0.0024) & (0.0038) & (0.0010) & (0.0013) \\ 
+  & & & & & & \\ 
+
+\midrule \emph{Fixed-Effects:} &   &   &   &   &   &  \\
+cs (N) & -- & -- & 108 & -- & -- & 108\\
+cy (N) & -- & 40 & 45 & -- & 40 & 45\\
+sy (N) & -- & 176 & 198 & -- & 176 & 198\\ \midrule
+SE & HAC & HAC & HAC &HAC &HAC &HAC \\
+Observations & 320 & 320 & 360 & 320 & 320 & 360 \\ 
+R$^{2}$ & 0.541 & 0.136 & 0.299 & 0.871 & 0.907 & 0.956 \\ 
+Adjusted R$^{2}$ & 0.532 & 0.119 & 0.287 & 0.869 & 0.905 & 0.955 \\ 
+Residual SE & 0.066 & 0.024 & 0.039 & 0.049 & 0.016 & 0.021 \\ 
+IRLS Coverged & Yes & Yes & Yes & Yes & Yes & Yes \\
+\bottomrule \\ [-1em]
+\textit{Note:}  & \multicolumn{6}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+
+
+In summary, Tables \ref{tab:VAGRREG_MAN} and \ref{tab:VAGRREG_MAN_R} present similar results than Tables \ref{tab:VAGRREG} and \ref{tab:VAGRREG_R}. The elasticity  of VA to I2E within two years time is around $0.3$ for both the manufacturing sectors and all other sectors taken together, suggesting a gain from foreign technology in production. When looking at forward GVC integration (E2R), all sectors together have an cumulative growth elasticity of around $0.11-0.15$, but the manufacturing sectors have an elasticity of $0.25-0.3$, which is more than twice as large. Thus manufacturing sectors in the EAC benefit equally from backward and forward GVC integration, whereas other sectors benefit mostly from backward GVC integration. This is a very sensible result, as for example increased forward integration in primary products like agriculture or mining is not necessarily associated with domestic productivity gains, but if manufactured exports feed into a value chain to be re-exported, they likely have to be of sufficient quality.  
+
+%\begin{table}[h!]
+%\centering
+%\caption{\label{tab:DVA_EX_GRREG} \textsc{Domestic Value Added in Exports Regressions}}
+%\resizebox{\textwidth}{!}{
+%\begin{tabular}[t]{lcccccccc}
+%\toprule
+%& \multicolumn{4}{c}{\textit{Domestic VA in Exports: All Sectors}} &  \multicolumn{4}{c}{\textit{Domestic VA in Exports: Manufacturing Sectors}} \\ %\cline{2-9} 
+%  & FD & FE & FD Elas & FE Elas & FD & FE & FD Elas & FE Elas\\
+%\midrule \\
+%(Intercept) & 0.0582*** &  & 0.0474*** &  & 0.0576*** &  & 0.0487*** & \\
+% & (0.0050) &  & (0.0060) &  & (0.0114) &  & (0.0090) & \\\\
+%I2E & 1.3274*** & -3.1121*** & 0.6993*** & -0.0990 & 1.3647*** & -2.6842*** & 0.6375*** & -0.4583*\\
+% & (0.3751) & (0.4198) & (0.0656) & (0.1728) & (0.4522) & (0.4096) & (0.1111) & (0.2610)\\\\
+%L1.I2E & -0.6119*** & -0.6848*** & -0.1613*** & -0.0536 & -1.4374*** & -1.0690* & -0.2962*** & -0.5899*\\
+% & (0.2605) & (0.3597) & (0.0475) & (0.1753) & (0.2559) & (0.5222) & (0.0520) & (0.4947)\\\\
+%L2.I2E & 0.0599 & 0.3498 & 0.1257*** & 0.1172 & 0.0398 & 1.3326*** & 0.1517* & 0.4036\\
+% & (0.1485) & (0.2747) & (0.0375) & (0.1465) & (0.2214) & (0.4345) & (0.0550) & (0.3965)\\\\
+%E2R & 3.4530*** & -0.5185 & 0.2980*** & 0.1497*** & 2.7296*** & -1.7244*** & 0.3195*** & -0.0611\\
+% & (1.0364) & (0.3479) & (0.1563) & (0.0459) & (2.0973) & (0.2483) & (0.1171) & (0.0461)\\\\
+%L1.E2R & -0.1293 & 0.1992 & 0.0327 & 0.0776** & 0.7064 & 0.2050 & 0.0793 & 0.0353\\
+% & (0.3372) & (0.3271) & (0.0228) & (0.0400) & (0.5145) & (0.1942) & (0.0548) & (0.0624)\\\\
+%L2.E2R & -0.1460 & -1.2892*** & 0.0302 & -0.1128** & 0.0894 & -0.3958* & 0.0715 & -0.1130\\
+% & (0.3549) & (0.3543) & (0.0281) & (0.0525) & (0.3508) & (0.1335) & (0.0807) & (0.0688)\\\\
+%\midrule
+%Obs. & 864 & 972 & 861 & 969 & 320 & 360 & 320 & 360\\
+%$R^2$ & 0.133 & 0.999 & 0.254 & 0.999 & 0.190 & 1.000 & 0.284 & 1.000\\
+%$R^2$ Adj. & 0.127 & 0.999 & 0.249 & 0.998 & 0.174 & 1.000 & 0.270 & 0.999\\
+%$R^2$ Within &  & 0.513 &  & 0.146 &  & 0.405 &  & 0.168\\
+%AIC &  & -2606.4 &  & -2051.2 &  & -1299.7 &  & -1179.1\\
+%BIC &  & -874.2 &  & -320.1 &  & -674.0 &  & -553.5\\
+%Fixed-Effects &  & CS, CY, SY & & CS, CY, SY &  & CS, CY, SY & & CS, CY, SY\\
+%Clustered SE &  CS & CS, CY & CS & CS, CY & CS & CS, CY & CS & CS, CY \\
+%\bottomrule \\[-1em]
+%\multicolumn{9}{l}{\textsuperscript{} * p < 0.1, ** p < 0.05, *** p < 0.01}\\
+%\end{tabular}
+%}
+%\end{table}
+%\FloatBarrier
+ 
+ \todo[inline]{Also report estimations using DVA in Exports?. If not also remove the summary statistics.}
+ 
+ 
+%This regression is run for each sector in each of the EAC countries where $I2E > 0.01$, that is where more than 1\% of VA is imported content. 
+%In general there is great heterogeneity in the coefficients across countries and sectors. Taking the median value of these sectoral estimates suggests that a 1\% increase in the imported content share (I2E) in a given year is associated with a 0.16\% decline in domestic VA in production in that year, but a 0.67\% increase in DVA in exports. The coefficient on $\%\Delta I2E_{t-1}$ is 0.26\%, indicating that with a lag of one year increased foreign content also leads to higher domestic VA in production. Higher exports feeding into foreign exports (E2R) always have a positive contemporaneous effect on DVA and DVA exports, with an elasticity of around 1 for DVA (0.2 on the lagged coefficient), and 0.76 for DVA exports (0.12 on the lagged coefficient).  \newline
+%
+%This suggests that greater GVC integration on average across all sectors in East Africa eventually produces increased growth of the concerned sector. The result is however not very robust to different specifications. \newline
+
+\subsection{GVC Integration and the Composition of Value Added}
+Since ICIO tables also provide a breakdown of VA, into compensation of employees ($\approx$ wages and salaries), taxes on production, subsidies on production, net operating surplus ($\approx$ profits), net mixed income and consumption of fixed capital, another investigation at the sector level could be to examine whether increased GVC integration makes companies more profitable or workers receive higher wages. I therefore use the share of compensation of employees (COE) and net operating surplus (NOS) in total VA to estimate a specification of the form
+
+\begin{equation} \label{eq:CVA}
+\Delta Y_{cst} = \sum_{i=0}^p \beta_{1i} \Delta I2E_{cs,t-i} + \sum_{i = 0}^p \beta_{2i} \Delta E2R_{cs,t-i}  + u_{cst},
+\end{equation}
+where $Y_{cst} \in COE_{cst},\ NOS_{cst}$ expressed as a share of VA. The first-difference specification is again preferred over fixed-effects because of strong serial correlation in the error term. Lag order $p=2$ also carries through from the VA estimations. Eq. \ref{eq:CVA} can be also be estimated in log-log form, which will also be reported to obtain coefficients that can be interpreted as elasticities, and to make the estimation more robust to the presence of outliers. \newline
+
+Usually, all VA component shares apart from subsidies, which enter with a negative sign, should be between 0 and 1. It is however possible, in the presence of massive subsidies, to have COE and NOS shares greater than 1, or even negative COE and GOS shares  if  subsidies are so large to turn VA negative. In the sample of $N=1188$ used to run VA regressions in the previous section, there are $17$ cases where COE$_{Share} < 0$, COE$_{Share} > 1$, NOS$_{Share} < 0$ or NOS$_{Share} > 1$. These cases are shown in Table \ref{tab:VADEC_OUTL}.  Curiously all such cases occurred in Tanzania in the years 2012 and onwards. The range of extreme NOS shares is larger than that of COE shares, but overall remains between $-0.83$ and $3.48$, which are possible values given the effect of massive subsidies in shrinking the value-added of a sector. Thus these cases will not be removed from the estimation sample, but their influence on the coefficients is carefully examined. 
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, May 07, 2021 - 11:52:57 AM
+\begin{table}[h!] \centering 
+  \caption{\textsc{Cases where COE$_{Share} < 0\ | > 1$ or NOS$_{Share} < 0\ | > 1$}} 
+  \label{tab:VADEC_OUTL} 
+    \vspace{2mm}
+\begin{tabular}{lllrrrr} \toprule
+Year & Country & Sector & VA$_{SUM}$ & SUB & COE$_{Share}$ & NOS$_{Share}$ \\ \midrule
+$2012$ & TZA & FBE & $102,862$ & -$57,004$ & $0.2566$ & $1.1536$ \\ 
+$2013$ & TZA & FBE & $32,737$ & -$124,197$ & $0.8806$ & $3.4788$ \\ 
+$2014$ & TZA & ELM & -$30,968$ & -$50,479$ & -$0.1451$ & -$0.4052$ \\ 
+$2014$ & TZA & FBE & -$82,780$ & -$174,184$ & -$0.1889$ & -$0.8310$ \\ 
+$2014$ & TZA & MAN & $7,066$ & -$3,737$ & $0.3185$ & $1.0634$ \\ 
+$2014$ & TZA & MIN & $28,618$ & -$14,570$ & $0.0578$ & $1.2906$ \\ 
+$2014$ & TZA & PCM & $73,113$ & -$25,112$ & $0.1658$ & $1.0185$ \\ 
+$2014$ & TZA & TEQ & $10,342$ & -$8,250$ & $0.3466$ & $1.2392$ \\ 
+$2015$ & TZA & ELM & -$54,832$ & -$61,732$ & -$0.0277$ & -$0.0837$ \\ 
+$2015$ & TZA & FBE & -$115,877$ & -$205,176$ & -$0.1245$ & -$0.5948$ \\ 
+$2015$ & TZA & MAN & -$3,165$ & -$6,458$ & -$0.1995$ & -$0.7606$ \\ 
+$2015$ & TZA & MIN & $33,475$ & -$16,250$ & $0.0507$ & $1.2868$ \\ 
+$2015$ & TZA & MPR & $10,079$ & -$7,533$ & $0.4336$ & $1.1186$ \\ 
+$2015$ & TZA & MRE & $2,610$ & -$2,327$ & $0.4625$ & $1.3046$ \\ 
+$2015$ & TZA & PCM & $47,769$ & -$30,143$ & $0.1842$ & $1.2735$ \\ 
+$2015$ & TZA & TEQ & -$6,623$ & -$13,209$ & -$0.1770$ & -$0.7176$ \\ 
+$2015$ & TZA & TEX & $3,346$ & -$3,262$ & $0.4001$ & $1.4279$ \\ \bottomrule
+\end{tabular} 
+\end{table} 
+\FloatBarrier
+
+Table \ref{tab:SUMM_VADEC} shows summary statistics for the COE and NOS variables used in the estimation, both in levels (constant 2015 US\$ at basic prices)\todo{millions?}  and VA shares. 
+
+% is to investigate whether increased GVC integration changes the composition of VA in a sector towards having a higher share of net operating surplus and compensation of employees, which increases wealth and investment in the economy. 
+
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, May 07, 2021 - 11:18:17 AM
+\begin{table}[h!] \centering 
+  \caption{\label{tab:SUMM_VADEC}\textsc{Summary Statistics of COE and NOS}}
+  \vspace{2mm}
+\begin{tabular}{llrrrrr} \toprule
+Variable & Trans. & N/T & Mean & SD & Min & Max \\ \midrule
+COE & Overall & $1,188$ & $177,522$ & $437,196$ & $373$ & $4,733,560$ \\ 
+COE & Between & $108$ & $177,522$ & $416,280$ & $609$ & $3,029,210$ \\ 
+COE & Within & $11$ & $177,522$ & $138,966$ & -$1,229,228$ & $1,881,872$ \\ 
+NOS & Overall & $1,188$ & $176,514$ & $436,585$ & $146$ & $5,836,330$ \\ 
+NOS & Between & $108$ & $176,514$ & $414,798$ & $294$ & $3,754,908$ \\ 
+NOS & Within & $11$ & $176,514$ & $141,418$ & -$1,561,404$ & $2,257,936$ \\ 
+COE + NOS & Overall & $1,188$ & $354,037$ & $823,338$ & $1,001$ & $10,569,890$ \\ 
+COE + NOS & Between & $108$ & $354,037$ & $782,059$ & $2,020$ & $6,784,118$ \\ 
+COE + NOS & Within & $11$ & $354,037$ & $267,251$ & -$2,790,631$ & $4,139,809$ \\ 
+COE$_{Share}$ & Overall & $1,188$ & $0.3990$ & $0.1721$ & -$0.1995$ & $0.8806$ \\ 
+COE$_{Share}$ & Between & $108$ & $0.3990$ & $0.1694$ & $0.0297$ & $0.7860$ \\ 
+COE$_{Share}$ & Within & $11$ & $0.3990$ & $0.0344$ & $0.0046$ & $1.1327$ \\ 
+NOS$_{Share}$ & Overall & $1,188$ & $0.4187$ & $0.2372$ & -$0.8310$ & $3.4788$ \\ 
+NOS$_{Share}$ & Between & $108$ & $0.4187$ & $0.2002$ & $0.1076$ & $0.9253$ \\ 
+NOS$_{Share}$ & Within & $11$ & $0.4187$ & $0.1286$ & -$1.2080$ & $3.1017$ \\ 
+COE + NOS$_{Share}$ & Overall & $1,188$ & $0.8177$ & $0.1786$ & -$1.0199$ & $4.3595$ \\ 
+COE + NOS$_{Share}$ & Between & $108$ & $0.8177$ & $0.0756$ & $0.6537$ & $1.0060$ \\ 
+COE + NOS$_{Share}$ & Within & $11$ & $0.8177$ & $0.1619$ & -$1.1449$ & $4.2344$ \\ 
+% With the 17 obs in table above excluded:
+%COE & Overall & $1,171$ & $179,989$ & $439,876$ & $373$ & $4,733,560$ \\ 
+%COE & Between & $108$ & $177,744$ & $416,204$ & $609$ & $3,029,210$ \\ 
+%COE & Within & $10.84$ & $179,989$ & $139,948$ & -$1,226,761$ & $1,884,339$ \\ 
+%NOS & Overall & $1,171$ & $178,522$ & $439,401$ & $146$ & $5,836,330$ \\ 
+%NOS & Between & $108$ & $177,487$ & $414,695$ & $294$ & $3,754,908$ \\ 
+%NOS & Within & $10.84$ & $178,522$ & $142,172$ & -$1,559,396$ & $2,259,944$ \\ 
+%COE + NOS & Overall & $1,171$ & $358,511$ & $828,435$ & $1,001$ & $10,569,890$ \\ 
+%COE + NOS & Between & $108$ & $355,231$ & $781,764$ & $2,020$ & $6,784,118$ \\ 
+%COE + NOS & Within & $10.84$ & $358,511$ & $268,956$ & -$2,786,158$ & $4,144,282$ \\ 
+%COE Share & Overall & $1,171$ & $0.4025$ & $0.1673$ & $0.0135$ & $0.7875$ \\ 
+%COE Share & Between & $108$ & $0.3993$ & $0.1691$ & $0.0297$ & $0.7860$ \\ 
+%COE Share & Within & $10.84$ & $0.4025$ & $0.0064$ & $0.3633$ & $0.4653$ \\ 
+%NOS Share & Overall & $1,171$ & $0.4143$ & $0.1954$ & $0.1076$ & $0.9629$ \\ 
+%NOS Share & Between & $108$ & $0.4186$ & $0.1975$ & $0.1076$ & $0.8709$ \\ 
+%NOS Share & Within & $10.84$ & $0.4143$ & $0.0193$ & $0.3640$ & $0.6540$ \\ 
+%COE + NOS  Share & Overall & $1,171$ & $0.8168$ & $0.0712$ & $0.6977$ & $1.2104$ \\ 
+%COE + NOS Share & Between & $108$ & $0.8179$ & $0.0677$ & $0.6985$ & $0.9595$ \\ 
+%COE + NOS Share& Within & $10.84$ & $0.8168$ & $0.0234$ & $0.7561$ & $1.0868$ \\ 
+\bottomrule
+\end{tabular} 
+\end{table} 
+\FloatBarrier
+
+In addition to Table \ref{tab:SUMM_VADEC}, Figure \ref{fig:VADEC_REG_TS}\todo{Calculate median line properly using all sectors?} shows time series charts of the COE and NOS shares. It is evident that from 2012 onwards remarkable changes are taking place in a set of mostly Tanzanian sectors. Again concerns about data quality for Tanzania are paramout, and the lower part of Figure \ref{fig:VADEC_REG_TS} excluding Tanzania shows much less anomalous behavior. The corresponding histograms in Figure \ref{fig:VADEC_REG_Hists} show that excluding Tanzania gets rid of some large values, particularly fro NOS, but does not change the distribution much. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VADEC_REG_TS}\textsc{Time Series of COE and NOS Shares}}
+\textit{Full Sample: 108 Sectors}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VADEC_REG_TS".pdf} %trim={<left> <lower> <right> <upper>}
+\textit{Excluding Tanzania: 86 Sectors}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VADEC_REG_TS_NOTZ".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+Compared to Figure \ref{fig:GROWTH_REG_Hists}, the distributions shown in Figure \ref{fig:VADEC_REG_Hists} are also much less regular and all appear to be multi-modal. \newline
+
+Because of the insufficiencies of the data, special care is taken in these sections to ensure robustness of the results. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VADEC_REG_Hists}\textsc{Histograms of COE and NOS Shares}}
+\textit{Full Sample: 108 Sectors}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VADEC_REG_Hists".pdf} %trim={<left> <lower> <right> <upper>}
+\textit{Excluding Tanzania: 86 Sectors}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VADEC_REG_Hists_NOTZ".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, May 07, 2021 - 5:22:35 PM
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Share-Share}} 
+  \label{} 
+  \resizebox{\textwidth}{!}{
+\begin{tabular}{@{\extracolsep{5pt}}lccccccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{9}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-10} 
+\\[-1.8ex] & \multicolumn{3}{c}{COE\_S} & \multicolumn{3}{c}{NOS\_S} & \multicolumn{3}{c}{COE\_NOS\_S} \\ 
+\\[-1.8ex] & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} \\ 
+ & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\ 
+\hline \\[-1.8ex] 
+ I2E & 0.165$^{**}$ & 0.002$^{***}$ & 0.001$^{***}$ & 0.561$^{*}$ & 0.003$^{***}$ & 0.001$^{***}$ & 0.726$^{*}$ & 0.005$^{***}$ & 0.002$^{***}$ \\ 
+  & (0.082) & (0.0005) & (0.0003) & (0.312) & (0.0005) & (0.0002) & (0.394) & (0.001) & (0.0003) \\ 
+  & & & & & & & & & \\ 
+ L1.I2E & $-$0.090 & 0.001$^{***}$ & 0.001$^{**}$ & $-$0.306 & 0.002$^{***}$ & 0.0005$^{*}$ & $-$0.396 & 0.004$^{***}$ & 0.001$^{***}$ \\ 
+  & (0.085) & (0.0005) & (0.0003) & (0.323) & (0.0005) & (0.0002) & (0.407) & (0.001) & (0.0004) \\ 
+  & & & & & & & & & \\ 
+ L2.I2E & $-$0.062 & 0.003$^{***}$ & 0.001$^{*}$ & $-$0.173 & 0.004$^{***}$ & 0.0004 & $-$0.235 & 0.005$^{***}$ & 0.001$^{**}$ \\ 
+  & (0.080) & (0.0004) & (0.0003) & (0.302) & (0.0005) & (0.0003) & (0.381) & (0.001) & (0.0004) \\ 
+  & & & & & & & & & \\ 
+ E2R & $-$0.015 & $-$0.002$^{***}$ & $-$0.001$^{**}$ & 0.010 & $-$0.003$^{***}$ & $-$0.001$^{***}$ & $-$0.005 & $-$0.005$^{***}$ & $-$0.002$^{***}$ \\ 
+  & (0.139) & (0.001) & (0.0005) & (0.525) & (0.001) & (0.0004) & (0.663) & (0.001) & (0.001) \\ 
+  & & & & & & & & & \\ 
+ L1.E2R & $-$0.055 & $-$0.001 & $-$0.0003 & $-$0.184 & 0.0001 & $-$0.0001 & $-$0.239 & $-$0.001 & $-$0.001 \\ 
+  & (0.135) & (0.001) & (0.0004) & (0.513) & (0.001) & (0.0004) & (0.647) & (0.001) & (0.001) \\ 
+  & & & & & & & & & \\ 
+ L2.E2R & 0.115 & $-$0.001$^{**}$ & $-$0.001 & 0.304 & 0.001 & 0.0002 & 0.420 & $-$0.001 & $-$0.001 \\ 
+  & (0.107) & (0.001) & (0.0004) & (0.406) & (0.001) & (0.0003) & (0.512) & (0.001) & (0.0004) \\ 
+  & & & & & & & & & \\ 
+ Constant & $-$0.0001 & $-$0.00004$^{***}$ & $-$0.00002$^{***}$ & 0.001 & $-$0.00000 & 0.00000 & 0.001 & $-$0.0001$^{***}$ & $-$0.00004$^{***}$ \\ 
+  & (0.002) & (0.00001) & (0.00001) & (0.008) & (0.00001) & (0.00001) & (0.010) & (0.00002) & (0.00001) \\ 
+  & & & & & & & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 864 & 864 & 864 & 864 & 864 & 864 & 864 & 864 & 864 \\ 
+R$^{2}$ & 0.008 &  & 0.048 & 0.006 &  & 0.051 & 0.006 &  & 0.116 \\ 
+Adjusted R$^{2}$ & 0.001 &  & 0.042 & $-$0.001 &  & 0.044 & $-$0.001 &  & 0.110 \\ 
+Residual Std. Error & 0.053 & 0.0002 & 0.0002 & 0.199 & 0.0002 & 0.0001 & 0.251 & 0.0003 & 0.0002 \\ 
+F Statistic & 1.170 &  &  & 0.835 &  &  & 0.902 &  &  \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{9}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, May 07, 2021 - 5:24:37 PM
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Log Share - Log Share}} 
+  \label{} 
+    \resizebox{\textwidth}{!}{
+\begin{tabular}{@{\extracolsep{5pt}}lccccccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{9}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-10} 
+\\[-1.8ex] & \multicolumn{3}{c}{COE\_S} & \multicolumn{3}{c}{NOS\_S} & \multicolumn{3}{c}{COE\_NOS\_S} \\ 
+\\[-1.8ex] & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} \\ 
+ & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\ 
+\hline \\[-1.8ex] 
+ I2E & 0.022 & 0.001$^{***}$ & 0.001$^{***}$ & 0.011 & 0.001$^{***}$ & 0.001$^{***}$ & 0.014 & 0.001$^{***}$ & 0.001$^{***}$ \\ 
+  & (0.024) & (0.0003) & (0.0002) & (0.022) & (0.0003) & (0.0002) & (0.022) & (0.0002) & (0.0001) \\ 
+  & & & & & & & & & \\ 
+ L1.I2E & 0.004 & 0.001$^{**}$ & 0.0004$^{**}$ & 0.023 & 0.001$^{***}$ & 0.0004$^{**}$ & 0.021 & 0.001$^{***}$ & 0.0004$^{***}$ \\ 
+  & (0.025) & (0.0003) & (0.0002) & (0.023) & (0.0003) & (0.0002) & (0.023) & (0.0002) & (0.0001) \\ 
+  & & & & & & & & & \\ 
+ L2.I2E & 0.039$^{*}$ & 0.001$^{***}$ & 0.0002 & 0.040$^{*}$ & 0.002$^{***}$ & 0.0001 & 0.041$^{**}$ & 0.001$^{***}$ & 0.0001 \\ 
+  & (0.023) & (0.0002) & (0.0002) & (0.021) & (0.0003) & (0.0002) & (0.020) & (0.0002) & (0.0001) \\ 
+  & & & & & & & & & \\ 
+ E2R & $-$0.091$^{***}$ & $-$0.001$^{***}$ & $-$0.00002 & $-$0.059$^{***}$ & $-$0.001$^{***}$ & 0.00003 & $-$0.064$^{***}$ & $-$0.001$^{***}$ & 0.0001 \\ 
+  & (0.015) & (0.0002) & (0.0001) & (0.014) & (0.0002) & (0.0001) & (0.014) & (0.0001) & (0.0001) \\ 
+  & & & & & & & & & \\ 
+ L1.E2R & $-$0.082$^{***}$ & $-$0.0004$^{**}$ & $-$0.0002 & $-$0.069$^{***}$ & 0.0002 & $-$0.0002 & $-$0.071$^{***}$ & $-$0.0003$^{***}$ & $-$0.0002$^{**}$ \\ 
+  & (0.016) & (0.0002) & (0.0002) & (0.015) & (0.0002) & (0.0002) & (0.015) & (0.0001) & (0.0001) \\ 
+  & & & & & & & & & \\ 
+ L2.E2R & $-$0.031$^{**}$ & $-$0.001$^{***}$ & $-$0.001$^{***}$ & $-$0.035$^{**}$ & 0.001$^{***}$ & $-$0.0001 & $-$0.033$^{**}$ & $-$0.0004$^{***}$ & $-$0.0004$^{***}$ \\ 
+  & (0.015) & (0.0002) & (0.0002) & (0.013) & (0.0002) & (0.0002) & (0.013) & (0.0001) & (0.0001) \\ 
+  & & & & & & & & & \\ 
+ Constant & $-$0.002 & $-$0.0001$^{***}$ & $-$0.00004$^{**}$ & 0.003 & 0.00002 & 0.00000 & 0.002 & $-$0.0001$^{***}$ & $-$0.00003$^{***}$ \\ 
+  & (0.002) & (0.00003) & (0.00002) & (0.002) & (0.00003) & (0.00002) & (0.002) & (0.00002) & (0.00001) \\ 
+  & & & & & & & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 855 & 855 & 855 & 855 & 855 & 855 & 855 & 855 & 855 \\ 
+R$^{2}$ & 0.074 &  & 0.082 & 0.058 &  & 0.055 & 0.064 &  & 0.131 \\ 
+Adjusted R$^{2}$ & 0.067 &  & 0.076 & 0.051 &  & 0.049 & 0.058 &  & 0.125 \\ 
+Residual Std. Error & 0.061 & 0.0005 & 0.0004 & 0.057 & 0.001 & 0.0004 & 0.055 & 0.0003 & 0.0003 \\ 
+F Statistic & 11.275$^{***}$ &  &  & 8.628$^{***}$ &  &  & 9.689$^{***}$ &  &  \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{9}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, May 07, 2021 - 5:31:31 PM
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Log Level - Share}} 
+  \label{} 
+      \resizebox{\textwidth}{!}{
+\begin{tabular}{@{\extracolsep{5pt}}lccccccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{9}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-10} 
+\\[-1.8ex] & \multicolumn{3}{c}{log\_COE} & \multicolumn{3}{c}{log\_NOS} & \multicolumn{3}{c}{log\_COE\_NOS} \\ 
+\\[-1.8ex] & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} \\ 
+ & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\ 
+\hline \\[-1.8ex] 
+ I2E & $-$0.077 & $-$0.049 & 0.053 & $-$0.203 & $-$0.142 & $-$0.030 & $-$0.176 & $-$0.133 & $-$0.021 \\ 
+  & (0.281) & (0.140) & (0.132) & (0.257) & (0.137) & (0.131) & (0.261) & (0.137) & (0.131) \\ 
+  & & & & & & & & & \\ 
+ L1.I2E & $-$1.488$^{***}$ & $-$0.555$^{***}$ & $-$0.305$^{**}$ & $-$1.402$^{***}$ & $-$0.580$^{***}$ & $-$0.338$^{**}$ & $-$1.414$^{***}$ & $-$0.570$^{***}$ & $-$0.330$^{**}$ \\ 
+  & (0.290) & (0.145) & (0.137) & (0.265) & (0.141) & (0.135) & (0.270) & (0.141) & (0.135) \\ 
+  & & & & & & & & & \\ 
+ L2.I2E & $-$1.288$^{***}$ & $-$0.458$^{***}$ & $-$0.195 & $-$1.203$^{***}$ & $-$0.458$^{***}$ & $-$0.214 & $-$1.221$^{***}$ & $-$0.457$^{***}$ & $-$0.210 \\ 
+  & (0.272) & (0.135) & (0.134) & (0.248) & (0.132) & (0.132) & (0.252) & (0.132) & (0.132) \\ 
+  & & & & & & & & & \\ 
+ E2R & 0.817$^{*}$ & 1.219$^{***}$ & 1.265$^{***}$ & 0.916$^{**}$ & 1.240$^{***}$ & 1.274$^{***}$ & 0.900$^{**}$ & 1.251$^{***}$ & 1.287$^{***}$ \\ 
+  & (0.473) & (0.236) & (0.232) & (0.432) & (0.230) & (0.229) & (0.439) & (0.230) & (0.229) \\ 
+  & & & & & & & & & \\ 
+ L1.E2R & 0.208 & 0.747$^{***}$ & 0.935$^{***}$ & 0.272 & 0.729$^{***}$ & 0.901$^{***}$ & 0.262 & 0.726$^{***}$ & 0.898$^{***}$ \\ 
+  & (0.461) & (0.230) & (0.213) & (0.422) & (0.225) & (0.211) & (0.429) & (0.224) & (0.211) \\ 
+  & & & & & & & & & \\ 
+ L2.E2R & 1.255$^{***}$ & 0.965$^{***}$ & 0.972$^{***}$ & 1.189$^{***}$ & 0.965$^{***}$ & 0.976$^{***}$ & 1.205$^{***}$ & 0.954$^{***}$ & 0.962$^{***}$ \\ 
+  & (0.365) & (0.182) & (0.175) & (0.334) & (0.178) & (0.173) & (0.340) & (0.178) & (0.172) \\ 
+  & & & & & & & & & \\ 
+ Constant & 0.064$^{***}$ & 0.077$^{***}$ & 0.081$^{***}$ & 0.069$^{***}$ & 0.079$^{***}$ & 0.081$^{***}$ & 0.068$^{***}$ & 0.078$^{***}$ & 0.081$^{***}$ \\ 
+  & (0.007) & (0.004) & (0.003) & (0.006) & (0.003) & (0.003) & (0.007) & (0.003) & (0.003) \\ 
+  & & & & & & & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 864 & 864 & 864 & 864 & 864 & 864 & 864 & 864 & 864 \\ 
+R$^{2}$ & 0.097 &  & 0.117 & 0.108 &  & 0.122 & 0.106 &  & 0.121 \\ 
+Adjusted R$^{2}$ & 0.091 &  & 0.111 & 0.101 &  & 0.116 & 0.099 &  & 0.115 \\ 
+Residual Std. Error & 0.179 & 0.085 & 0.083 & 0.164 & 0.083 & 0.083 & 0.166 & 0.083 & 0.082 \\ 
+F Statistic & 15.361$^{***}$ &  &  & 17.225$^{***}$ &  &  & 16.855$^{***}$ &  &  \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{9}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, May 07, 2021 - 5:33:10 PM
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Log Level - Log Share}} 
+  \label{} 
+        \resizebox{\textwidth}{!}{
+\begin{tabular}{@{\extracolsep{5pt}}lccccccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{9}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-10} 
+\\[-1.8ex] & \multicolumn{3}{c}{COE} & \multicolumn{3}{c}{NOS} & \multicolumn{3}{c}{COE\_NOS} \\ 
+\\[-1.8ex] & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} & \textit{OLS} & \textit{robust} & \textit{MM-type} \\ 
+ & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} & \textit{} & \textit{linear} & \textit{linear} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\ 
+\hline \\[-1.8ex] 
+ I2E & 0.028 & 0.063$^{*}$ & 0.079$^{**}$ & 0.011 & 0.049 & 0.070$^{**}$ & 0.015 & 0.051 & 0.071$^{**}$ \\ 
+  & (0.072) & (0.035) & (0.032) & (0.066) & (0.034) & (0.032) & (0.067) & (0.034) & (0.032) \\ 
+  & & & & & & & & & \\ 
+ L1.I2E & $-$0.175$^{**}$ & $-$0.060 & $-$0.032 & $-$0.158$^{**}$ & $-$0.058 & $-$0.034 & $-$0.160$^{**}$ & $-$0.058 & $-$0.034 \\ 
+  & (0.076) & (0.037) & (0.034) & (0.070) & (0.036) & (0.034) & (0.071) & (0.036) & (0.034) \\ 
+  & & & & & & & & & \\ 
+ L2.I2E & $-$0.026 & 0.009 & 0.026 & $-$0.023 & 0.009 & 0.027 & $-$0.023 & 0.008 & 0.026 \\ 
+  & (0.068) & (0.033) & (0.031) & (0.062) & (0.032) & (0.031) & (0.063) & (0.032) & (0.031) \\ 
+  & & & & & & & & & \\ 
+ E2R & 0.084$^{*}$ & 0.099$^{***}$ & 0.089$^{***}$ & 0.111$^{***}$ & 0.138$^{***}$ & 0.116$^{***}$ & 0.106$^{***}$ & 0.136$^{***}$ & 0.113$^{***}$ \\ 
+  & (0.044) & (0.021) & (0.022) & (0.040) & (0.021) & (0.021) & (0.040) & (0.021) & (0.022) \\ 
+  & & & & & & & & & \\ 
+ L1.E2R & 0.129$^{***}$ & 0.135$^{***}$ & 0.146$^{***}$ & 0.129$^{***}$ & 0.139$^{***}$ & 0.182$^{***}$ & 0.129$^{***}$ & 0.133$^{***}$ & 0.168$^{***}$ \\ 
+  & (0.046) & (0.022) & (0.027) & (0.042) & (0.022) & (0.028) & (0.042) & (0.022) & (0.028) \\ 
+  & & & & & & & & & \\ 
+ L2.E2R & 0.200$^{***}$ & 0.201$^{***}$ & 0.197$^{***}$ & 0.183$^{***}$ & 0.201$^{***}$ & 0.198$^{***}$ & 0.188$^{***}$ & 0.199$^{***}$ & 0.195$^{***}$ \\ 
+  & (0.042) & (0.020) & (0.028) & (0.038) & (0.020) & (0.028) & (0.039) & (0.020) & (0.028) \\ 
+  & & & & & & & & & \\ 
+ Constant & 0.050$^{***}$ & 0.070$^{***}$ & 0.075$^{***}$ & 0.055$^{***}$ & 0.072$^{***}$ & 0.077$^{***}$ & 0.054$^{***}$ & 0.072$^{***}$ & 0.076$^{***}$ \\ 
+  & (0.007) & (0.003) & (0.003) & (0.007) & (0.003) & (0.003) & (0.007) & (0.003) & (0.003) \\ 
+  & & & & & & & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 861 & 861 & 861 & 861 & 861 & 861 & 861 & 861 & 861 \\ 
+R$^{2}$ & 0.050 &  & 0.116 & 0.056 &  & 0.147 & 0.055 &  & 0.135 \\ 
+Adjusted R$^{2}$ & 0.043 &  & 0.109 & 0.049 &  & 0.141 & 0.048 &  & 0.129 \\ 
+Residual Std. Error & 0.183 & 0.078 & 0.083 & 0.168 & 0.078 & 0.082 & 0.171 & 0.079 & 0.082 \\ 
+F Statistic & 7.468$^{***}$ &  &  & 8.410$^{***}$ &  &  & 8.238$^{***}$ &  &  \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{9}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+\subsection{GVC Integration and Export Diversification}
+
+Another potential benefit of GVC integration is that it potentially increases the diversity and range of exported products, which may have pro-competitive effects on the economy that eventually foster growth. One idea for country-level analysis could be to compute an index of concentration such as the Herfindahl-Hirshman (HH) Index over the range of exported products and see whether it increases with GVC integretion and/or is correlated with growth. The HH index is computed by expressing the exports of sector $i$ as a share $s_i$ of total country exports $E$, and then calculating the sum of the squares of the shares. 
+\begin{equation}
+HH_E = \sum_{i =0}^k s_i^2. 
+\end{equation} 
+\todo[inline]{See if HH index is correlated with growth... do a mediation analysis? See your M\&S II class.}
+
+
+
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Apr 30, 2021 - 11:16:54 PM
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{} 
+ \resizebox{1\textwidth}{!}{%
+\begin{tabular}{@{\extracolsep{5pt}}lcccccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{8}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-9} 
+\\[-1.8ex] & \multicolumn{2}{c}{HIN} & Dlog(HIN) & D(HIN) & \multicolumn{2}{c}{HIN\_DVA} & Dlog(HIN\_DVA) & D(HIN\_DVA) \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\ 
+\hline \\[-1.8ex] 
+ log(i2e) & $-$0.045 &  &  &  & $-$0.012 &  &  &  \\ 
+  & (0.028) &  &  &  & (0.021) &  &  &  \\ 
+  & & & & & & & & \\ 
+ I2E &  & $-$0.171 &  &  &  & $-$0.050 &  &  \\ 
+  &  & (0.141) &  &  &  & (0.128) &  &  \\ 
+  & & & & & & & & \\ 
+ log(Exports) & 0.051 & 0.0001 &  &  &  &  &  &  \\ 
+  & (0.045) & (0.020) &  &  &  &  &  &  \\ 
+  & & & & & & & & \\ 
+ Dlog(i2e) &  &  & $-$0.464 &  &  &  & 0.033 &  \\ 
+  &  &  & (0.676) &  &  &  & (0.458) &  \\ 
+  & & & & & & & & \\ 
+ D(I2E) &  &  &  & $-$0.084 &  &  &  & 0.032 \\ 
+  &  &  &  & (0.214) &  &  &  & (0.218) \\ 
+  & & & & & & & & \\ 
+ Dlog(Exports) &  &  & 0.508 & 0.001 &  &  &  &  \\ 
+  &  &  & (0.968) & (0.033) &  &  &  &  \\ 
+  & & & & & & & & \\ 
+ log(DVA\_Exports) &  &  &  &  & 0.003 & $-$0.013 &  &  \\ 
+  &  &  &  &  & (0.040) & (0.021) &  &  \\ 
+  & & & & & & & & \\ 
+ Dlog(DVA\_Exports) &  &  &  &  &  &  & $-$0.141 & $-$0.009 \\ 
+  &  &  &  &  &  &  & (0.715) & (0.036) \\ 
+  & & & & & & & & \\ 
+ Constant & $-$0.083 & 0.095 & $-$0.030 & $-$0.003 & 0.174 & 0.241 & $-$0.034 & $-$0.003 \\ 
+  & (0.271) & (0.216) & (0.059) & (0.004) & (0.275) & (0.231) & (0.057) & (0.005) \\ 
+  & & & & & & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 11 & 11 & 10 & 10 & 11 & 11 & 10 & 10 \\ 
+R$^{2}$ & 0.469 & 0.407 & 0.072 & 0.027 & 0.252 & 0.235 & 0.009 & 0.009 \\ 
+Adjusted R$^{2}$ & 0.336 & 0.259 & $-$0.193 & $-$0.251 & 0.065 & 0.043 & $-$0.274 & $-$0.274 \\ 
+Residual Std. Error & 0.009 & 0.009 & 0.161 & 0.012 & 0.010 & 0.010 & 0.155 & 0.013 \\ 
+F Statistic & 3.536$^{*}$ & 2.745 & 0.271 & 0.097 & 1.348 & 1.226 & 0.032 & 0.032 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{8}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+}
+\end{table} 
+\FloatBarrier
+
+
+
+\subsection{GVC Integration and Export Competitiveness}
+A third idea is proposed by Foster 2015 drawing on ..., to obtain a measure of which products are globally competitive, and then investigate whether increased GVC integration shifts the composition of exports towards more globally competitive products... 
+
+
+
+
+
+\newpage
+\bibliographystyle{apacite}
+\bibliography{GVC}
+
+
+\end{document}

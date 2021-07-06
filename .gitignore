@@ -2,6 +2,24 @@
 .Rhistory
 .Rapp.history
 
+# Latex Files 
+*.aux
+*.bbl
+*.blg
+*.out
+*.bak
+*.gz
+*.toc
+*.log
+*.dvi
+*.ps
+
+# Excel temporary
+~$*
+
+# Misc
+.DS_Store
+
 # Session Data files
 .RData
 
