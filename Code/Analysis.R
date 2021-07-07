@@ -1,10 +1,10 @@
 
-setwd("C:/Users/Sebastian Krantz/Documents/Data/EORA")
+# setwd("C:/Users/Sebastian Krantz/Documents/Data/EORA")
 
 rm(list = ls())
 gc()
 
-load("EAC_EORA_data.RData")
+load("Code/EAC_EORA_data.RData")
 
 # Libraries, Functions, Global Variables -----------------------------------------
 
@@ -84,7 +84,7 @@ va_ag_sec %>%
   theme_minimal(base_size = 14) + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/global_GDP_sector.pdf", width = 9, height = 7.5)
+dev.copy(pdf, "../Figures/global_GDP_sector.pdf", width = 9, height = 7.5)
 dev.off()
 
 
@@ -104,7 +104,7 @@ va_ag %>%
   theme_minimal(base_size = 14) + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/global_GDP_region.pdf", width = 9, height = 5)
+dev.copy(pdf, "../Figures/global_GDP_region.pdf", width = 9, height = 5)
 dev.off()
 
 
@@ -122,7 +122,7 @@ lapply(decomps, with, Vc * X) %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/EAC_GDP_sector.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/EAC_GDP_sector.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 ###############################
@@ -138,7 +138,7 @@ T[eac, eac, "2015"] %>% log10 %>%
            border_color = NA, legend_breaks = -4:6, 
            fontsize_row = 3.2, fontsize_col = 3.2)  # legend_labels = 10^(0:7))
 
-dev.copy(pdf, "GVC EAC Paper/Figures/heatmap_EAC.pdf", width = 9, height = 8)
+dev.copy(pdf, "../Figures/heatmap_EAC.pdf", width = 9, height = 8)
 dev.off()
 
 T_ag[, , "2015"] %c/% 1000 %>% log10 %>% .[r, r] %>% 
@@ -147,7 +147,7 @@ T_ag[, , "2015"] %c/% 1000 %>% log10 %>% .[r, r] %>%
            legend_breaks = 0:7, # legend_labels = 10^(0:7),
            display_numbers = TRUE)
 
-dev.copy(pdf, "GVC EAC Paper/Figures/heatmap_AG.pdf", width = 7, height = 6)
+dev.copy(pdf, "../Figures/heatmap_AG.pdf", width = 7, height = 6)
 dev.off()
 
 
@@ -210,7 +210,7 @@ va[eac, "2015"] %>%
       pretty_plot
   }
 
-dev.copy(pdf, "GVC EAC Paper/Figures/output_DVA_tot.pdf", width = 10, height = 8.27)
+dev.copy(pdf, "../Figures/output_DVA_tot.pdf", width = 10, height = 8.27)
 dev.off()
 
 # Direct Value added content of Output (Problematic)
@@ -233,7 +233,7 @@ dec15$Vc[eac] %>% replace_outliers(0, NA, "min") %>%
       pretty_plot
   }
 
-dev.copy(pdf, "GVC EAC Paper/Figures/output_DVA.pdf", width = 10, height = 8.27)
+dev.copy(pdf, "../Figures/output_DVA.pdf", width = 10, height = 8.27)
 dev.off()
 
 # Exports ----------------------------------------------
@@ -262,7 +262,7 @@ exports <- lapply(decomps, with, E) %>% value2df("Exports")
       pretty_plot
   }
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports.pdf", width = 10, height = 8.27)
+dev.copy(pdf, "../Figures/exports.pdf", width = 10, height = 8.27)
 dev.off()
 
 
@@ -277,7 +277,7 @@ exports %>%
   theme_minimal() +
   theme(panel.grid.major.x = element_blank())
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports_stacked.pdf", width = 8.27, height = 7.5)
+dev.copy(pdf, "../Figures/exports_stacked.pdf", width = 8.27, height = 7.5)
 dev.off()
 
 # Total EAC Exports: Stacked Area
@@ -293,7 +293,7 @@ exports %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/exports_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -318,7 +318,7 @@ dec15$ESR[eac, EAC] %>%
       pretty_plot
   }
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports_EAC.pdf", width = 10, height = 8.27)
+dev.copy(pdf, "../Figures/exports_EAC.pdf", width = 10, height = 8.27)
 dev.off()
 
 # Exports to EAC Partner States: Stacked
@@ -334,7 +334,7 @@ dec15$ESR[eac, EAC] %>%
   theme_minimal() +
   theme(panel.grid.major.x = element_blank())
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports_EAC_stacked.pdf", width = 8.27, height = 7.5)
+dev.copy(pdf, "../Figures/exports_EAC_stacked.pdf", width = 8.27, height = 7.5)
 dev.off()
 
 # Exports Share to EAC Partner States: Stacked
@@ -350,7 +350,7 @@ dec15$ESR[eac, EAC] %>%
   theme_minimal() +
   theme(panel.grid.major.x = element_blank())
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports_EAC_perc_stacked.pdf", width = 8.27, height = 7.5)
+dev.copy(pdf, "../Figures/exports_EAC_perc_stacked.pdf", width = 8.27, height = 7.5)
 dev.off()
 
 
@@ -372,7 +372,7 @@ lapply(decomps, function(x) x$ESR[eac, EAC] %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/exports_EAC_perc_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/exports_EAC_perc_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
   
@@ -458,7 +458,7 @@ get_E_shares(T[,, "2015"], FD[,, "2015"])[eac, ] %>% qDT("Sector") %>%
   theme_minimal() +
   pretty_plot # + theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/output_shares.pdf", width = 13.69, height = 8.27)
+dev.copy(pdf, "../Figures/output_shares.pdf", width = 13.69, height = 8.27)
 dev.off()
 
 # Aggregate:
@@ -486,7 +486,7 @@ get_E_shares(T_ag[, , "2015"], FD_ag[, , "2015"], return.E = TRUE) %>% View
       guides(color = guide_legend(title = NULL)) + 
       theme_minimal() + pretty_plot + theme(legend.text = element_text(size = 10))
     
-    dev.copy(pdf, "GVC EAC Paper/Figures/output_shares_ag_ts.pdf", width = 11.69, height = 8.27)
+    dev.copy(pdf, "../Figures/output_shares_ag_ts.pdf", width = 11.69, height = 8.27)
     dev.off()
     
 
@@ -509,7 +509,7 @@ pheatmap(VB_ag[,, "2015"] * 100,
          cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
          display_numbers = TRUE)
 
-dev.copy(pdf, "GVC EAC Paper/Figures/heatmap_AG_VB.pdf", width = 9, height = 8)
+dev.copy(pdf, "../Figures/heatmap_AG_VB.pdf", width = 9, height = 8)
 dev.off()
 
 # Disaggregated EAC heatmap: Does not look cool
@@ -519,7 +519,7 @@ pheatmap(VB[eac, eac, "2015"] * 100,
          border_color = NA, # legend_breaks = -4:6, 
          fontsize_row = 3.2, fontsize_col = 3.2)  
 
-# dev.copy(pdf, "GVC EAC Paper/Figures/heatmap_EAC_VB", width = 9, height = 8)
+# dev.copy(pdf, "../Figures/heatmap_EAC_VB", width = 9, height = 8)
 # dev.off()
 
 # This gets disaggregated EAC VA Shares:
@@ -537,7 +537,7 @@ for(i in names(VB_eac_ag)) {
            cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
            display_numbers = TRUE)
   
-  dev.copy(pdf, paste0("GVC EAC Paper/Figures/heatmap_VB_AG_", i, ".pdf"), width = 10, height = 4)
+  dev.copy(pdf, paste0("../Figures/heatmap_VB_AG_", i, ".pdf"), width = 10, height = 4)
   dev.off()
   
 }
@@ -557,7 +557,7 @@ unlist2d(VB_eac_ag, "Country", "Source", DT = TRUE, id.factor = TRUE) %>%
     margin = ggplot2::margin(t = 0)
   ))
 
-dev.copy(pdf, "GVC EAC Paper/Figures/heatmap_VB_AG_EAC.pdf", width = 10.69, height = 7.27)
+dev.copy(pdf, "../Figures/heatmap_VB_AG_EAC.pdf", width = 10.69, height = 7.27)
 dev.off()
 
 
@@ -585,7 +585,7 @@ EAC_VA_shares %>%
   # guides(fill = guide_legend(title = NULL, nrow = 1)) + 
   theme_minimal() + pretty_plot + theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_shares_ag_ts_area.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_shares_ag_ts_area.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # Annualized Growth of VA shares
@@ -614,7 +614,7 @@ EAC_VA_shares %>%
   scale_fill_brewer(palette = "Set1") +
   theme_minimal() + pretty_plot + theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_shares_ag_ts_bar.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_shares_ag_ts_bar.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -643,7 +643,7 @@ exports_VA %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # EAC Total Value Added contained in Domestic Gross Exports by Using/Exporting Country-Industry: Stacked Area
@@ -662,7 +662,7 @@ exports_VA %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_DOM_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_DOM_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # EAC Value Added Share in Global Gross Exports to the EAC, excluding any domestic value added in exports absorbed at home   
@@ -692,7 +692,7 @@ dev.off()
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_EAC_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_EAC_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # EAC Value Added Share in Domestic Gross Exports to the EAC, excluding any domestic value added in exports absorbed at home   
@@ -709,7 +709,7 @@ lapply(decomps, with, copyAttrib(diag(Vc) %*% B %*% diag(rowSums(ESR[, EAC])), B
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_EAC_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_EAC_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -748,7 +748,7 @@ merge(EAC_exports_VA, exports_EAC_VA) %>%
   guides(color = guide_legend(title = NULL)) +
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_EAC_shares_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_EAC_shares_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -775,7 +775,7 @@ FD_exports_VA %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_FD_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_FD_exports_stacked_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # Value Added in EAC final goods exports by country origin
@@ -816,7 +816,7 @@ merge(EAC_FD_exports_VA_orig, FD_exports_EAC_VA_orig) %>%
   guides(color = guide_legend(title = NULL)) +
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_FD_EAC_shares_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_FD_EAC_shares_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -871,7 +871,7 @@ VS_df_ag %>% slt(-i2e) %>%
   guides(color = guide_legend(title = NULL, nrow = 1)) + 
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VS_ag_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VS_ag_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # Sector Level Plot: 2015
@@ -896,7 +896,7 @@ VS_df %>% slt(-i2e) %>%
   guides(fill = guide_legend(title = NULL, nrow = 1)) + 
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VS.pdf", width = 13.69, height = 8.27)
+dev.copy(pdf, "../Figures/VS.pdf", width = 13.69, height = 8.27)
 dev.off()
 
 
@@ -925,7 +925,7 @@ VS_df %>% slt(-i2e) %>%
   guides(fill = guide_legend(title = NULL, nrow = 1)) + 
   theme_minimal() + pretty_plot 
 }
-dev.copy(pdf, "GVC EAC Paper/Figures/VS_growth.pdf", width = 13.69, height = 8.27)
+dev.copy(pdf, "../Figures/VS_growth.pdf", width = 13.69, height = 8.27)
 dev.off()
 
 # Regional Integration in VA Trade ----------------------------------------------------------
@@ -1018,7 +1018,7 @@ merge(VS_EAC_ag %>% rm_stub("Using_"),
   guides(color = guide_legend(title = NULL)) +
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/VA_EAC_shares_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/VA_EAC_shares_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -1069,7 +1069,7 @@ KWW_ts %>%
   # theme_minimal() + pretty_plot +
   # theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/KWW_fill_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/KWW_fill_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -1105,7 +1105,7 @@ KWW_ts_det %>%
 # theme_minimal() + pretty_plot +
 # theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/KWW_fill_ts_EAC.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/KWW_fill_ts_EAC.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # Sector 2015
@@ -1139,7 +1139,7 @@ KWW_ts_det %>%
 # theme_minimal() + pretty_plot +
 # theme(legend.position = "right")
 
-dev.copy(pdf, "GVC EAC Paper/Figures/KWW_fill_sec.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/KWW_fill_sec.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # Upstreamness and Downstramness based in KWW Decomposition ------------------------------------------------------------------------------
@@ -1165,7 +1165,7 @@ KWW_ts %>%
   guides(color = guide_legend(title = NULL, nrow = 1)) + 
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/UP_DOWN_ag_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/UP_DOWN_ag_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -1190,7 +1190,7 @@ KWW_ts %>%
       theme_minimal() + pretty_plot + theme(axis.text.x = element_text(angle = 0))
   }
 
-dev.copy(pdf, "GVC EAC Paper/Figures/UP_DOWN_ag_growth.pdf", width = 8, height = 4.27)
+dev.copy(pdf, "../Figures/UP_DOWN_ag_growth.pdf", width = 8, height = 4.27)
 dev.off()
 
 # Disaggregated  ------------------------------------------------
@@ -1216,7 +1216,7 @@ KWW_ts_det %>%
   guides(color = guide_legend(title = NULL, nrow = 1)) + 
   theme_minimal() + pretty_plot 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/UP_DOWN_sec.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/UP_DOWN_sec.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
@@ -1252,7 +1252,7 @@ KWW_ts_det_wide %>%
         # panel.spacing.x = unit(2, "lines"))
         
 
-dev.copy(pdf, "GVC EAC Paper/Figures/NRCA.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/NRCA.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 KWW_ts_det_wide %>% 
@@ -1269,7 +1269,7 @@ KWW_ts_det_wide %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right") 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/NRCA_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/NRCA_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # NRCA relative to EAC
@@ -1296,7 +1296,7 @@ KWW_ts_det_wide %>%
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) #,
   
 
-dev.copy(pdf, "GVC EAC Paper/Figures/NRCA_EAC.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/NRCA_EAC.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 KWW_ts_det_wide %>% 
@@ -1313,7 +1313,7 @@ KWW_ts_det_wide %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right") 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/NRCA_EAC_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/NRCA_EAC_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # NRCA in Inner-EAC Trade
@@ -1348,7 +1348,7 @@ KWW_ts_det_EAC %>%
   theme_minimal() + pretty_plot +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) #,
 
-dev.copy(pdf, "GVC EAC Paper/Figures/NRCA_IEAC.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/NRCA_IEAC.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 KWW_ts_det_EAC %>% 
@@ -1364,7 +1364,7 @@ KWW_ts_det_EAC %>%
   theme_minimal() + pretty_plot +
   theme(legend.position = "right") 
 
-dev.copy(pdf, "GVC EAC Paper/Figures/NRCA_IEAC_ts.pdf", width = 11.69, height = 8.27)
+dev.copy(pdf, "../Figures/NRCA_IEAC_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
