@@ -1045,9 +1045,9 @@ dev.off()
 
 # KWW Decomposition ------------------------------------------------------------------------------
 
-kww2 <- function(x, ...) wwz2kww(wwz(x), )
+kww2 <- function(x, ...) wwz2kww(wwz(x), ...)
 
-KWW_ts <- lapply(decomps, kww) %>% unlist2d("Year") %>%
+KWW_ts <- lapply(decomps, kww2, aggregate = TRUE) %>% unlist2d("Year") %>%
           tfm(Year = as.integer(Year)) %>% qDT %>%
           melt(1:2, variable.name = "Term")
 
