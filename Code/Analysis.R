@@ -1045,9 +1045,7 @@ dev.off()
 
 # KWW Decomposition ------------------------------------------------------------------------------
 
-kww2 <- function(x, ...) wwz2kww(wwz(x), ...)
-
-KWW_ts <- lapply(decomps, kww2, aggregate = TRUE) %>% unlist2d("Year") %>%
+KWW_ts <- lapply(decomps, wwz2kww, aggregate = TRUE) %>% unlist2d("Year") %>%
           tfm(Year = as.integer(Year)) %>% qDT %>%
           melt(1:2, variable.name = "Term")
 
@@ -1078,7 +1076,7 @@ dev.copy(pdf, "Figures/KWW_fill_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 
-KWW_ts_det <- lapply(decomps, kww2) %>% unlist2d("Year") %>%
+KWW_ts_det <- lapply(decomps, wwz2kww) %>% unlist2d("Year") %>%
               tfm(Year = as.integer(Year)) %>% qDT %>%
               melt(1:4, variable.name = "Term")
 
@@ -1094,7 +1092,8 @@ KWW_ts_det %>%
   geom_area(position = "fill", alpha = 0.8) +
   facet_wrap( ~ Country, scales = "free_y") +
   guides(fill = guide_legend(ncol = 1)) +
-  scale_y_continuous(labels = percent, breaks = extended_breaks(7), 
+  scale_y_continuous(labels = percent, 
+                     breaks = extended_breaks(7), 
                      expand = c(0, 0.02)) +
   scale_x_continuous(breaks = 2005:2015, expand = c(0, 0)) + rbsc2 +
   ylab("VA Share in Gross Exports to the EAC") +
@@ -1129,7 +1128,7 @@ KWW_ts_det %>%
   scale_x_continuous(labels = percent, breaks = extended_breaks(7), 
                      expand = c(0, 0.02)) +
   scale_y_discrete(expand = c(0, 0)) + rbsc2 +
-  labs(x = "VA Share in Gross Exports", y = "Value") +
+  labs(x = "VA Share in Gross Exports", y = "Sector") +
   theme_minimal() + pretty_plot +
   theme(legend.position = "right", 
         panel.grid = element_blank(),
@@ -1204,10 +1203,11 @@ KWW_ts_det %>%
   gby(-Importing_Country, -value) %>% 
   nv %>% fsum %>% rm_stub("Exporting_") %>%
   dcast(... ~ Term, value.var = "value") %>% 
-  fcompute(Year = Year, Country = Country, Industry = factor(Industry, levels = rev(levels(Industry))), 
+  fcompute(Year = Year, Country = Country, 
+           Industry = factor(Industry, levels = rev(levels(Industry))), 
            Upstreamness = (DVA_INT + DVA_INTrex + DDC) / (DVA_FIN + DVA_INT + DVA_INTrex + RDV_FIN + RDV_INT + DDC),
            Downstreamness = FVA_FIN / (FVA_FIN + FVA_INT + FDC)) %>% # Why ??
-  collapv(2:3, list(ffirst, flast), return = "long") %>% 
+  collapv(2:3, list(ffirst, flast), return = "long", na.rm = FALSE) %>% 
   slt(-Function) %>%
   melt(1:3, variable.name = "Variable", value.name = "Value") %>% 
   tfm(Text = recode_char(paste(Variable, Year), "Downstreamness 2015" = "Downstreamness 2015             ")) %>%  
@@ -1227,39 +1227,91 @@ dev.off()
 
 # NRCA ------------------------------------------------------------------------------------------------
 
-KWW_ts_det_wide <- lapply(decomps, kww2) %>% unlist2d("Year") %>%
+KWW_ts_det_wide <- lapply(decomps, wwz2kww) %>% unlist2d("Year") %>%
                    tfm(Year = as.integer(Year)) %>% qDT %>%
                    gby(Year, Exporting_Country, Exporting_Industry) %>%
                    num_vars %>% fsum
 
 
-settransform(KWW_ts_det_wide, VAE = DVA_FIN + DVA_INT + DVA_INTrex + RDV_FIN + RDV_INT) # = GDP in exports, not matter where they are absorbed
-settransform(KWW_ts_det_wide, VAE_s = VAE / fsum(VAE, list(Year, Exporting_Country), TRA = "replace_fill"))
-settransform(KWW_ts_det_wide, VAE_Ws = fsum(VAE, list(Year, Exporting_Industry), TRA = "replace_fill") / 
-                                       fsum(VAE, Year, TRA = "replace_fill"))
+KWW_ts_det_wide %<>% tfm(VAE = DVA_FIN + DVA_INT + DVA_INTrex + RDV_FIN + RDV_INT) %>%    # = GDP in exports, not matter where they are absorbed
+                     tfm(VAE_s = fsum(VAE, list(Year, Exporting_Country), TRA = "/"),     # Share of Sector in country exports
+                         VAE_Ws = fsum(VAE, list(Year, Exporting_Industry), TRA = 1L) /   # Share of Sector in World Exports
+                                  fsum(VAE, Year, TRA = 1L)) %>% 
+                     tfm(NRCA = VAE_s / VAE_Ws)
 
-settransform(KWW_ts_det_wide, NRCA = VAE_s / VAE_Ws)
-
+# Barchart
 KWW_ts_det_wide %>% 
   rm_stub("Exporting_") %>% 
   sbt(Year == 2015L & Country %in% EAC, Year:Industry, NRCA) %>% 
-  tfm(Industry = factor(Industry, levels = rev(levels(Industry)))) %>%
-
-  ggplot(aes(y = Industry, x = NRCA)) + # , fill = Industry
+  tfm(Industry = factor(Industry, levels = rev(levels(Industry)))) %>% {
+  
+  ggplot(., aes(y = Industry, x = NRCA)) + # , fill = Industry
   geom_bar(stat = "identity", alpha = 0.8) +
+  geom_text(aes(label = signif(NRCA, 3)), hjust = fifelse(.$NRCA >= 1, -0.2, 1.2), cex = 3, 
+            colour = "grey10") +
   facet_wrap( ~ Country, scales = "free_y") +
   guides(fill = FALSE) +
   scale_x_continuous(trans = "log10", breaks = log_breaks(10), limits = c(0.01, 100),
-                     expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
+                     expand = expansion(mult = 0.1), labels = function(x) signif(x, 3)) +
   scale_y_discrete(expand = c(0, 0)) + xlab("NRCA") + # rbsc2 +
   theme_minimal() + pretty_plot +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) #,
         # panel.spacing.x = unit(2, "lines"))
+  }
         
-
 dev.copy(pdf, "Figures/NRCA.pdf", width = 11.69, height = 8.27)
 dev.off()
 
+# Dotchart
+KWW_ts_det_wide %>% 
+  rm_stub("Exporting_") %>% 
+  sbt((Year == 2005L | Year == 2015L) & Country %in% EAC, Year:Industry, NRCA) %>% 
+  tfm(Industry = factor(Industry, levels = rev(levels(Industry)))) %>% 
+      # NRCA = replace_outliers(NRCA, c(-10, 20))) %>%
+  
+  ggplot(aes(x = NRCA, y = Industry, color = qF(Year))) +
+  geom_point() +
+  facet_wrap( ~ Country, scales = "free_y") + 
+  scale_x_continuous(trans = "log10", breaks = log_breaks(10), limits = c(0.01, 100),
+                     expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
+  scale_color_brewer(palette = "Paired") +
+  guides(color = guide_legend(title = NULL, nrow = 1)) + 
+  theme_minimal() + pretty_plot 
+
+  dev.copy(pdf, "Figures/NRCA_fl.pdf", width = 11.69, height = 8.27)
+  dev.off()
+
+
+# Barchart Growth
+  KWW_ts_det_wide %>% 
+    rm_stub("Exporting_") %>% 
+    sbt((Year == 2005L | Year == 2015L) & Country %in% EAC, Year:Industry, NRCA) %>% 
+    tfm(Industry = factor(Industry, levels = rev(levels(Industry))), 
+        NRCA = fgrowth(NRCA, 10, 1, list(Country, Industry), Year, power = 1/10, scale = 1)) %>% 
+    {
+    ggplot(., aes(y = Industry, x = NRCA)) + 
+    geom_bar(stat = "identity", alpha = 0.8) +
+    geom_text(aes(label = percent(NRCA, 0.1)), hjust = fifelse(.$NRCA >= 0, -0.2, 1.2), cex = 3, 
+              colour = "grey10") +
+    facet_wrap( ~ Country, scales = "free_y") +
+    guides(fill = FALSE) +
+    scale_x_continuous(breaks = extended_breaks(10), labels = function(x) percent(x, 1),
+                       limits = c(-0.16, 0.16)) + # , expand = expansion(mult = 0.1)
+    scale_y_discrete(expand = c(0, 0)) + xlab("NRCA") + 
+    theme_minimal() + pretty_plot +
+    theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) #,
+    }
+  
+  dev.copy(pdf, "Figures/NRCA_growth.pdf", width = 11.69, height = 8.27)
+  dev.off()
+  
+# Check if sectors moved from comparative advantage to disadvantage and vice-versa
+KWW_ts_det_wide %>% 
+   sbt((Year == 2005L | Year == 2015L) & Exporting_Country %in% EAC, 1:3, NRCA) %>% 
+   merge(gby(., 2:3) %>% smr(NRCAg = fsum(NRCA > 1)) %>% sbt(NRCAg == 1, -NRCAg)) %>%
+   dcast(... ~ Year, value.var = "NRCA")
+
+# Time Series Chart for full period  
 KWW_ts_det_wide %>% 
   rm_stub("Exporting_") %>% 
   sbt(Country %in% EAC, Year:Industry, NRCA) %>% 
@@ -1280,30 +1332,36 @@ dev.off()
 # NRCA relative to EAC
 
 KWW_ts_det_wide[Exporting_Country %in% EAC, 
-                VAE_EACs := fsum(VAE, list(Year, Exporting_Industry), TRA = "replace_fill") / 
-                            fsum(VAE, Year, TRA = "replace_fill")]
+                VAE_EACs := fsum(VAE, list(Year, Exporting_Industry), TRA = 1L) / 
+                            fsum(VAE, Year, TRA = 1L)]
 
 KWW_ts_det_wide[, NRCA_EAC := VAE_s / VAE_EACs]
 
+# Barchart:
 KWW_ts_det_wide %>% 
   rm_stub("Exporting_") %>% 
-  sbt(Year == 2015L & Country %in% EAC, Year:Industry, NRCA_EAC) %>% 
+  sbt((Year == 2005L | Year == 2015L) & Country %in% EAC, Year:Industry, NRCA_EAC) %>% 
   tfm(Industry = factor(Industry, levels = rev(levels(Industry)))) %>%
-  
-  ggplot(aes(y = Industry, x = NRCA_EAC)) + # , fill = Industry
+  {
+  ggplot(sbt(., Year == 2015L), aes(y = Industry, x = NRCA_EAC)) + 
   geom_bar(stat = "identity", alpha = 0.8) +
+  geom_point(data = sbt(., Year == 2005L), colour = "dodgerblue4", shape=16, stroke = 0, size = 3, alpha = 0.6) +
+  geom_text(aes(label = signif(NRCA_EAC, 3)), 
+            hjust = fifelse(sbt(., Year == 2015L)$NRCA_EAC >= 1, -0.2, 1.2), cex = 3, 
+            colour = "grey10") +
   facet_wrap( ~ Country, scales = "free_y") +
   guides(fill = FALSE) +
-  scale_x_continuous(trans = "log10", breaks = log_breaks(6), limits = c(0.03, 30),
-                     expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
-  scale_y_discrete(expand = c(0, 0)) + xlab("NRCA") + # rbsc2 +
+  scale_x_continuous(trans = "log10", breaks = log_breaks(10), limits = c(0.049, 15),
+                     expand = expansion(mult = 0.08), labels = function(x) signif(x, 3)) +
+  scale_y_discrete(expand = c(0, 0)) + xlab("NRCA") + 
   theme_minimal() + pretty_plot +
-  theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) #,
-  
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) 
+  }
 
 dev.copy(pdf, "Figures/NRCA_EAC.pdf", width = 11.69, height = 8.27)
 dev.off()
 
+# Full Time Series chart
 KWW_ts_det_wide %>% 
   rm_stub("Exporting_") %>% 
   sbt(Country %in% EAC, Year:Industry, NRCA_EAC) %>% 
@@ -1321,41 +1379,47 @@ KWW_ts_det_wide %>%
 dev.copy(pdf, "Figures/NRCA_EAC_ts.pdf", width = 11.69, height = 8.27)
 dev.off()
 
+
 # NRCA in Inner-EAC Trade
 
-KWW_ts_det_EAC <- lapply(decomps, kww2) %>% unlist2d("Year") %>%
+KWW_ts_det_EAC <- lapply(decomps, wwz2kww) %>% unlist2d("Year") %>%
                   tfm(Year = as.integer(Year)) %>% 
                   sbt(Exporting_Country %in% EAC & Importing_Country %in% EAC) %>% 
-                  gby(Year, Exporting_Country, Exporting_Industry) %>%
-                  num_vars %>% fsum %>% setDT 
+                  gby(Year, Exporting_Country, Exporting_Industry) %>% num_vars %>% fsum %>% 
+                  tfm(VAE = DVA_FIN + DVA_INT + DVA_INTrex + RDV_FIN + RDV_INT) %>%    # = GDP in exports, not matter where they are absorbed
+                  tfm(VAE_s = fsum(VAE, list(Year, Exporting_Country), TRA = "/"),     # Share of Sector in country exports
+                      VAE_Ws = fsum(VAE, list(Year, Exporting_Industry), TRA = 1L) /   # Share of Sector in World Exports
+                        fsum(VAE, Year, TRA = 1L)) %>% 
+                  tfm(NRCA = VAE_s / VAE_Ws) %>% qDT
                   
-
-settransform(KWW_ts_det_EAC, VAE = DVA_FIN + DVA_INT + DVA_INTrex + RDV_FIN + RDV_INT) # = GDP in exports, not matter where they are absorbed
-settransform(KWW_ts_det_EAC, VAE_s = VAE / fsum(VAE, list(Year, Exporting_Country), TRA = "replace_fill"))
-settransform(KWW_ts_det_EAC, VAE_Ws = fsum(VAE, list(Year, Exporting_Industry), TRA = "replace_fill") / 
-                                      fsum(VAE, Year, TRA = "replace_fill"))
-
-settransform(KWW_ts_det_EAC, NRCA = VAE_s / VAE_Ws)
 
 
 KWW_ts_det_EAC %>% 
   rm_stub("Exporting_") %>% 
-  sbt(Year == 2015L, Year:Industry, NRCA) %>% 
+  sbt((Year == 2005L | Year == 2015L) & Country %in% EAC, Year:Industry, NRCA) %>% 
   tfm(Industry = factor(Industry, levels = rev(levels(Industry)))) %>%
-  
-  ggplot(aes(y = Industry, x = NRCA)) + # , fill = Industry
-  geom_bar(stat = "identity", alpha = 0.8) +
-  facet_wrap( ~ Country, scales = "free_y") +
-  guides(fill = FALSE) +
-  scale_x_continuous(trans = "log10", breaks = log_breaks(6), limits = c(0.01, 100),
-                     expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
-  scale_y_discrete(expand = c(0, 0)) + xlab("NRCA") + # rbsc2 +
-  theme_minimal() + pretty_plot +
-  theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) #,
+  {
+    ggplot(sbt(., Year == 2015L), aes(y = Industry, x = NRCA)) + 
+      geom_bar(stat = "identity", alpha = 0.8) +
+      geom_point(data = sbt(., Year == 2005L), colour = "dodgerblue4", shape=16, stroke = 0, size = 3, alpha = 0.6) +
+      geom_text(aes(label = signif(NRCA, 3)), 
+                hjust = fifelse(sbt(., Year == 2015L)$NRCA >= 1, -0.2, 1.2), cex = 3, 
+                colour = "grey10") +
+      facet_wrap( ~ Country, scales = "free_y") +
+      guides(fill = FALSE) +
+      scale_x_continuous(trans = "log10", breaks = log_breaks(10), limits = c(0.01, 50),
+                         expand = expansion(mult = 0.08), labels = function(x) signif(x, 3)) +
+      scale_y_discrete(expand = c(0, 0)) + xlab("NRCA") + 
+      theme_minimal() + pretty_plot +
+      theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5))) 
+  }
+
 
 dev.copy(pdf, "Figures/NRCA_IEAC.pdf", width = 11.69, height = 8.27)
 dev.off()
 
+
+# Time Series Chart
 KWW_ts_det_EAC %>% 
   rm_stub("Exporting_") %>% 
 
