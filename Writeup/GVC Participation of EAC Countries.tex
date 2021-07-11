@@ -391,8 +391,7 @@ To summarize, the decomposed gross flows data presented in Figures \ref{fig:outs
 
 \section{Value Added Flows}
 While gross flows provide useful information about direct productive relationships and the amounts of goods traded therein, a problem of gross flows IO tables, is that they do not reveal how much of the value was added in the supplying industry, and how much of the value was added in previous stages of production, performed by other industries or even countries. % \citep{Kummritz2014}. 
-The Leontief decomposition of gross trade flows solves this problem by real-
-locating the value of intermediate goods used by industries to the original producers \citep{Kummritz2014}. %In our example, the use of Argentinian agricultural produce (raw hides) is subtracted from the Turkish leather industry and added to the Argentinian agricultural industry \citep{Kummritz2014}. 
+The Leontief decomposition of gross trade flows solves this problem by reallocating the value of intermediate goods used by industries to the original producers \citep{Kummritz2014}. %In our example, the use of Argentinian agricultural produce (raw hides) is subtracted from the Turkish leather industry and added to the Argentinian agricultural industry \citep{Kummritz2014}. 
 %\newline
 
 \subsection{The Leontief Decomposition of Gross Trade Flows}
@@ -403,13 +402,13 @@ Let $\textbf{A}$ be a row-normalized ICIO table where each element $a_{ij}$ give
 \textbf{x} = \textbf{A}\textbf{x} + \textbf{d}.
 \end{equation}
 
-The classical Leontief 1936 insight was that one can solve this equation for $\textbf{x}$ to get the amount of output each industry should produce given a certain amount of final demand:
+The classical \citet{leontief1936quantitative} insight was that one can solve this equation for $\textbf{x}$ to get the amount of output each industry should produce given a certain amount of final demand:
 
 \begin{equation} \label{eq:leontief}
 \textbf{x} = (\textbf{I}-\textbf{A})^{-1} \textbf{d} = \textbf{B}\textbf{d},
 \end{equation}
 
-where the Leontief Inverse was denoted $\textbf{B} = (\textbf{I}-\textbf{A})^{-1}$. This matrix is also often called the total requirement matrix since it gives the total productive input requirement from each sector to produce one unit of final output. Specifically each element in $b_{ij}$ in \textbf{B} gives the output required from sector $i$ for the production  of one unit of the final good $j$. Thus the first column of \textbf{B} gives all the productive input required from all sectors for the production of one unit of the final good in sector 1, and the first column of \textbf{B} gives all the input required from sector 1 to produce one unit of the final good in each sector. Now the amount of direct value added in each unit of output for each sector is given by:
+where the Leontief Inverse was denoted $\textbf{B} = (\textbf{I}-\textbf{A})^{-1}$. This matrix is also often called the total requirement matrix since it gives the total productive input requirement from each sector to produce one unit of final output. Specifically each element in $b_{ij}$ in \textbf{B} gives the output required from sector $i$ for the production  of one unit of the final good $j$. Thus the first column of \textbf{B} gives all the productive input required from all sectors for the production of one unit of the final good in sector 1, and the first row of \textbf{B} gives all the input required from sector 1 to produce one unit of the final good in each sector. Now the amount of direct value added in each unit of output for each sector is given by:
 
 \begin{equation}
 \textbf{v} = \textbf{1} - \textbf{A}'\textbf{1}
@@ -457,7 +456,7 @@ If we assume that the production technology of goods is the same no matter wheth
 \subsection{Value Added in Final Production}
 
 
- \todo[inline]{Decompositions of output and FD + heatmaps commented out}
+%  \todo[inline]{Decompositions of output and FD + heatmaps commented out}
 % A first basic application is to decompose output \textbf{x} into it's value added origins by country-industry. The expression \textbf{VBx} would provide the total value added origins of \textbf{x} by supplying industries, but to obtain the disaggregated flows for each using industry, we compute \textbf{VBX}, where \textbf{X} is a diagonal matrix with \textbf{x} along the diagonal. The value added flows are shown in Figures \ref{fig:wldfvax} and \ref{fig:eacfvax}. 
 
 %A first basic application is to decompose finally demanded output \textbf{d} into it's value added origins by country-industry. The expression \textbf{VBd} would provide the total value added origins of \textbf{d} by supplying industries, but to obtain the disaggregated flows for each using industry, we compute \textbf{VBD}, where \textbf{D} is a diagonal matrix with \textbf{d} along the diagonal. The value added flows are shown in Figures \ref{fig:wldfvax} and \ref{fig:eacfvax}. Each element of \textbf{VBD} represents the value added of the row country(-industry) to the production of the column country(-industry)'s final product. The column sums of  \textbf{VBD} therefore equal the final demand \textbf{d}:
@@ -500,15 +499,15 @@ Figure \ref{fig:wldVB} shows the aggregate value added share matrix at the EAC c
 %\end{figure}
 %\FloatBarrier
 
-The foreign value added share in domestic production and exports is what \citet{hummels2001nature} termed 'Vertical Specialization' (VS), and is the most widely used measure of backward GVC integration. Consider the VA share matrix \textbf{VB} with elements $vb_{oi,dj}$ where $o$ is the VA origin country and $i$ the VA origin industry (along the rows) and $d$ is the VA using country and $j$ the VA using industry (along the columns). Then the VS ratio for a particular country-industry may be expressed as:
+The foreign value added share in domestic production and exports is what \citet{hummels2001nature} termed 'Vertical Specialization' (VS), and is the most widely used measure of backward GVC integration. Consider the VA share matrix \textbf{VB} with elements vb$_{oi,dj}$ where $o$ is the VA origin country and $i$ the VA origin industry (along the rows) and $d$ is the VA using country and $j$ the VA using industry (along the columns). Then the VS ratio for a particular country-industry may be expressed as:
 
 \begin{equation} \label{eq:VS}
-VS_{uj} = \sum_{oi,\ o \neq  u} vb_{oi, uj}\ \ \forall uj,
+\text{VS}_{uj} = \sum_{oi,\ o \neq  u} \text{vb}_{oi, uj}\ \ \forall uj,
 \end{equation}
 
 in other words we are summing the elements of \textbf{VB} in each column, excluding any VA shares components from domestic country-industries. Figure \ref{fig:EACVB_ts} gives a breakdown of the VS for EAC countries by supplier country-region over the sample period. When comparing it to the foreign intermediates share in gross flows shown in Figure \ref{fig:outshares_ag_ts}, it is evident that the VS computed from value added data is about 1.5 times greater in nearly all EAC countries, owing to the fact that the foreign content in domestic intermediates which is now taken into account is a lot greater than the domestic content in foreign intermediates which is subtracted in value added flows data. \newline
 
-Figure \ref{fig:EACVB_ts} shows that the share of foreign value added in Ugandan production has been fluctuating between 10 and 12\% over the analyzed period. 2\% of the value of Ugandan produce comes from Kenya, about 1\% from the rest of Sub-Saharan Africa, 1.5\% from the MENA region, about 3-4\% from the EU and 1-1.5\% from South Asia. The other regions make up the remaining 2\%. Tanzania and Kenya have similar relative VA contributions of SSA and MENA, EU and SAS regions to their production, through at higher shares of around 19\% foreign VA content in Tanzanian production by 2015, and around 15\% in Kenya. Kenya adds around 1-2\% to Tanzanian production, and Uganda adds about 0.25\% to Kenyan produce. The value added share of Kenya and Uganda in Rwandan production of around and 1\% and 0.5\%, respectively is also visible. It is curious to observe the VS appears to have declined in Uganda, Kenya, Randa and Burundi from 2011 onwards, whereas in Tanzania it appears to have increased \todo{Why is that?}.
+Figure \ref{fig:EACVB_ts} shows that the share of foreign value added in Ugandan production has been fluctuating between 10 and 12\% over the analyzed period. 2\% of the value of Ugandan produce comes from Kenya, about 1\% from the rest of Sub-Saharan Africa, 1.5\% from the MENA region, about 3-4\% from the EU and 1-1.5\% from South Asia. The other regions make up the remaining 2\%. Tanzania and Kenya have similar relative VA contributions of SSA, MENA, EU and SAS regions to their production, at overall higher foreign content shares of around 29\% foreign VA content in Tanzanian production by 2015, and around 15\% in Kenya. Kenya adds around 1-2\% to Tanzanian production, and Uganda adds about 0.25\% to Kenyan produce. The value added share of Kenya and Uganda in Rwandan production of around and 1\% and 0.5\%, respectively is also visible. It is curious to observe the VS appears to have declined in Uganda, Kenya, Randa and Burundi from 2011 onwards, whereas in Tanzania it appears to have increased. % \todo{Why is that?}.
 
 \begin{figure}[h!]
 \centering
@@ -517,31 +516,33 @@ Figure \ref{fig:EACVB_ts} shows that the share of foreign value added in Ugandan
 \end{figure}
 \FloatBarrier
 
-To better summarize the movements in VA shares by different origins over the analyzed period, Figure \ref{fig:EACVB_ts_bar} shows  bars giving the value added share in 2005 and in 2015, and above the two bars the annualized average growth rate in the share over this period. The annualized average growth rate of the domestic value added share is also reported in round brackets behind the country code for each EAC country. Figure \ref{fig:EACVB_ts_bar} makes it clear that the foreign value added share has increased substantially in Tanzania and also in Rwanda, but decreased slightly in Kenya and Uganda between 2005 and 2015.  Examining more closely the inner EAC shares, it appears that Tanzania's VA share in Ugandan production has halved between 2005 and 2015, whereas Kenya's share has increased by 0.8\% annually. For Tanzania the VA share of Kenya has almost doubled from about 0.8\% to 1.8\%. Rwanda has also seen increases in the shares of Ugandan and Kenyan VA of about 5\% each year. 
+To better summarize the movements in VA shares by different origins over the analyzed period, Figure \ref{fig:EACVB_ts_bar} shows  bars giving the value added share in 2005 and in 2015, and above the two bars the annualized average growth rate in the share over this period. The annualized average growth rate of the domestic value added share is also reported in round brackets behind the country code for each EAC country. Figure \ref{fig:EACVB_ts_bar} makes it clear that the foreign value added share has increased substantially in Tanzania and also in Rwanda, but decreased slightly in Kenya and Uganda between 2005 and 2015.  Examining more closely the inner EAC shares, it appears that Tanzania's VA share in Ugandan production has halved between 2005 and 2015, whereas Kenya's share has increased by 0.8\% annually. For Tanzania the VA share of Kenya has almost doubled from about 0.8\% to 1.8\%. Rwanda has also seen increases in the shares of Ugandan and Kenyan VA of about 5\% each year. In Burundi it appears foreign VA declined by 1.7\% over the sample period with only minor changes in the shares of different suppliers. The data for South Sudan is considered unreliable, also minding that the country only became independent in 2011. 
 
 \begin{figure}[h!]
 \centering
-\caption{\label{fig:EACVB_ts_bar}\textsc{Foreign Value Added Shares in EAC Production}}
+\caption{\label{fig:EACVB_ts_bar}\textsc{Change in Foreign Value Added Shares in EAC Production}}
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_bar".pdf} %trim={<left> <lower> <right> <upper>}
 \end{figure}
 \FloatBarrier
 
-A full sector level view of \textbf{VB} for the EAC is not very informative due to the prevalence of very low shares. Figure \ref{fig:eacVB} gives a partial sector disaggregation showing the value added in each EAC sector from different EAC countries. Across the different countries the domestic value added shares are lowest in the manufacturing sectors, coming as low as 30-35\%  in Tanzanian electrical machinery and transport equipment. Kenya is an important supplier of inputs and therefore of VA to these manufactured outputs, accounting for as much as 9\% of the VA in Ugandan petro-chemicals. It was mentioned above than Uganda supplies a significant part of its Agricultural exports to Kenyan food and beverage industries. In VA terms Figure \ref{fig:eacVB} suggests these inputs nevertheless only account for 0.5\% of the VA in this industry in Kenya, which is likely explained by the high amount of VA in processing as well as by other inputs. Uganda has a greater role in Rwandan production, accounting for around 0.5-1\% of the value added in several Rwandan manufacturing sectors. 
+A full sector level view of \textbf{VB} for the EAC is not very informative due to the prevalence of very low shares. Figure \ref{fig:eacVB} gives a partial sector disaggregation showing the value added in each EAC sector from different EAC countries and world regions. Across the different countries the domestic value added shares are lowest in the manufacturing sectors, coming as low as 30-35\%  in Tanzanian electrical machinery and transport equipment. Kenya is an important supplier of inputs and therefore of VA to these manufactured outputs, accounting for as much as 9\% of the VA in Ugandan petro-chemicals. It was mentioned above than Uganda supplies a significant part of its Agricultural exports to Kenyan food and beverage industries. In VA terms Figure \ref{fig:eacVB} suggests these inputs nevertheless only account for 0.5\% of the VA in this industry in Kenya, which is likely explained by the high amount of VA in processing as well as by other inputs. Uganda has a greater role in Rwandan production, accounting for around 0.5-1\% of the value added in several Rwandan manufacturing sectors. \newline
+
+In terms of other world regions, it is evident that the EU has significant shares in the produce of EAC manufacturing sectors, accounting for a much as 20\% of VA in Tanzanian electrical machinery and transport equipment, and 14\% of VA in Kenyan metal products, electrical machinery and transport equipment. In Uganda the EU shares are lower at 7.3\% for electrical machinery and  and 8.1\% for transport equipment. It is also evident that Rwanda, and to a lesser extent Burundi maintain highly international recycling industries, with significant inputs from all world regions. Other significant contributions to VA in EAC manufacturing come from South Asia, China and the rest of Sub-Saharan Africa, with shares ranging between 2 and 8\%, depending on the country and sector. 
 
 \begin{figure}[h!]
 \centering
-\caption{\label{fig:eacVB}\textsc{Disaggregated VA Table: EAC}}
+\caption{\label{fig:eacVB}\textsc{Disaggregated Value Added Share Tables: EAC in 2015}}
 \small{\textit{Shares in Percentage Terms, Columns Sum to 100 Percent}}
-\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_VB_AG_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_VB_AG_EAC_tot".pdf} %trim={<left> <lower> <right> <upper>}
 \end{figure}
 \FloatBarrier
 
 
 \subsection{Value Added Exports}
 
-The matrix \textbf{VB}, reflecting the structure of international production, allows us to decompose any gross flow coming from any country-industry into it's value-added origins by country-industry. The literature frequently considers a decomposition of gross exports into its VA origins, given by the matrix \textbf{VBE} where \textbf{E} is a diagonal matrix with exports by country-industry along the diagonal. %This can be useful to analyze, for example, how much of the value added in a countries exports was generated in that country. Since \textbf{VB} is the same for domestic production and exports, the domestic value added share can just be read from Figures \ref{eq:VB} and \ref{fig:eacVB}. % In terms of VA being consumed, \textbf{VAE}, being a decomposition of gross exports which service both final demand and production, overstates the amount of global value added distributed to the final consumer by means of exports. \newline
+The matrix \textbf{VB}, reflecting the structure of international production, allows us to decompose any gross flow coming from any country-industry into it's value-added origins by country-industry. The literature frequently considers a decomposition of gross exports into its VA origins, given by the matrix \textbf{VBE} where \textbf{E} is a diagonal matrix with exports by country-industry along the diagonal.\newline  %This can be useful to analyze, for example, how much of the value added in a countries exports was generated in that country. Since \textbf{VB} is the same for domestic production and exports, the domestic value added share can just be read from Figures \ref{eq:VB} and \ref{fig:eacVB}. % In terms of VA being consumed, \textbf{VAE}, being a decomposition of gross exports which service both final demand and production, overstates the amount of global value added distributed to the final consumer by means of exports. \newline
 
-\todo[inline]{Referring to commented out bit: Yeah, but even exports of non final goods may be produced into final goods by the receiving country and then consumed there, or processed into intermediates exported to another country and then consumed there. The only exports that do not feed into consumption abroad are exports that are ultimately consumed at home. So using $\textbf{VBE}_{FD}$ is a stark underestimation of exports actually servicing foreign consumption. Perhaps also explain this in writing..}
+%\todo[inline]{Referring to commented out bit: Yeah, but even exports of non final goods may be produced into final goods by the receiving country and then consumed there, or processed into intermediates exported to another country and then consumed there. The only exports that do not feed into consumption abroad are exports that are ultimately consumed at home. So using $\textbf{VBE}_{FD}$ is a stark underestimation of exports actually servicing foreign consumption. Perhaps also explain this in writing..}
 %A more sensible decomposition in terms of quantity is thus to consider the matrix $\textbf{VAE}_{FD}$, where $\textbf{E}_{FD}$ contains only the exports for final demand / consumption. Figure \ref{fig:VAFDexp} shows the EAC value added in global finally consumed exports. Note that this includes exports to other EAC countries as well as exports that are ultimately consumed at home.
 
 %\begin{figure}[h!]
@@ -554,7 +555,7 @@ The matrix \textbf{VB}, reflecting the structure of international production, al
 Figure \ref{fig:VAexp} shows the EAC value added in global exports, which is obtained, for each country-industry, by simply summing the corresponding row of \textbf{VBE}.
 
 \begin{equation} \label{eq:VAE}
-VAE_{oi} = \sum_{uj} vbe_{oi, uj}\ \ \forall\ oi.
+\text{VAE}_{oi} = \sum_{uj} \text{vbe}_{oi, uj}\ \ \forall\ oi.
 \end{equation}
 
  Note that this therefore includes VA in exports to other EAC countries as well as VA in exports that are ultimately consumed at home. Figure \ref{fig:VAexp} shows that the Ugandan VA in globally exported goods at the end of 2015 was around 1 billion USD in basic prices, whereas Kenya contributed around 6 billion USD to the value of gloabal exports in that year. 
@@ -570,22 +571,22 @@ VAE_{oi} = \sum_{uj} vbe_{oi, uj}\ \ \forall\ oi.
 Next to VS or the imported content of production and exports visualized in detail in Figure \ref{fig:EACVB_ts} which functions as a measure of backward GVC integration, \citet{hummels2001nature} also introduced the share of domestic exports that enters foreign countries exports, which they called VS1, as a measure of forward GVC Integration. This measure was first computed and explored by \citet{daudin2011produces}. It is defined as 
 
 \begin{equation} \label{eq:VS1}
-VS1_{oi} = \frac{1}{E_{oi}} \sum_{uj, u \neq  o} vbe_{oi, uj}\ \ \forall\ oi,
+\text{VS1}_{oi} = \frac{1}{E_{oi}} \sum_{uj, u \neq  o} \text{vbe}_{oi, uj}\ \ \forall\ oi,
 \end{equation}
+
 where $E_{oi}$ are the gross exports of country-industry $oi$ which is used to normalize the sum along the rows of \textbf{VBE} (excluding domestic industries) which capture the use of VA from a domestic sector $oi$ in the exports of all foreign sectors $uj$. For completeness I note that VS can be defined in an analogous way as
 
 \begin{equation} \label{eq:VSE}
-VS_{uj} = \frac{1}{E_{uj}} \sum_{oi, o \neq  u} vbe_{oi, uj}\ \ \forall\ uj,
+\text{VS}_{uj} = \frac{1}{E_{uj}} \sum_{oi, o \neq  u} \text{vbe}_{oi, uj}\ \ \forall\ uj,
 \end{equation}
 
-however since $\sum_{oi} vb_{oi, uj} = 1\ \forall\ uj$, the exports cancel out and Eq. \ref{eq:VSE} reduces to \ref{eq:VS}. \newline
+however since $\sum_{oi} \text{vb}_{oi, uj} = 1\ \forall\ uj$, the exports cancel out and Eq. \ref{eq:VSE} reduces to Eq. \ref{eq:VS}. \newline
 
-Figure \ref{fig:VSag_ts} shows the aggregate VS and VS1 for each EAC member country over time. VS1 is called E2R (export to re-exports), and VS I2E (import to exports) by \citet{Kummritz20162} (following \citet{baldwin2015supply}), which also developed the $gvc$ R package to compute these measures. For Uganda, both VS and VS1 are at 11-12\% of exports towards the end of 2015, whereas VS1 was higher at around 14\% of exports in 2005. Tanzania, as already noted shows a remarkable increase in backward GVC participation to above 30\% of VA in its produce generated abroad, but a slight decline in forward GVC participation down to 11\% of exports being re-exported in 2015 - similar to Uganda. Kenya exhibits a stable development with VS of around 17\% and VSI around 12.5\%. Rwanda increased in VS from 15\% in 2005 to 22.5\% in 2015, but at the same time showed a decrease in VS1 from initially 22.5\% down to 16\% in 2015. It is noteworthy that while a few members like Tanzania and Rwanda appear to have succesfully increased their use of foreign intermediates, none of the members significantly increased it's role as supplier of inputs in the global market. Overall the GVC situation appears stagnant in Uganda, Kenya and Burundi. 
+Figure \ref{fig:VSag_ts} shows the aggregate VS and VS1 for each EAC member country over time. VS1 is called E2R (export to re-exports), and VS I2E (import to exports) by \citet{Kummritz20162} (following \citet{baldwin2015supply}), which also developed the $gvc$ R package to compute these measures. For Uganda, both VS and VS1 are at 11-12\% of exports towards the end of 2015, whereas VS1 was higher at around 14\% of exports in 2005. Tanzania, as already noted shows a remarkable increase in backward GVC participation to above 30\% of VA in its produce generated abroad, but a slight decline in forward GVC participation down to 11\% of exports being re-exported in 2015 - similar to Uganda. Kenya exhibits a stable development with VS of around 17\% and VS1 around 12.5\%. Rwanda increased in VS from 15\% in 2005 to 22.5\% in 2015, and at the same time showed a decrease in VS1 from initially 22.5\% down to 16\% in 2015. It is noteworthy that while a few members like Tanzania and Rwanda appear to have succesfully increased their use of foreign intermediates, none of the members significantly increased it's role as supplier of inputs in the global market. Overall the GVC situation appears stagnant in Uganda, Kenya and Burundi. 
 
-\todo[inline]{Global i2e (VS) share is taken by \citep{Kummritz20162} as measure of increase in GVCs over time: "the nomial value of i2e has grown by approximately 350\% and as a share of total exports, it has grown by 35\%, from around 17\% to over 23\% of total exports, Thus, countries increasingly rely on inputs produced abroad for their export production."}. 
+% \todo[inline]{Global i2e (VS) share is taken by \citep{Kummritz20162} as measure of increase in GVCs over time: "the nomial value of i2e has grown by approximately 350\% and as a share of total exports, it has grown by 35\%, from around 17\% to over 23\% of total exports, Thus, countries increasingly rely on inputs produced abroad for their export production."}. 
 
-\todo[inline]{Also from \citep{Kummritz20162}: Another way to examine the expansion of GVCs from 1995 to 2011 is to look
-at their length instead of their trade volume. WWZ propose to use the amount of double counted trade, pdc, as a proxy for GVC length, since its value goes up with back-and-forth trade, which is equivalent to an increase in the number of production stages. They show that its value has increased for 40 selected countries. "In Figure 2, we observe in our larger sample similarly that pdc as a share of total exports has increased over the examined period by 73\% and thus more than i2e. Therefore, GVCs do not only channel more trade but also have become longer over time."}
+%\todo[inline]{Also from \citep{Kummritz20162}: Another way to examine the expansion of GVCs from 1995 to 2011 is to look at their length instead of their trade volume. WWZ propose to use the amount of double counted trade, pdc, as a proxy for GVC length, since its value goes up with back-and-forth trade, which is equivalent to an increase in the number of production stages. They show that its value has increased for 40 selected countries. "In Figure 2, we observe in our larger sample similarly that pdc as a share of total exports has increased over the examined period by 73\% and thus more than i2e. Therefore, GVCs do not only channel more trade but also have become longer over time."}
 
 
 \begin{figure}[h!]
@@ -595,7 +596,7 @@ at their length instead of their trade volume. WWZ propose to use the amount of 
 \end{figure}
 \FloatBarrier
 
-\todo[inline]{Compare growth of i2e and e2r to world growth in these ratios. Also: Is VS1 the same as E2R?}
+%\todo[inline]{Compare growth of i2e and e2r to world growth in these ratios. Also: Is VS1 the same as E2R?}
 
 %\begin{figure}[h!]
 %\centering
@@ -604,7 +605,7 @@ at their length instead of their trade volume. WWZ propose to use the amount of 
 %\end{figure}
 %\FloatBarrier
 
-A sector-level snapshot of VS and VS1 for the year 2015 is provided in Figure \ref{fig:VS}. It shows the large amount of VS in manufacturing, particularly in Tanzania. Rwanda appears to recycle a lot of foreign garbage. In terms of VS1,  aroud 48\% of Ugandan mining exports are manufactured into goods that are re-exported by receiving countries. Wholesale and retail trade also appears to have shares above 20\% of exported goods being re-exported in all countries. 
+A sector-level snapshot of VS and VS1 for the year 2015 is provided in Figure \ref{fig:VS}. It shows the large share of foreign content in manufacturing, particularly in Tanzania. Rwanda and Burundi recycle a lot of foreign garbage. In terms of VS1,  aroud 48\% of Ugandan mining exports are manufactured into goods that are re-exported by receiving countries. Wholesale and retail trade also appears to have shares above 20\% of exported goods being re-exported in all countries. 
 
 \begin{figure}[h!]
 \centering
@@ -613,7 +614,7 @@ A sector-level snapshot of VS and VS1 for the year 2015 is provided in Figure \r
 \end{figure}
 \FloatBarrier
 
-To provide at least a rough overview of the sector-level dynamics over the last 10 years, Figure \ref{fig:VSgr} shows the annualized average growth rate of VS and VS1 over the period. The axes are now on different scales fro each country to reflect the large differences in sector level changes between countries. In Uganda and Kenya, developments are very moderate. Most Ugandan manufacturing sectors increased their imported content (VS) by 1-2\% per annum, while at the same time reducing the share of intermediates for re-export (VS1) by 2-4\% per annum. in Kenya the picture is more diverse, but al similarly small annual changes of 1-4\%. A similarity share by Uganda and Kenya is that both countries reduced their VS in Agriculture by around 3\% per annum while increasing the share amount exports for re-export (VS1) by 2\% each year. In Tanzania nearly all manufacturing sectors exhibit annual gains in VS of 8-10\%. I note again that the data reliability for Tanzania is very low and these estimates should not be interpreted as factual truths. Rwanda shows a similar development to Tanzania, but on a smaller scale. Here most manufacturing sectors appear to have increased their VS by 4-5\% per annum, while reducing VS1 by a similar amount.
+To provide at least a rough overview of the sector-level dynamics over the last 10 years, Figure \ref{fig:VSgr} shows the annualized average growth rates of VS and VS1. The axes are now on different scales for each country to reflect the large differences in sector level changes between countries. In Uganda and Kenya, developments are very moderate. Most Ugandan manufacturing sectors increased their imported content (VS) by 1-2\% per annum, while at the same time reducing the share of intermediates for re-export (VS1) by 2-4\% per annum. In Kenya the picture is more diverse, but with similarly small annual changes of 1-4\%. A similarity between Uganda and Kenya is that both countries reduced their VS in Agriculture by around 3\% per annum while increasing the share of exports for re-export (VS1) by 2\%. In Tanzania nearly all manufacturing sectors exhibit annual gains in VS of 8-10\%. I note again that the data reliability for Tanzania is very low and these estimates should be interpreted with great caution. Rwanda shows a similar development to Tanzania, but on a smaller scale. Here most manufacturing sectors appear to have increased their VS by 4-5\% per annum, while reducing VS1 by a similar amount.
 
 \begin{figure}[h!]
 \centering
@@ -623,38 +624,38 @@ To provide at least a rough overview of the sector-level dynamics over the last 
 \FloatBarrier
 
 
-\todo[inline]{Compute the previous 2 figures for the EAC only!}.
+% \todo[inline]{Compute the previous 2 figures for the EAC only!}
 
 
 \subsection{Regional Integration in Value Added Trade}
-So far we have explored standard country and industry level metrics of backward and forward GVC integration, VS and VS1 and examined the overall level of GVC integration of EAC countries and sectors. The result of this examination was that apart from increases in the import content of production and exports (VS) in Tanzania and Rwanda, the situation is relatively stable over time, with moderate amounts of heterogeneity at the sector level. \newline
+So far we have explored standard country and industry level metrics of backward and forward GVC integration, VS and VS1, and examined the overall level of GVC integration of EAC countries and sectors. The result of this examination was that apart from increases in the import content of production and exports (VS) in Tanzania and Rwanda, the situation is relatively stable over time, with moderate amounts of heterogeneity at the sector level. \newline
 
-This section builds on these findings and introduces some metrics to track regional EAC integration through VA in supply chains, relative to any global developments experience by each member country. The first such metric computed is the share of foreign VA in a members production / exports accounted for by it's EAC partner states. It is computed as
+This section builds on these findings and introduces some metrics to track regional EAC integration through VA in supply chains, relative to any global developments experienced by each member country. The first such metric computed is the share of foreign VA in a members production / exports accounted for by it's EAC partner states. It is computed as
 
 \begin{equation} \label{eq:VS_EAC}
-VS_{uj}^{EAC} = \frac{1}{VS_{uj}}  \sum_{oi \in EAC,\ o \neq  u} vb_{oi, uj}   \ \ \forall\ uj \in EAC,
+\text{VS}_{uj}^{EAC} = \frac{1}{\text{VS}_{uj}}  \sum_{oi \in EAC,\ o \neq  u} \text{vb}_{oi, uj}   \ \ \forall\ uj \in EAC,
 \end{equation}
-where $VS_{uj}$ is defined as in Eq. \ref{eq:VS}. $VS^{EAC}$ is thus a relative measure tracking the EAC share in VS, such that the overall EAC VA share in domestic production can be computed as $VS_{uj}^{EAC} \times VS_{uj} \ \forall\ uj$. We can define an analogous measure for VS1 as the proportion of domestic VA in re-exported exports that is exported by EAC partner states. 
+
+where VS$_{uj}$ is defined as in Eq. \ref{eq:VS}. VS$^{EAC}$ is thus a relative measure tracking the EAC share in VS, such that the overall EAC VA share in domestic production can be computed as VS$_{uj}^{EAC} \times \text{VS}_{uj} \ \forall\ uj$. We can define an analogous measure for VS1 as the proportion of domestic VA in re-exported exports that is exported by EAC partner states. 
 
 \begin{equation} \label{eq:VS1_EAC}
-VS1_{oi}^{EAC} =  \sum_{uj \in EAC, u \neq  o} vbe_{oi, uj} \bigg/ \sum_{uj, u \neq  o} vbe_{oi, uj}\ \ \forall\ oi \in EAC.
+\text{VS1}_{oi}^{EAC} =  \sum_{uj \in EAC, u \neq  o} \text{vbe}_{oi, uj} \bigg/ \sum_{uj, u \neq  o} \text{vbe}_{oi, uj}\ \ \forall\ oi \in EAC.
 \end{equation}
 
-These two metrics effectively track the role of the EAC in forming the interaction of each member country with the rest of the world in terms of production and export linkages. They do however not account for the import side, that is the overall role of the EAC in providing goods and services to each member country relative to the rest of the world. Therefore we will compute two additional metrics to capture this aspect of regional integration. The first metric is the share of EAC VA in the imports received by each member, which we shall denote by $VAI^{EAC}$. Consider $E_u$ to the vector of VA exports to EAC using country $u \in EAC$ from each country-sector.%, and $\textbf{I}_u$ the matrix with  $I_u$ along the diagonal.
-\todo[inline]{Note that since we don't have final demand disaggregated by sector, we cannot compute $VAI^{EAC}$ by receiving sector, but only by receiving country.}
+These two metrics effectively track the role of the EAC in forming the interaction of each member country with the rest of the world in terms of production and export linkages. They do however not account for the import side, that is the overall role of the EAC in providing goods and services to each member country relative to the rest of the world. Therefore we will compute two additional metrics to capture this aspect of regional integration. The first metric is the share of EAC VA in the imports received by each member, which we shall denote by VAI$^{EAC}$. Consider $E_u$ to the vector of VA exports to EAC using country $u \in EAC$ from each country-sector\footnote{Note that since we don't have final demand disaggregated by sector, we cannot compute VAI$^{EAC}$ by receiving sector, but only by receiving country.}.%, and $\textbf{I}_u$ the matrix with  $I_u$ along the diagonal.
 Then we can find the VA origins of these exports to country $u$ by pre-multiplying with \textbf{VB} to give 
 \begin{equation}
 E_u^{VA} = \textbf{VB}E_u,
 \end{equation}
  where $E_u^{VA}$ denotes the vector, with elements $e_{oi, u}^{VA}$, of VA supplied by each country-industry ($oi$) in these imports of country $u$. From  $E_u^{VA}$ the share of EAC VA is easily computed as 
 \begin{equation}
-VAI_{u}^{EAC} = \sum_{oi \in EAC, o \neq u}  e_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  e_{oi, u}^{VA}.  
+\text{VAI}_u^{EAC} = \sum_{oi \in EAC, o \neq u}  e_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  e_{oi, u}^{VA}.  
 \end{equation}
-$VAI_u^{EAC}$ thus gives us a country-level measure of the VA by it's EAC partners in it's import mix, excluding any domestic VA in imports. This VA may however enter into produced goods and be exported again, thus it is a measure of the EAC contribution to (non-domestic) production and consumption in a particular member country. To single out the EAC share in imported consumption goods, we need to consider only exports for final demand, which exclude exports feeding into production as intermediates. Let $FE_u$ therefore denote the final exports to country $u$ from each country-industry. Then $FE_u^{VA} = \textbf{VB}FE_u$ denotes the decomposition of those exports into VA components, and we can define 
+VAI$_u^{EAC}$ thus gives us a country-level measure of the VA by it's EAC partners in it's import mix, excluding any domestic VA in imports. This VA may however enter into produced goods and be exported again, thus it is a measure of the EAC contribution to (non-domestic) production and consumption in a particular member country. To single out the EAC share in imported consumption goods, we need to consider only exports for final demand, which exclude exports feeding into production as intermediates. Let $FE_u$ therefore denote the final exports to country $u$ from each country-industry. Then $FE_u^{VA} = \textbf{VB}FE_u$ denotes the decomposition of those exports into VA components, and we can define 
 \begin{equation}
-VAFI_{u}^{EAC} = \sum_{oi \in EAC, o \neq u}  fe_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  fe_{oi, u}^{VA}
+\text{VAFI}_{u}^{EAC} = \sum_{oi \in EAC, o \neq u}  fe_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  fe_{oi, u}^{VA}
 \end{equation}
-as the EAC VA share in final goods exported to a particular member $u$.
+as the EAC VA share in final goods exported to a particular member $u$. 
 
 %\begin{equation} \label{eq:VS1_EAC}
 %VS1_{oi}^{EAC} =  \sum_{uj \in EAC, u \neq  o} vbe_{oi, uj} \bigg/ \sum_{uj, u \neq  o} vbe_{oi, uj}\ \ \forall\ oi \in EAC.
@@ -670,14 +671,6 @@ as the EAC VA share in final goods exported to a particular member $u$.
 %VS_{uj}^{EAC} = \frac{1}{VS_{uj}}  \sum_{oi \in EAC,\ o \neq  u} vb_{oi, uj}   \ \ \forall uj \in EAC,
 %\end{equation}
 
-Figure \ref{fig:VAEACshares} reports the results. It is evident that Uganda and Tanzania follow very similar regional integration patterns, though at very different levels. In Uganda, around 21\% of VS (the foreign content of production) is accounted for by the EAC, whereas in Tanzania this was 6.3\% at the end of 2015. In Uganda the EAC share of VS1 (re-exported exports) was close to 6\% end of 2015, whereas in Tanzania it ended at 2\%. In-between we have the EAC share in Ugandan imports (VAI) and final imports (VAFI) at around 16.5\% and 14.5\% in 2015, whereas for Tanzania these shares were 5.2\% and 4.5\%, respectively. 
-
-\todo[inline]{Another metric: Calculate each countries share in total EAC exports ??, or add EAC content in Final exports ??}
-
-Overall this suggests that both countries have stronger backward GVC linkages with the EAC, with EAC countries (in particularly Kenya), supplying inputs into the production, whereas both countries play only a moderate role as suppliers of intermediates for export. In Kenya we observe the opposite pattern, where around 7.4\% of Kenya's re-exported exports (VS1) are exported by it's EAC partners, but only about 0.9\% of its imported inputs (VS) is accounted for by EAC partners. On the import side, less than 3\% of the VA in Kenyan imports is generated by it's EAC partners, but it is interesting that the EAC content in final imports is higher at 2.3\% than the EAC share in overall imports at 1.5\%, confirming that Kenya imports relatively more final goods than intermediates from it's EAC partners. Rwanda and Burundi also follow a similar pattern of EAC integration. In both countries the final import share of the EAC is highest, at around 11\% in Randa and 4.3\% in Burundi in 2015. This is followed, with some distance, by the EAC share in VS, at 6.5\% in Rwanda and 2.2\% in Burundi. Both countries have a negligible supplier role for the EAC, with <1\% of their re-exported exports exported by EAC partners. 
-
-
-
 \begin{figure}[h!]
 \centering
 \caption{\label{fig:VAEACshares}\textsc{EAC VA Shares in Members VS, VS1, Imports and Final Imports}}
@@ -685,19 +678,26 @@ Overall this suggests that both countries have stronger backward GVC linkages wi
 \end{figure}
 \FloatBarrier
 
+Figure \ref{fig:VAEACshares} reports the results. It is evident that Uganda and Tanzania follow very similar regional integration patterns, though at very different levels. In Uganda, around 21\% of VS (the foreign content of production) is accounted for by the EAC, whereas in Tanzania this was 6.3\% at the end of 2015. In Uganda the EAC share of VS1 (re-exported exports) was close to 6\% end of 2015, whereas in Tanzania it ended at 2\%. In-between we have the EAC share in Ugandan imports (VAI) and final imports (VAFI) at around 16.5\% and 14.5\% in 2015, whereas for Tanzania these shares were 5.2\% and 4.5\%, respectively. \newline
+
+% \todo[inline]{Another metric: Calculate each countries share in total EAC exports ??, or add EAC content in Final exports ??}
+
+Overall this suggests that both countries have stronger backward GVC linkages with the EAC, with EAC countries (in particularly Kenya), supplying inputs into the production, whereas both countries play only a moderate role as suppliers of intermediates for export. In Kenya we observe the opposite pattern, where around 7.4\% of Kenya's re-exported exports (VS1) are exported by it's EAC partners, but only about 0.9\% of its imported inputs (VS) is accounted for by EAC partners. On the import side, less than 3\% of the VA in Kenyan imports is generated by it's EAC partners, but it is interesting that the EAC share in final imports is higher at 2.3\% than the EAC share in overall imports at 1.5\%, confirming that Kenya imports relatively more final goods than intermediates from it's EAC partners. Rwanda and Burundi also follow a similar pattern of EAC integration. In both countries the final import share of the EAC is highest, at around 11\% in Randa and 4.3\% in Burundi in 2015. This is followed, with some distance, by the EAC share in VS, at 6.5\% in Rwanda and 2.2\% in Burundi. Both countries have a negligible supplier role for the EAC, with <1\% of their re-exported exports exported by EAC partners. In South Sudan the data suggest EAC shares in VS, VAI and VAFI of around 1\% in 2015, indicative of it low-level of economic integration with its EAC partners. Overall, the progression of these indicators over time suggests a stagnant or, in the case of Tanzania and Burundi, even declining level of regional integration through value chains, measured on relation to an also mostly stagnant overall level of value chain integration of the EAC member countries. 
 
 
-\todo[inline]{Compare direct domestic VA with total domestic VA}.
-\todo[inline]{Growth of VS relative to World Average, and percentage of export growth accounted for by VS growth, following Hummels. Also calculate VS trends in time. Also look at which industries are driving this growth.... ALso: VS growth accounted for bz regional EAC integration vs. other. ALso: Links between VS and FDI. And: VS and tarriffs / NTB's...}
+% \todo[inline]{Compare direct domestic VA with total domestic VA}.
+% \todo[inline]{Growth of VS relative to World Average, and percentage of export growth accounted for by VS growth, following Hummels. Also calculate VS trends in time. Also look at which industries are driving this growth.... ALso: VS growth accounted for bz regional EAC integration vs. other. ALso: Links between VS and FDI. And: VS and tarriffs / NTB's...}
 
-\todo[inline]{look at VS by firm size and owndership in each sector (combine ES with GVC data). Could also be interesting for economic integration in Uganda / East Africa. I.e. does the domestic economy benefit at all or is it just foreign firms assembling foreign inputs here.}
+% \todo[inline]{look at VS by firm size and owndership in each sector (combine ES with GVC data). Could also be interesting for economic integration in Uganda / East Africa. I.e. does the domestic economy benefit at all or is it just foreign firms assembling foreign inputs here.}
 
-\todo[inline]{KWW talk about effect of Exchange rate on bilateral trade atters and how it depends on VS -> understand it...}.
+% \todo[inline]{KWW talk about effect of Exchange rate on bilateral trade atters and how it depends on VS -> understand it...}.
 
 \subsection{Koopman Wang Wei Decomposition of Gross Exports}
-One problem with the Leontief decomposition of gross exports into VA origins is that it also captures so called pure double counted items, which are items that that are traded two or more times between the same trading partners. For example if on a value chain for chemical products an intermediate product would be first exported from Uganda to Kenya, processed further in Kenya and then imported again by Uganda to produce a final good that is the exported. The Leontief decomposition will correctly allocate the share of VA in this product to Uganda and Kenya, but Ugandan gross exports themselves would overstate the amount of VA in either of the two countries, because it includes both the export the the intermediate produce to Kenya, and the export of the final good to the rest of the world. So this king of double counting in gross exports is incurred whethever there exists two-eay trade in intermediate goods. \newline
+One problem with the Leontief decomposition of gross exports into VA origins is that it also captures so called pure double counted items, which are items that that are traded two or more times between the same trading partners. For example if on a value chain for chemical products an intermediate product would be first exported from Uganda to Kenya, processed further in Kenya and then imported again by Uganda to produce a final good that is the exported. The Leontief decomposition will correctly allocate the share of VA in this product to Uganda and Kenya, but Ugandan gross exports themselves would overstate the amount of VA in either of the two countries, because it includes both the export of the intermediate produce to Kenya, and the export of the final good to the rest of the world. So this kind of double counting in gross exports is incurred whenever there exists two-way trade in intermediate goods. \newline
 
-Secondly, the Leontief decomposition provides no information as to where and how the VA in exports is absorbed, it only provides the origin of VA in gross exports. To account for double counted items in gross exports and also to better understand where and how VA is absorved, which indicates how countries integrate into GVCs, a number of increasingly complex GVC decompositions have been developed. The simplest and most well known of these is the Decomposition of country-level gross exports into 9 VA components proposed by Koopman, Wang and Wei (2014), henceforth KWW \citep{koopman2014tracing}. The 9 terms fo the KWW decompostion are given schematically in Figure \ref{fig:KWW}\footnote{A mathematical expression for each of the 9 terms is provided in Eq. 36 of the \citet{koopman2014tracing} paper.}.
+Secondly, the Leontief decomposition provides no information as to where and how the VA in exports is absorbed, it only provides the origin of VA in gross exports. To account for double counted items in gross exports and also to better understand where and how VA is absorbed, which indicates how countries integrate into GVCs, a number of increasingly complex GVC decompositions have been developed. The simplest and most well known of these is the Decomposition of country-level gross exports into 9 VA components proposed by Koopman, Wang and Wei (2014), henceforth KWW \citep{koopman2014tracing}. The 9 terms fo the KWW decompostion are given schematically in Figure \ref{fig:KWW}\footnote{A mathematical expression for each of the 9 terms is provided in Eq. 36 of the \citet{koopman2014tracing} paper.}. \newline
+
+The decomposition splits exports first into foreign content (VS) and domestic content. Domestic content is then further split into VA exports that are absorbed abroad, and content that eventually returns home and is absorbed domestically. Each of these thee categories can be subdivided further according to how the VA is utilized. In both the domestic content returning home and foreign content, there are double counted categories, which split double counted VA arising from two-way trade in intermediate goods according to their domestic and foreign VA. In the example given above: if an intermediate is first exported from Uganda to Kenya, then re-imported by Uganda and finally exported, then the VA in that first export from Uganda to Kenya would be assigned to the domestic and foreign double counted terms (depending on where the value of the intermediate at that stage originated). 
 
 \begin{figure}[h!]
 \centering
@@ -707,7 +707,7 @@ Secondly, the Leontief decomposition provides no information as to where and how
 \FloatBarrier
 
 \subsubsection{Aggregate KWW Decomposition}
-The KWW decomposition of gross exports is computed for each of the EAC members and shown in Figure \ref{fig:KWW_fill_ts}. To connect this decomposition to the aggregate measures of GVC integration VS and VS1 obtained from the Leontief decomposition and shown in Figure \ref{fig:VSag_ts}: VS the share of FVA in gross exports is the sum of FVA\_FIN, FVA\_INT  and FDC, while VS1 is nearly equivalent to DVA\_INTrex (since RDV\_FIN, and RDV\_INT are close to 0 in all EAC countries)\todo{Check with KWW paper}.  
+The KWW decomposition of gross exports is computed for each of the EAC members and shown in Figure \ref{fig:KWW_fill_ts}. To connect this decomposition to the aggregate measures of GVC integration VS and VS1 obtained from the Leontief decomposition and shown in Figure \ref{fig:VSag_ts}: VS the share of FVA in gross exports is the sum of FVA$_{FIN}$ (7), FVA$_{INT}$ (8) and FDC (9), while VS1 is the sum of DVA$_{INTrex}$ (3), RDV$_{FIN}$ (4), RDV$_{INT}$ (5) and DDC (6) (approximately equal to DVA$_{INTrex}$ here since RDV$_{FIN}$, RDV$_{INT}$  and DDC are close to 0 in all EAC countries).  
 
 \begin{figure}[h!]
 \centering
@@ -716,26 +716,31 @@ The KWW decomposition of gross exports is computed for each of the EAC members a
 \end{figure}
 \FloatBarrier
 
-Figure \ref{fig:KWW_fill_ts} shows that double counted items constitute up to 10\% of gross exports in EAC countries, but that most of this double counting occurs with VA produced abroad. The domestic content in intermediate exports that finally returns home is practially 0 for all EAC members, indicating an overall insignificant role of these countries as suppliers of inputs to their own final imports\footnote{This is a prevalent feature in the export composition of high-income countries, see for example \citep{Kummritz20162}.}. In all members furthermore the largest share of exports is domestic VA in intermediate exports absorbed by direct importers. Only a small share of DVA in intermediate exports is re-exported indicating that EAC countries predominantly export basic inputs to products manufactured for home consumption in the importing countries. In Uganda furthermore around 40\% of exports constitute DVA in final goods exports. Apart from Tanzania, the share of DVA in final goods exports has increased over time. Tanzania is also the only country with a significant share of FVA in final goods exports, indicating some significant assembly and processing tasks. Rwanda on the other hand has a high share of FVA in intermediate exports\footnote{Primary the recycling sector as shown in Figure \ref{fig:KWW_fill_sec}.}. \newline  % suggesting moderate upstream integration in GVCs in some industries
+Figure \ref{fig:KWW_fill_ts} shows that double counted items constitute up to 10\% of gross exports in EAC countries, but that most of this double counting occurs with VA produced abroad. The domestic content in intermediate exports that finally returns home is practially 0 for all EAC members, indicating an overall insignificant role of these countries as suppliers of inputs to their own final imports\footnote{This is prevalent in the export composition of high-income countries, see e.g. \citep{Kummritz20162}.}. In all members furthermore the largest share of exports is domestic VA in intermediate exports absorbed by direct importers. Only a small share of DVA in intermediate exports is re-exported indicating that EAC countries predominantly export basic inputs to products manufactured for home consumption in the importing countries. In Uganda furthermore around 40\% of exports constitute DVA in final goods exports. Apart from Tanzania, the share of DVA in final goods exports has increased over time. Tanzania is also the only country with a significant share of FVA in final goods exports, indicating some assembly and processing tasks. Rwanda on the other hand has a high share of FVA in intermediate exports\footnote{Primary the recycling sector as shown in Figure \ref{fig:KWW_fill_sec}.}. \newline  % suggesting moderate upstream integration in GVCs in some industries
 
 \subsubsection{Upstreamness and Downstreamness in GVC Participation}
 
-\todo[inline]{Make Separate charts for Final and Intermediate Exports: High FVA in final exports indicates downstreamness, while high DVA in intermediate exports indicates upstreamness. 
-By tracking these two variables over time we can see which countries have succeeded in moving up the value chain. See \citep{Kummritz20162}}
+%\todo[inline]{Make Separate charts for Final and Intermediate Exports: High FVA in final exports indicates downstreamness, while high DVA in intermediate exports indicates upstreamness. By tracking these two variables over time we can see which countries have succeeded in moving up the value chain. See \citep{Kummritz20162}}
 
-The KWW decomposition also lets us asses the position of countries in GVCs regardless of their overall level of GVC integration\footnote{As measured by VS and VS1.}. According to \citet{Kummritz20162} and \citet{wang2013quantifying}, High FVA in final exports relative to total foreign content in exports indicates downstreamness (assembly tasks), while high DVA in intermediate exports relative to total DVA in exports indicates upstreamness (specialization in tasks adding a lot of value to an unfinished product). I follow these authors by computing these ratios\footnote{More formally: $$\text{Upstreamness} = \frac{\text{DVA\_INT} + \text{DVA\_INTrex} + \text{DDC}}{\text{DVA\_FIN} + \text{DVA\_INT} + \text{DVA\_INTrex} + \text{RDV\_FIN} + \text{RDV\_INT} + \text{DDC}}$$  
-$$\text{Downstreamness} = \frac{\text{FVA\_FIN}}{\text{FVA\_FIN} + \text{FVA\_INT} + \text{FDC}}$$}, which are shown in Figure \ref{fig:UP_DOWN_ag_ts}\todo{Ratios are unintuitive, why not FVA\_FIN over total FIN exports (domestic and foreign)? Google more about upstreamness and downstreamness.}.
-
-\todo[inline]{also repeat VS and VS1 movements indicating overall GVC integration.}
-
-\begin{figure}[h!]
+The KWW decomposition also lets us asses the position of countries in GVCs regardless of their overall level of GVC integration\footnote{As measured by VS and VS1.}. According to \citet{Kummritz20162} and \citet{wang2013quantifying}, High FVA in final exports relative to total foreign content in exports indicates downstreamness (assembly tasks), while high DVA in intermediate exports relative to total DVA in exports indicates upstreamness (specialization in tasks adding a lot of value to an unfinished product). I follow these authors in computing the ratios as shown in Equations \ref{eq:US} and \ref{eq:DS}, and plot them in Figure \ref{fig:UP_DOWN_ag_ts}.  
+\begin{equation} \label{eq:US}
+\text{Upstreamness}\quad =\quad \frac{\text{DVA}_{INT} + \text{DVA}_{INTrex} + \text{DDC}}{\text{DVA}_{FIN} + \text{DVA}_{INT} + \text{DVA}_{INTrex} + \text{RDV}_{FIN} + \text{RDV}_{INT} + \text{DDC}}
+\end{equation}
+\begin{equation} \label{eq:DS}
+\text{Downstreamness}\quad =\quad \frac{\text{FVA}_{FIN}}{\text{FVA}_{FIN} + \text{FVA}_{INT} + \text{FDC}},
+\end{equation}
+%\todo[inline]{Ratios are unintuitive, why not FVA\_FIN over total FIN exports (domestic and foreign)? Google more about upstreamness and downstreamness.}.
+% \todo[inline]{also repeat VS and VS1 movements indicating overall GVC integration.}
+\begin{figure}[h!] \vspace{-0.3cm}
 \centering
 \caption{\label{fig:UP_DOWN_ag_ts}\textsc{Upstreamness and Downstreamness Ratios}}
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
-\end{figure}
-\FloatBarrier
+% \vspace{-1cm}
+\end{figure} 
+\FloatBarrier 
 
-From Figure \ref{fig:UP_DOWN_ag_ts} it appears that the smaller countries are situated more upstream in GVCs, but this is also a consequence of them generally exporting less final goods. More meaningful than the levels of these ratios are their change over time. Figure \ref{fig:UP_DOWN_ag_ts} suggests that apart from Tanzania all EAC members became more downstream in their GVC integration, with less domestic content in intermediate exports and more FVA in final goods exports. To better exhibit these findings, Figure \ref{fig:UP_DOWN_ag_growth} shows the difference in the Upstreamness and Downstreamness ratios between 2005 and 2015. It is evident that Uganda and Kenya moved downstream in these years, with more foreign value added going into final goods than intermediate goods, and also more DVA going into final goods. This could, especially for the smaller countries Rwanda and Burundi, also indicate a general increase in Final goods exports that has nothing to do with GVCs\todo{right?}. Only Tanzania appears to have mived slightly upstream over this time period, with more domestic and foreign VA going into intermediate exports. 
+From Figure \ref{fig:UP_DOWN_ag_ts} it appears that the smaller countries are situated more upstream in GVCs, but this is also a consequence of them generally exporting less final goods. More meaningful than the levels of these ratios is their change over time. Figure \ref{fig:UP_DOWN_ag_ts} suggests that apart from Tanzania all EAC members became more downstream in their GVC integration, with less domestic content in intermediate exports and more FVA in final goods exports. To better exhibit these findings, Figure \ref{fig:UP_DOWN_ag_growth} shows the difference in the Upstreamness and Downstreamness ratios between 2005 and 2015. It is evident that Uganda and Kenya moved downstream in these years, with more foreign value added going into final goods than intermediate goods, and also more DVA going into final goods. This could, especially for the smaller countries Rwanda and Burundi, also indicate a general increase in Final goods exports that has nothing to do with shifting patterns of GVC integration. %\todo{right?}. 
+Only Tanzania appears to have mived slightly upstream over this time period, with more domestic and foreign VA going into intermediate exports. 
 
 \begin{figure}[h!]
 \centering
@@ -747,28 +752,33 @@ From Figure \ref{fig:UP_DOWN_ag_ts} it appears that the smaller countries are si
 
 \subsubsection{KWW Decomposition of EAC Exports to the EAC}
 
-Whereas the KWW decomposition is only defined at the country-level, \citet{wang2013quantifying} derived a much more detailed decomposition that decomposes exports into 16 terms at the bilateral and sector-level. To consider 16 terms is a bit over the top given the very moderate data quality for developing countries. It is however possible to add up these 16 terms to get the 9 terms of KWW at a disaggregated level. Figure \ref{fig:KWW_fill_ts_EAC} shows the KWW decomposition of gross exports to other EAC countries. 
+Whereas the KWW decomposition is only defined at the country-level, \citet{wang2013quantifying} derived a much more detailed decomposition that decomposes gross exports into 16 terms at the bilateral and sector-level. To consider 16 terms is a bit over the top given the very low data quality for developing countries. It is however possible to add up these 16 terms to get the 9 terms of KWW at a disaggregated level. \newline 
 
-\begin{figure}[h!]
+Figure \ref{fig:KWW_fill_ts_EAC} shows the KWW decomposition of gross exports to other EAC countries. Overall it is very similar to the overall export decomposition in Figure \ref{fig:KWW_fill_ts}, but with a couple of noteworthy differences. The first is that in all EAC countries DVA$_{FIN}$ has a higher and DVA$_{INT}$ a lower share in exports to the EAC than in overall exports, implying that final goods exports are more prevalent in inner-EAC trade than in the overall trade mix of member countries. Secondly, DVA$_{INTrex}$ and FDC components are both a lot lower in inner-EAC trade. Since both exports of intermediates and double counted components are features of GVCs, this therefore suggests that EAC member countries engage relatively more in GVCs with the rest of the World than with their EAC partners, or at least that inner-EAC value chains are shorter than other value chains EAC members engage in \citep{Kummritz20162}. 
+\newpage
+
+\begin{figure}[h!] \vspace{-1cm}
 \centering
 \caption{\label{fig:KWW_fill_ts_EAC}\textsc{KWW Decomposition of Gross Exports to the EAC}}
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_ts_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\vspace{-0.8cm}
 \end{figure}
 \FloatBarrier
-
-\todo[inline]{Double counted trade is low: Short GVC's following \citep{Kummritz20162}?.}
+% \todo[inline]{Double counted trade is low: Short GVC's following \citep{Kummritz20162}?.}
 
 \subsubsection{Sectoral-Level Decomposition}
-In addition, we can show the KWW at sector level for the year 2015 (derived from WWZ).
+The decomposition of \citet{wang2013quantifying} decomposes trade flows at the sector level, from which the sector-level KWW decomposition is easily obtained. Figure \ref{fig:KWW_fill_sec} shows this sectoral KWW decomposition for the year 2015. In general, manufacturing sectors have higher shares of FVA, including FDC, in all EAC countries. In some cases such as Rwanda's highly international recycling sector FVA is over 90\%, where compared to Figure \ref{fig:VS}, Figure \ref{fig:KWW_fill_sec} provides the additional information that most of this recycling is re-exported as intermediate inputs.  
 
-\begin{figure}[h!]
+\begin{figure}[h!] \vspace{-0.1cm}
 \centering
 \caption{\label{fig:KWW_fill_sec}\textsc{KWW Decomposition of Sector-Level Gross Exports in 2015}}
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_sec".pdf} %trim={<left> <lower> <right> <upper>}
+\vspace{-1.5cm}
 \end{figure}
 \FloatBarrier
+\newpage
 
-It remains to investigate Upstreamness and Downstreamness at the sectoral level to gauge if amidst of the aggregate movement towards more downstream GVC integration in most EAC countries some sectors moved upstream. Figure \ref{fig:UP_DOWN_sec} shows the values of Upstreamness and Downstreamness for each sector in 2005 and 2015. It suggests that movements at the sector level are quite homogenous and in line with the aggregate movement towards final goods production. 
+While Figure \ref{fig:VS} already gives an indication of the overall share of FVA in sectoral exports for the year 2015, the more detailed decomposition in Figure \ref{fig:KWW_fill_sec} permits further investigation regarding the relative share of final goods vs. intermediates in both domestic and foreign VA.  This information is difficult to read off Figure \ref{fig:KWW_fill_sec} but summarized by the Upstreamness and Downstreamness ratios computed above at the aggregate level, which Figure \ref{fig:UP_DOWN_sec} now computes at the sector-level. To also gauge whether sectors have moved upstream of not, Figure \ref{fig:UP_DOWN_sec} shows the values of Upstreamness and Downstreamness for both the firs and last year of the analysis period. 
 
 \begin{figure}[h!]
 \centering
@@ -777,13 +787,13 @@ It remains to investigate Upstreamness and Downstreamness at the sectoral level 
 \end{figure}
 \FloatBarrier
 
+While there is a great deal of sectoral heterogeneity in Figure \ref{fig:UP_DOWN_sec}, two findings stand out. The first is that in Rwanda and Burundi manufacturing sectors appear to be relatively more upstream than other sectors, which is not generally the case in Uganda, Tanzania and Kenya. The second more striking fact is that nearly all sectors in all EAC countries (including Tanzania) have moved downstream, that is to say exports have shifted more towards final goods than intermediates. In this regard movements at the sector level are very homogeneous and in line with the aggregate movement towards final goods production conveyed by Figures \ref{fig:UP_DOWN_ag_ts} and \ref{fig:UP_DOWN_ag_growth}. This downstream shift will likely not increase the benefits EAC member countries can gain from participation in GVCs, as most of the technology transfer is likely to happen in upstream production tasks than in downstream assembly tasks. More research needs to be done however with regards to the nature and causes of this downstream shift before jumping to conclusions about its economic implications. 
+
+
 \subsection{New Revealed Comparative Advantage}
-A popular measure to empirically measure Ricardo's concept of comparative advantage in international trade is the measure of revealed comparative advantage proposed by \citet{balassa1965trade}. It is computed as the share of a sector in gross country exports, divided by the share that of that sector in gross World exports. A ratio above 1 indicates a comparative advantage of the country in this sector. The traditional index based on gross flows however does not take account of double counting in gross exports, and may thus be noisy and misleading. \citet{koopman2014tracing} therefore propose a new index based on VA flows, which considers the domestic value added in gross exports, no matter where it is absorbed (the sum of terms 1-5 of the KWW decomposition) to compute a new revealed comparative advantage (NRCA) index. \newline
+A popular measure to empirically measure Ricardo's concept of comparative advantage in international trade is the measure of revealed comparative advantage proposed by \citet{balassa1965trade}. It is computed as the share of a sector in gross country exports, divided by the share that of that sector in gross World exports. A ratio above 1 indicates a comparative advantage of the country in this sector. The traditional index based on gross flows however does not take account of double counting in gross exports, and may thus be noisy and misleading. \citet{koopman2014tracing} therefore propose a new index based on VA flows, which considers the domestic VA in gross exports (or domestic GDP in exports, the sum of terms 1-5 of the KWW decomposition), to compute a new revealed comparative advantage (NRCA) index. \newline
 
-Figure \ref{fig:NRCA} shows the NRCA for EAC countries in the year 2015. It is evident that all EAC members have a NRCA in agriculture, which is higher than 10 in Uganda, Tanzania and Kenya. Also all EAC members have a comparative disadvantage in core manufacturing sectors such a petro-chemicals, metral products and electrical machinery. The remaining sectors show more heterogeneity across EAC countries, where Kenya appears to be different from the other countries. In Uganda, Tanzania, Rwanda, Burundi and South Sudan activities of private households (self-employment) seem to have a strong comparative advantage, and also maintenance and repair activities have a strong comparative advantage, whereas in Kenya both sectors appear to have a comparative disadvantage. \newline
-
-As we have 10 years of data, it will be interesting to see whether there were significant changes in the revealed comparative advantage of sectors. Figure \ref{fig:NRCA_ts} therefore shows the NRCA for each EAC country-sector over the 2005-2015 period. It is evident from the many straight lines in the graph that comparative advantage did not change much over this time period. In Uganda, Rwanda, Burundi and South Sudan there was no transition of a comparative disadvantage sector (NRCA < 1) to a comparative advantage sector (NRCA > 1) over this period. The gratest fluctuations are exhibited by Tanzania where the data suggest that NRCA in Agriculture and Fishing has increased from around 10 to around 13. 
-
+Figure \ref{fig:NRCA} shows the NRCA for EAC countries in the year 2015. It is evident that all EAC members have a NRCA in agriculture and fishing, which is higher than 10 for agriculture in Uganda, Tanzania and Kenya. Also all EAC members have a comparative disadvantage in core manufacturing sectors such a petro-chemicals, metral products and electrical machinery. The remaining sectors show more heterogeneity across EAC countries, where Kenya appears to be different from the other countries. In Uganda, Tanzania, Rwanda, Burundi and South Sudan activities of private households (self-employment) seem to have a strong comparative advantage, and also maintenance and repair activities have a strong comparative advantage, whereas in Kenya both sectors appear to have a comparative disadvantage. \newline
 
 \begin{figure}[h!]
 \centering
@@ -792,31 +802,41 @@ As we have 10 years of data, it will be interesting to see whether there were si
 \end{figure}
 \FloatBarrier
 
+As we have 10 years of data, it will be interesting to see whether there were significant changes in the revealed comparative advantage of sectors. Figure \ref{fig:NRCA_growth} therefore shows the annualized growth rate in NRCA over the 2005-2015 period. It is evident that comparative advantage has not changed much in agriculture, with minor annual gains or losses within the [-2\%, 2\%] range. All EAC members seem to have gained comparative advantage in fishing, particularly Uganda and Tanzania with gains of 2.2\% and 5.3\%, respectively. Also all EAC members had lost comparative advantage in mining, especially Uganda. All EAC countries have gained comparative advantage in re-exporting goods. In other sectors developments are rather heterogeneous. Uganda for example appears to have gained comparative advantage in exporting transport equipment by around 5.1\% annually, whereas Rwanda lost comparative advantage in the same sector by -4.1\% annually. There were also hardly any movements of sectors from comparative disadvantage (NRCA $< 1$) to comparative advantage (NRCA $> 1$) in this time period, only Tanzania's mining sector moved to a slight comparative disadvantage of 0.99 in 2015, from 1.23 in 2005. 
+
+%It is evident from the many straight lines in the graph that comparative advantage did not change much over this time period. In Uganda, Rwanda, Burundi and South Sudan there was no transition of a comparative disadvantage sector (NRCA < 1) to a comparative advantage sector (NRCA > 1) over this period. The gratest fluctuations are exhibited by Tanzania where the data suggest that NRCA in Agriculture and Fishing has increased from around 10 to around 13. 
+
+% \todo[inline]{Replace Figure with a growth rates bar chart just like the figure above. Or better: Try the dot plot straight}
 
 \begin{figure}[h!]
 \centering
-\caption{\label{fig:NRCA_ts}\textsc{New Revealed Comparative Advantage}}
-\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\caption{\label{fig:NRCA_growth}\textsc{NRCA Annualized 2005-2015 Growth Rate}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_growth".pdf} %trim={<left> <lower> <right> <upper>}
 \end{figure}
 \FloatBarrier
 
-In the other countries movements are very gradual, in Uganda comparative advantage in Agriculture has increased very slightly from 17.8 in 2005 to 18 in 2015, whereas in Kenya it has dropped from 15.2 to 13.3 over the same period. 
+% In the other countries movements are very gradual, in Uganda comparative advantage in Agriculture has increased very slightly from 17.8 in 2005 to 18 in 2015, whereas in Kenya it has dropped from 15.2 to 13.3 over the same period. 
 
 
 \subsubsection{NRCA Relative to the EAC}
-Figures \ref{fig:NRCA} and \ref{fig:NRCA_ts} have shown that relative to the rest of the world EAC members exhibit similar patterns of comparative advantage with a general advantage in agriculture and disadvantage in manufacturing. This could be constitutive to forming a common trade block with the rest of the world, supported by a currency union as is currently planned for 2024/25. Nevertheless comparing the EAC with the rest of the world may mask rivalries and shifts in comparative advantage between member countries. A final exercise in this section of the paper is thus to compute comparative advantage relative to the EAC, as the share of a sector in country VA exports to the share of the sector in EAC VA exports\todo{Which also includes EAC countries, should it?}. 
+Figures \ref{fig:NRCA} and \ref{fig:NRCA_growth} have shown that relative to the rest of the world EAC members exhibit similar patterns of comparative advantage with a general advantage in agriculture and disadvantage in manufacturing. This could be constitutive to forming a common trade block with the rest of the world, supported by a currency union as is currently planned for 2024/25. Nevertheless comparing the EAC with the rest of the world may mask rivalries and shifts in comparative advantage between member countries. A final exercise in this section of the paper is thus to compute comparative advantage relative to the EAC as the share of a sector in country VA exports to the share of the sector in EAC VA exports. %\todo{Which also includes EAC countries, should it?}. 
+Figure \ref{fig:NRCA_EAC} shows the results, where in addition to the bars for the year 2015, I have added a blue dot giving the 2005 value - to avoid having to draw two charts while still enabling a comparison over time as well. \newline 
 
+It is evident from Figure \ref{fig:NRCA_EAC} that relative to other EAC members Uganda has a comparative advantage in agriculture, Tanzania has a comparative advantage in fishing, Rwanda has a comparative advantage in mining, and Kenya has a comparative advantage in core manufacturing sectors such as wood and paper, petro-chemicals, metal products and electrical machinery. In addition, it appears that Rwanda and Burundi, and to a weaker extent Uganda, have a comparative advantage in construction, maintenance and repairs, wholesale and retail trade, whereas Tanzania appears to have a comparative advantage in other manufacturing, recycling, and financial and business services. Other sectors are more heterogeneous between countries and sectors. The afore mentioned comparative advantage relations appear to be stable since 2005, without major shifts within or across sectors between 2005 and 2015. 
 
 \begin{figure}[h!]
 \centering
-\caption{\label{fig:NRCA_EAC}\textsc{NRCA Relative to EAC in 2015}}
+\caption{\label{fig:NRCA_EAC}\textsc{NRCA Relative to EAC}}
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_EAC".pdf} %trim={<left> <lower> <right> <upper>}
 \end{figure}
 \FloatBarrier
 
 \subsubsection{NRCA in Inner-EAC Trade}
 
-Finally, we can also compute NRCA for inner EAC trade, that is exports of EAC members to other EAC members, not taking into account any flows between the EAC and the rest of the World. 
+A final exercise that can be conducted around revealed comparative advantage in the EAC, is to compute NRCA only considering EAC trade with the EAC, and thus disregarding any trade flows between the EAC and the rest of the World. This can be useful to consider the evolution of trade relationships within the EAC itself, rather than questions of how the EAC as heterogenous trade block might engage with the rest of the World.  \newline
+% Finally, we can also compute NRCA for inner EAC trade, that is exports of EAC members to other EAC members, not taking into account any flows between the EAC and the rest of the World. 
+
+The results are shown in Figure \ref{fig:NRCA_IEAC}, and are surprisingly similar to Figure \ref{fig:NRCA_EAC}. When considering only trade within the EAC, Uganda's comparative advantage in Agriculture and Tanzania's comparative advantage in fishing, recycling and financial and business services, as well as Rwanda's and Burundi's comparative advantage in construction, maintenance and repairs, wholesale and retail trade become more pronounced, whereas Kenya maintains a comparative advantage in core manufacturing sectors.  An visible difference to Figure \ref{fig:NRCA_EAC} is that Rwanda's comparative advantage in mining has disappeared and turned into a comparative disadvantage, indicating that the majority of Rwandese mining exports are to the outside World. 
 
 \begin{figure}[h!]
 \centering
@@ -824,6 +844,8 @@ Finally, we can also compute NRCA for inner EAC trade, that is exports of EAC me
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_IEAC".pdf} %trim={<left> <lower> <right> <upper>}
 \end{figure}
 \FloatBarrier
+
+% \newpage
 
 \section{GVC's and Industrial Development in the EAC}
 Several papers have been written focussing on the global links between GVC integration and industrial development. As one of the first \citet{Kummritz20161} assessed the role of GVCs for labour productivity and domestic value added using a novel IV strategy. He showed that an increase in GVC participation leads to higher domestic value added and productivity for all countries independent of their income levels. His results imply that a 1 percent increase in backward GVC participation leads to 0.11\% higher domestic value added in the average industry, and  a 1 percent increase in forward GVC participation leads to 0.60\% higher domestic value added and to 0.33\% higher labour productivity \citep{Kummritz20161}. \newline
