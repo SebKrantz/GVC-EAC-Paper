@@ -1445,6 +1445,11 @@ dev.off()
 ##########################################
 # (a) The Effects of GVC Integration on GDP at the sector level: -----------------------------------------------
 
+# Checks:
+sapply(y, function(i) all.equal(va[, i], decomps[[i]]$X * decomps[[i]]$Vc))
+# sapply(y, function(i) all.equal(sbt(VS_df, Year == as.integer(i), i2e)[[1]], 
+#                                 unattrib(collapv(leontief(decomps[[i]]), 1:2, fsum, cols = "FVAX")[[3]])))
+
 names(y) <- y
 data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc * X) (I checked)
         value2df("VA") %>%
@@ -1457,6 +1462,11 @@ data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc *
         merge(VS1_df) %>%
         merge(exports) %>%
         tfm(DVA_Exports = Exports - i2e)
+
+
+all.equal(unattrib(data %$% (I2E * Exports)), unattrib(data$i2e))
+all.equal(unattrib(data %$% (E2R * Exports)), unattrib(data$e2r))
+
 
 # Saving so does not get overwritten
 VA_array <- VA
@@ -1533,10 +1543,10 @@ data %>% sbt(Country %in% setdiff(EAC, "SSD") & Sector %!in% c("REC", "REI", "FI
 
 # Excluded Sectors Table:
 data %>% sbt(Country %in% setdiff(EAC, "SSD") & 
-             (Sector %in% c("REC", "REI", "FIB", "EGW") |
-              (Sector %in% c("OTH", "PHH") & Country == "KEN"))) %>%
+             Sector %in% c("REC", "REI", "FIB", "EGW", "PHH", "OTH")) %>% # (Sector %in% c("OTH", "PHH") & Country == "KEN")
   qsu(I2E + E2R ~ Sector, array = FALSE) %>% 
-  unlist2d("GVC Measure", "Sector") %T>%
+  unlist2d("GVC Measure", "Sector") %>% colorderv(2:1) %>% 
+  roworderv(1:2, decreasing = c(FALSE, TRUE)) %T>%
   stargazer(summary = FALSE, 
             rownames = FALSE,
             out = "Tables/EXCL_SEC.tex") %>% print
@@ -1581,14 +1591,14 @@ ss_pseries <- function(x, i, drop = TRUE) { # `[.pseries`
 # }
 
 moddat <- data %>% sbt(Country %in% setdiff(EAC, "SSD") & 
-                       Sector %!in% c("REC", "REI", "FIB", "EGW") &
-                       !(Sector %in% c("OTH", "PHH") & Country == "KEN")) %>%
+                       Sector %!in% c("REC", "REI", "FIB", "EGW", "OTH", "PHH")) %>% # &
+                       # !(Sector %in% c("OTH", "PHH") & Country == "KEN")) %>%
            tfm(cs = finteraction(Country, Sector), 
                cy = finteraction(Country, Year),
                sy = finteraction(Sector, Year)) %>%
              frename(DVA_Exports = DVA_EX) %>%
              fdroplevels %>%
-             pdata.frame(index = c('cs', 'Year')) %>% pserify
+             pdata.frame(index = c('cs', 'Year'))
 
 
 # rm(list = names(moddat))
@@ -1597,7 +1607,7 @@ moddat <- data %>% sbt(Country %in% setdiff(EAC, "SSD") &
 
 # Summary statistics
 moddat %>% slt(VA, DVA_EX, I2E, E2R) %>% 
-  dapply(unclass) %>% qsu(array = FALSE) %>% 
+  qsu(array = FALSE) %>% 
   tfm(VA = round(VA), DVA_EX = round(DVA_EX)) %>%
   unlist2d("Variable", "Trans") %T>%
   stargazer(summary = FALSE, 
@@ -1607,7 +1617,7 @@ moddat %>% slt(VA, DVA_EX, I2E, E2R) %>%
 
 MAN <- .c(FBE, TEX, WAP, PCM, MPR, ELM, TEQ, MAN)
 
-with(moddat, {
+with(moddat %>% pserify, {
 # Histograms: https://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r
 oldpar <- par(mfrow = c(1, 3), mar = c(2.5, 4, 2.1, 0), lwd = 0.5) # bottom, left, top, right
 # VA
@@ -1638,7 +1648,7 @@ dev.off()
 
 
 # TS Charts
-with(moddat, {
+with(moddat %>% pserify, {
 oldpar <- par(mfrow = c(1, 3), mar = c(4.5, 2.5, 2.1, 1.5)) # bottom, left, top, right
 mat <- psmat(log10(VA))
 man_sec <- substr(rownames(mat), 5, 7) %in% MAN
@@ -1723,7 +1733,7 @@ index(moddat)[-FE_mod2$obsRemoved, ] %$% psacf(resid(FE_mod2), cs, Year)
 index(moddat)[-FE_mod2$obsRemoved, ] %$% lm(resid(FE_mod2) ~ L(resid(FE_mod2), 1, cs, Year)) %>% summary
 
 # FD Model
-FD_mod <- lm(log_VA ~ L(I2E, 0:2) + L(E2R, 0:2), data = D(moddat, stubs = FALSE))
+FD_mod <- lm(log_VA ~ L(I2E, 0:2) + L(E2R, 0:2), data = D(moddat, stubs = FALSE) %>% pserify)
 index(moddat)[-FD_mod$na.action, ] %$% psacf.default(resid(FD_mod), cs, Year) 
 index(moddat)[-FD_mod$na.action, ] %$% lm(resid(FD_mod) ~ flag.default(resid(FD_mod), 1, cs, Year)) %>% summary
 # Same as this test:
@@ -1741,6 +1751,12 @@ coef(FD_mod)
 settfmv(moddat, c('I2E', 'E2R'), flag, n = 1:2, apply = FALSE)
 vars <- c("log_VA", "I2E", "L1.I2E", "L2.I2E", "E2R", "L1.E2R", "L2.E2R")
 
+tfm(moddat) <- moddat %>% slt(i2e, e2r) %>% dapply(log) %>% flag(0:2)
+vars_log <- c("log_VA", "i2e", "L1.i2e", "L2.i2e", "e2r", "L1.e2r", "L2.e2r")
+
+varsn <- ckmatch(vars, names(moddat))
+
+View(moddat)
 
 FD_mod <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = D(moddat, cols = vars, stubs = FALSE))
   # jtools::summ(FD_mod, robust = TRUE, digits = 5)
@@ -1751,7 +1767,7 @@ FD_mod <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = D(mo
   # qsu(-dfbeta(FD_mod))
   # -dfbeta(FD_mod)[obs, ] %r+% coef(FD_mod)
   # lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R,
-  #    data = D(moddat, stubs = FALSE), subset = rownames(moddat) %!in% obs) %>% summary
+  #    data = D(moddat, cols = vars, stubs = FALSE), subset = rownames(moddat) %!in% obs) %>% summary
 
 # coef(lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data =
 #      moddat %>% tfmv(is.numeric, fdiff, apply = FALSE) %>% qDF %>% HDW(~cy+sy, stub = FALSE))) %>% round(4)
@@ -1761,23 +1777,30 @@ FD_mod <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = D(mo
 FD_mod <- feols(formula(FD_mod), D(moddat, cols = vars, stubs = FALSE), cluster = "cs")  
 
 library(robustbase)
-FD_mod_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = D(moddat, cols = vars, stubs = FALSE))
-  
+FD_mod_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                  data = D(moddat, cols = vars, stubs = FALSE))
+
 FD_mod_log <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                 data = moddat %>% tfmv(vars[-1], log) %>% gv(vars) %>% fdiff)
+                 data = D(moddat, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]))
   # jtools::summ(FD_mod_log, robust = TRUE, digits = 5)
   # performance::check_model(FD_mod_log)
   # qsu(-dfbeta(FD_mod_log))
   # lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R,
-  #    data = moddat %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)) %>% D(stubs = FALSE), 
+  #    data = D(moddat, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]),
   #    subset = rownames(moddat) %!in% obs)
   
-FD_mod_log <- feols(formula(FD_mod_log), moddat %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE), cluster = "cs")  
+FD_mod_log <- feols(formula(FD_mod_log), D(moddat, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]), 
+                    cluster = "cs")  
+
+FD_mod_logs <- feols(formula(FD_mod_log), moddat %>% tfmv(vars[-1], log) %>% D(cols = vars, stub = FALSE), 
+                     cluster = "cs")  
 
 FD_mod_log_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                 data = moddat %>% tfmv(vars[-1], log) %>% gv(vars) %>% fdiff, 
-                 k.max = 10000, refine.tol = 1e-16)
+                 data = D(moddat, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]))
+                 # k.max = 10000, refine.tol = 1e-16)
 
+FD_mod_logs_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                       data = moddat %>% tfmv(vars[-1], log) %>% D(cols = vars, stub = FALSE))
   
 FE_mod <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = moddat, 
                 panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"), se = "threeway")
@@ -1798,40 +1821,65 @@ FD_FE_mod_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, tem
 #                  panel.id = c("cs", "Year"), fixef = c("cs", "cy"))
 
 FE_mod_log <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                    data = moddat %>% gv(-varsn[-1]) %>% frename(toupper, cols = vars_log[-1]), 
+                    panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"), se = "threeway")
+
+FE_mod_logs <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                     data = moddat %>% tfmv(vars[-1], log), 
                     panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"), se = "threeway")
 
 
 FD_FE_mod_log <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                       data = moddat %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE), 
+                       data = moddat %>% tfmv(vars_log, fdiff, apply = FALSE) %>% gv(-varsn[-1]) %>% 
+                              frename(toupper, cols = vars_log[-1]), 
                        panel.id = c("cs", "Year"), fixef = c("cy", "sy"), cluster = c("cs", "cy", "sy"))
+
+FD_FE_mod_logs <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                        data = moddat %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE), 
+                        panel.id = c("cs", "Year"), fixef = c("cy", "sy"), cluster = c("cs", "cy", "sy"))
 
 # FE_mod_log2 <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = moddat %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), 
 #                      panel.id = c("cs", "Year"), fixef = c("cs", "cy"))
 
-temp <- moddat %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE) %>% qDF %>% 
+temp <- moddat %>% tfmv(vars_log, fdiff, apply = FALSE) %>% gv(-varsn[-1]) %>% 
+          frename(toupper, cols = vars_log[-1]) %>% qDF %>% 
           HDW( ~ qF(cy) + qF(sy), cols = vars, stub = FALSE)
 FD_FE_mod_log_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, temp)
 
+temp <- moddat %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE) %>% qDF %>% 
+        HDW( ~ qF(cy) + qF(sy), cols = vars, stub = FALSE)
+FD_FE_mod_logs_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, temp)
 
-temp <- qDF(moddat) %>% tfmv(vars[-1], log) %>% HDW(~ qF(cs) + qF(cy) + qF(sy), cols = vars, stub = FALSE)
+
+temp <- qDF(moddat) %>% gv(-varsn[-1]) %>% frename(toupper, cols = vars_log[-1]) %>% 
+        HDW(~ qF(cs) + qF(cy) + qF(sy), cols = vars, stub = FALSE)
 # summary(lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, temp))
 
-FE_mod_log_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, temp)
+FE_mod_log_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, temp, 
+                      k.max = 10000)
+
+temp <- qDF(moddat) %>% tfmv(vars[-1], log) %>% 
+        HDW(~ qF(cs) + qF(cy) + qF(sy), cols = vars, stub = FALSE)
+
+FE_mod_logs_r <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, temp, 
+                       k.max = 10000) # , refine.tol = 1e-16
 
 modlist <- list(FD = FD_mod,
-                `FD-TFE` = FD_FE_mod,
+                `FD-FE` = FD_FE_mod,
                 FE = FE_mod,
+                `FD ES` = FD_mod_logs,
+                `FD-FE ES` = FD_FE_mod_logs,
+                `FE ES` = FE_mod_logs,
                 #`FE NoSY` = FE_mod2,
-                `FD Elas` = FD_mod_log,
-                `FD-TFE Elas` = FD_FE_mod_log,
-                `FE Elas` = FE_mod_log
-                #`FE NoSY Elas` = FE_mod_log2
+                `FD E` = FD_mod_log,
+                `FD-FE E` = FD_FE_mod_log,
+                `FE E` = FE_mod_log
+                #`FE NoSY E` = FE_mod_log2
 )
 
 etable(modlist) # %>% lapply(unlist) %>% qDF
 # coefplot(FD_mod, FD_FE_mod, FE_mod, FD_mod_log, FD_FE_mod_log, FE_mod_log)
-esttex(modlist, digits = 4,
+esttex(modlist, digits = 4, digits.stats = 3,
        fixef_sizes = TRUE, fixef_sizes.simplify = FALSE, # postprocess.tex = TRUE, #drop.section = "fixef",
        style.tex = style.tex(fixef_sizes.prefix = "N ", 
                              line.top = "", 
@@ -1845,13 +1893,13 @@ esttex(modlist, digits = 4,
 # library(modelsummary)
 # 
 # # selist <- list(FD = sqrt(diag(plm::vcovHC(FD_mod, type = "HC3"))), 
-# #                `FD-TFE` = se(FD_FE_mod, "twoway"),
+# #                `FD-FE` = se(FD_FE_mod, "twoway"),
 # #                FE = se(FE_mod, "threeway"),
 # #                # `FE NoSY` = se(FE_mod2, "threeway"),
-# #                `FD Elas` = sqrt(diag(plm::vcovHC(FD_mod_log, type = "HC3"))),
-# #                `FD-TFE Elas` = se(FD_FE_mod_log, "twoway"),
-# #                `FE Elas` = se(FE_mod_log, "threeway")
-# #                #`FE NoSY Elas` = se(FE_mod_log2, "twoway")
+# #                `FD E` = sqrt(diag(plm::vcovHC(FD_mod_log, type = "HC3"))),
+# #                `FD-FE E` = se(FD_FE_mod_log, "twoway"),
+# #                `FE E` = se(FE_mod_log, "threeway")
+# #                #`FE NoSY E` = se(FE_mod_log2, "twoway")
 # #                )
 # 
 # modelsummary(modlist, fmt = 4, 
@@ -1864,14 +1912,19 @@ esttex(modlist, digits = 4,
 
 
 modlist_r <- list(FD = FD_mod_r, 
-                `FD-TFE` = FD_FE_mod_r, 
+                `FD-FE` = FD_FE_mod_r, 
                 FE = FE_mod_r,
-                `FD Elas` = FD_mod_log_r,
-                `FD-TFE Elas` = FD_FE_mod_log_r,
-                `FE Elas` = FE_mod_log_r) 
+                `FD ES` = FD_mod_logs_r,
+                `FD-FE ES` = FD_FE_mod_logs_r,
+                `FE ES` = FE_mod_logs_r,
+                `FD E` = FD_mod_log_r,
+                `FD-FE E` = FD_FE_mod_log_r,
+                `FE E` = FE_mod_log_r) 
 
-stargazer(modlist_r, df = FALSE, digits = 4, out = "Tables/GROWTH_EST_rob.tex")
+stargazer(modlist_r, df = FALSE, 
+          digits = 4, out = "Tables/GROWTH_EST_rob.tex")
 
+library(modelsummary)
 modelsummary(modlist_r, fmt = 4, 
              output = "huxtable", stars = TRUE, 
              gof_omit = "Pseudo|Lik|IC") %>% huxtable::quick_xlsx(file = "Tables/GROWTH_EST_rob.xlsx")
@@ -1884,11 +1937,11 @@ modelsummary(modlist_r, fmt = 4,
 #                 FE = FE_mod,
 #                 `FE-MM` = FE_mod_r,
 #                 #`FE NoSY` = FE_mod2,
-#                 `FD Elas` = FD_mod_log,
-#                 `FD-MM Elas` = FD_mod_log_r,
-#                 `FE Elas` = FE_mod_log, 
-#                 `FE-MM Elas` = FE_mod_log_r
-#                 #`FE NoSY Elas` = FE_mod_log2
+#                 `FD E` = FD_mod_log,
+#                 `FD-MM E` = FD_mod_log_r,
+#                 `FE E` = FE_mod_log, 
+#                 `FE-MM E` = FE_mod_log_r
+#                 #`FE NoSY E` = FE_mod_log2
 # )
 # 
 # selist <- list(FD = sqrt(diag(plm::vcovHC(FD_mod, type = "HC3"))), 
@@ -1896,11 +1949,11 @@ modelsummary(modlist_r, fmt = 4,
 #                FE = se(FE_mod, "twoway"),
 #                `FE-MM` = sqrt(diag(vcov(FE_mod_r))),
 #                # `FE NoSY` = se(FE_mod2, "twoway"),
-#                `FD Elas` = sqrt(diag(plm::vcovHC(FD_mod_log, type = "HC3"))),
-#                `FD-MM Elas` = summary(FD_mod_log_r)$coefficients[, 2],
-#                `FE Elas` = se(FE_mod_log, "twoway"), 
-#                `FE-MM Elas` = sqrt(diag(vcov(FE_mod_log_r))) 
-#                #`FE NoSY Elas` = se(FE_mod_log2, "twoway")
+#                `FD E` = sqrt(diag(plm::vcovHC(FD_mod_log, type = "HC3"))),
+#                `FD-MM E` = summary(FD_mod_log_r)$coefficients[, 2],
+#                `FE E` = se(FE_mod_log, "twoway"), 
+#                `FE-MM E` = sqrt(diag(vcov(FE_mod_log_r))) 
+#                #`FE NoSY E` = se(FE_mod_log2, "twoway")
 # )
 # 
 # 
@@ -1938,24 +1991,26 @@ modlist_MAN$FD <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, dat
 
 modlist_MAN$FD <- feols(formula(modlist_MAN$FD), D(moddat_MAN, cols = vars, stubs = FALSE), cluster = "cs")  
 
-modlist_MAN$`FD Elas` <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                         data = moddat_MAN %>% tfmv(vars[-1], log) %>% gv(vars) %>% fdiff)
-  # jtools::summ(modlist_MAN$`FD Elas`, robust = TRUE, digits = 5)
-  # performance::check_model(modlist_MAN$`FD Elas`)
-  # qsu(-dfbeta(modlist_MAN$`FD Elas`))
+modlist_MAN$`FD E` <- lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                         data = D(moddat_MAN, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]))
+  # jtools::summ(modlist_MAN$`FD E`, robust = TRUE, digits = 5)
+  # performance::check_model(modlist_MAN$`FD E`)
+  # qsu(-dfbeta(modlist_MAN$`FD E`))
   # lm(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R,
   #    data = moddat_MAN %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)) %>% D(stubs = FALSE), 
   #    subset = rownames(moddat_MAN) %!in% obs) %>% summary
 
 
-# modlist_MAN$`FD Elas` <- plm(formula(modlist_MAN$`FD Elas`), moddat_MAN %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), model = "fd")  
-modlist_MAN$`FD Elas` <- feols(formula(modlist_MAN$`FD Elas`), 
-                               moddat_MAN %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE), cluster = "cs")  
+# modlist_MAN$`FD E` <- plm(formula(modlist_MAN$`FD E`), moddat_MAN %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), model = "fd")  
+modlist_MAN$`FD E` <- feols(formula(modlist_MAN$`FD E`), 
+                               D(moddat_MAN, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]), cluster = "cs")  
 
-modlist_MAN$`FD-TFE` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_MAN$`FD ES` <- feols(formula(modlist_MAN$`FD E`), 
+                             moddat_MAN %>% tfmv(vars[-1], log) %>% D(cols = vars, stubs = FALSE), cluster = "cs")  
+
+modlist_MAN$`FD-FE` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                               tfmv(moddat_MAN, vars, fdiff, apply = FALSE),
                               fixef = c("cy", "sy"), cluster = c("cs", "cy", "sy"))  
-
 
 modlist_MAN$FE <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = moddat_MAN, 
                         fixef = c("cs", "cy", "sy"), se = "threeway")
@@ -1963,27 +2018,36 @@ modlist_MAN$FE <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
 # modlist_MAN$`FE NoSY` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = moddat_MAN, 
 #                                fixef = c("cs", "cy"))
 
-modlist_MAN$`FD-TFE Elas` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                                   moddat_MAN %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE),
+modlist_MAN$`FD-FE E` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                                   moddat_MAN %>% tfmv(vars_log, fdiff, apply = FALSE) %>% gv(-varsn[-1]) %>% 
+                                     frename(toupper, cols = vars_log[-1]),
                                    fixef = c("cy", "sy"), cluster = c("cs", "cy", "sy"))  
 
+modlist_MAN$`FD-FE ES` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                               moddat_MAN %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE),
+                               fixef = c("cy", "sy"), cluster = c("cs", "cy", "sy"))  
 
-modlist_MAN$`FE Elas` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+
+modlist_MAN$`FE E` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                            data = moddat_MAN %>% gv(-varsn[-1]) %>% frename(toupper, cols = vars_log[-1]), 
+                            fixef = c("cs", "cy", "sy"), se = "threeway")
+
+modlist_MAN$`FE ES` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                             data = moddat_MAN %>% tfmv(vars[-1], log), 
                             fixef = c("cs", "cy", "sy"), se = "threeway")
 
-# modlist_MAN$`FE NoSY Elas` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+# modlist_MAN$`FE NoSY E` <- feols(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
 #                              data = moddat_MAN %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), 
 #                              panel.id = c("cs", "Year"), fixef = c("cs", "cy"))
 
 etable(modlist_MAN[names(modlist)])
-esttex(modlist_MAN[names(modlist)], digits = 4,
+esttex(modlist_MAN[names(modlist)], digits = 4, digits.stats = 3,
        fixef_sizes = TRUE, fixef_sizes.simplify = FALSE, # postprocess.tex = TRUE, #drop.section = "fixef",
        style.tex = style.tex(fixef_sizes.prefix = "N ", 
                              line.top = "", 
                              tablefoot.title = "" ,
                              line.bottom = ""), 
-       subtitles = names(modlist_MAN),
+       subtitles = names(modlist),
        file = "Tables/GROWTH_EST_MAN_TFE.tex", replace = TRUE)
 
 
@@ -1996,9 +2060,9 @@ modelsummary(modlist_MAN[names(modlist)], fmt = 4,
 # selist_MAN <- list(FD = sqrt(diag(plm::vcovHC(modlist_MAN$FD, type = "HC3"))), 
 #                    FE = se(modlist_MAN$FE, "twoway"),
 #                    `FE NoSY` = se(modlist_MAN$`FE NoSY`, "twoway"),
-#                    `FD Elas` = sqrt(diag(plm::vcovHC(modlist_MAN$`FD Elas`, type = "HC3"))),
-#                    `FE Elas` = se(modlist_MAN$`FE Elas`, "twoway"), 
-#                    `FE NoSY Elas` = se(modlist_MAN$`FE NoSY Elas`, "twoway"))
+#                    `FD E` = sqrt(diag(plm::vcovHC(modlist_MAN$`FD E`, type = "HC3"))),
+#                    `FE E` = se(modlist_MAN$`FE E`, "twoway"), 
+#                    `FE NoSY E` = se(modlist_MAN$`FE NoSY E`, "twoway"))
 # 
 # modelsummary(modlist_MAN[names(selist_MAN)], fmt = 4, 
 #              statistic_override = selist_MAN,
@@ -2012,18 +2076,31 @@ modelsummary(modlist_MAN[names(modlist)], fmt = 4,
 
 
 modlist_MAN_r <- list()
+
 modlist_MAN_r$`FD` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = D(moddat_MAN, cols = vars, stubs = FALSE))
-modlist_MAN_r$`FD-TFE` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_MAN_r$`FD-FE` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                  data = moddat_MAN %>% tfmv(vars, fdiff, apply = FALSE) %>% qDF %>% HDW(~ cy + sy, cols = vars, stub = FALSE))
 modlist_MAN_r$`FE` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                     data = moddat_MAN %>% qDF %>% HDW(~ cs + cy + sy, cols = vars, stub = FALSE))
-modlist_MAN_r$`FD Elas` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                             data = moddat_MAN %>% gv(vars) %>% tfmv(vars[-1], log) %>% fdiff)
-modlist_MAN_r$`FD-TFE Elas` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+
+modlist_MAN_r$`FD ES` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                              data = moddat_MAN %>% tfmv(vars[-1], log) %>% D(cols = vars, stubs = FALSE))
+modlist_MAN_r$`FD-FE ES` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                  data = moddat_MAN %>% tfmv(vars[-1], log) %>% tfmv(vars, fdiff, apply = FALSE) %>% 
                                    qDF %>% HDW(~ cy + sy, cols = vars, stub = FALSE), k.max = 500)
-modlist_MAN_r$`FE Elas` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
-                             data = moddat_MAN %>% tfmv(vars[-1], log) %>% qDF %>% HDW(~ cs + cy + sy, cols = vars, stub = FALSE), k.max = 500)
+modlist_MAN_r$`FE ES` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                              data = moddat_MAN %>% tfmv(vars[-1], log) %>% 
+                                qDF %>% HDW(~ cs + cy + sy, cols = vars, stub = FALSE), k.max = 500)
+
+modlist_MAN_r$`FD E` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                             data = D(moddat_MAN, cols = vars_log, stubs = FALSE) %>% frename(toupper, cols = vars_log[-1]))
+modlist_MAN_r$`FD-FE E` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                                 data = moddat_MAN %>% tfmv(vars_log, fdiff, apply = FALSE) %>% 
+                                   gv(-varsn[-1]) %>% frename(toupper, cols = vars_log[-1]) %>% 
+                                   qDF %>% HDW(~ cy + sy, cols = vars, stub = FALSE)) # , k.max = 500
+modlist_MAN_r$`FE E` <- lmrob(log_VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+                             data = moddat_MAN %>% gv(-varsn[-1]) %>% frename(toupper, cols = vars_log[-1]) %>% 
+                               qDF %>% HDW(~ cs + cy + sy, cols = vars, stub = FALSE)) # , k.max = 500
 
 stargazer(modlist_MAN_r, df = FALSE, digits = 4, out = "Tables/GROWTH_EST_MAN_rob.tex")
 
@@ -2041,13 +2118,13 @@ modlist_DVA_EX <- list()
 settfm(moddat, log_DVA_EX = log(DVA_EX))
 modlist_DVA_EX$FD <- plm(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, moddat, model = "fd")  
 
-modlist_DVA_EX$`FD Elas` <- plm(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_DVA_EX$`FD E` <- plm(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                 moddat %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), model = "fd")  
 
 modlist_DVA_EX$FE <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = moddat, 
                            panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"))
 
-modlist_DVA_EX$`FE Elas` <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_DVA_EX$`FE E` <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                   data = moddat %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), 
                                   panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"))
 
@@ -2055,13 +2132,13 @@ modlist_DVA_EX$`FE Elas` <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.
 settfm(moddat_MAN, log_DVA_EX = log(DVA_EX))
 modlist_DVA_EX$`FD MAN` <- plm(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, moddat_MAN, model = "fd")  
 
-modlist_DVA_EX$`FD Elas MAN` <- plm(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_DVA_EX$`FD E MAN` <- plm(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                              moddat_MAN %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), model = "fd")  
 
 modlist_DVA_EX$`FE MAN` <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, data = moddat_MAN, 
                            panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"))
 
-modlist_DVA_EX$`FE Elas MAN` <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_DVA_EX$`FE E MAN` <- feols(log_DVA_EX ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                data = moddat_MAN %>% tfm(gvr(., "I2E|E2R") %>% lapply(log)), 
                                panel.id = c("cs", "Year"), fixef = c("cs", "cy", "sy"))
 
@@ -2069,12 +2146,12 @@ etable(modlist_DVA_EX, se = "twoway")
 
 selist_DVA_EX <- list(FD = sqrt(diag(plm::vcovHC(modlist_DVA_EX$FD, type = "HC3"))), 
                    FE = se(modlist_DVA_EX$FE, "twoway"),
-                   `FD Elas` = sqrt(diag(plm::vcovHC(modlist_DVA_EX$`FD Elas`, type = "HC3"))),
-                   `FE Elas` = se(modlist_DVA_EX$`FE Elas`, "twoway"),
+                   `FD E` = sqrt(diag(plm::vcovHC(modlist_DVA_EX$`FD E`, type = "HC3"))),
+                   `FE E` = se(modlist_DVA_EX$`FE E`, "twoway"),
                    `FD MAN` = sqrt(diag(plm::vcovHC(modlist_DVA_EX$`FD MAN`, type = "HC3"))), 
                    `FE MAN` = se(modlist_DVA_EX$`FE MAN`, "twoway"),
-                   `FD Elas MAN` = sqrt(diag(plm::vcovHC(modlist_DVA_EX$`FD Elas MAN`, type = "HC3"))),
-                   `FE Elas MAN` = se(modlist_DVA_EX$`FE Elas MAN`, "twoway"))
+                   `FD E MAN` = sqrt(diag(plm::vcovHC(modlist_DVA_EX$`FD E MAN`, type = "HC3"))),
+                   `FE E MAN` = se(modlist_DVA_EX$`FE E MAN`, "twoway"))
 
 modelsummary(modlist_DVA_EX[names(selist_DVA_EX)], fmt = 4, 
              statistic_override = selist_DVA_EX,
@@ -2315,7 +2392,7 @@ msummary(rob_fits(form, Dlog(moddat, stubs = FALSE)))
 
 modlist_COE$FD <- plm(COE ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, moddat, model = "fd")  
 
-modlist_COE$`FD Elas` <- plm(COE ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_COE$`FD E` <- plm(COE ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                 moddat %>% tfm(gvr(., "COE|I2E|E2R") %>% lapply(log)), model = "fd")  
 
 # Manufacturing
@@ -2324,18 +2401,18 @@ moddat_MAN <- moddat %>% sbt(Sector %in% MAN) %>% qDF %>% fdroplevels %>%
 
 modlist_COE$`FD MAN` <- plm(COE ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, moddat_MAN, model = "fd")  
 
-modlist_COE$`FD Elas MAN` <- plm(COE ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
+modlist_COE$`FD E MAN` <- plm(COE ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, 
                                     moddat_MAN %>% tfm(gvr(., "COE|I2E|E2R") %>% lapply(log)), model = "fd")  
 
 
 selist_COE <- list(FD = sqrt(diag(plm::vcovHC(modlist_COE$FD, type = "HC3"))), 
                    FE = se(modlist_COE$FE, "twoway"),
-                      `FD Elas` = sqrt(diag(plm::vcovHC(modlist_COE$`FD Elas`, type = "HC3"))),
-                      `FE Elas` = se(modlist_COE$`FE Elas`, "twoway"),
+                      `FD E` = sqrt(diag(plm::vcovHC(modlist_COE$`FD E`, type = "HC3"))),
+                      `FE E` = se(modlist_COE$`FE E`, "twoway"),
                       `FD MAN` = sqrt(diag(plm::vcovHC(modlist_COE$`FD MAN`, type = "HC3"))), 
                       `FE MAN` = se(modlist_COE$`FE MAN`, "twoway"),
-                      `FD Elas MAN` = sqrt(diag(plm::vcovHC(modlist_COE$`FD Elas MAN`, type = "HC3"))),
-                      `FE Elas MAN` = se(modlist_COE$`FE Elas MAN`, "twoway"))
+                      `FD E MAN` = sqrt(diag(plm::vcovHC(modlist_COE$`FD E MAN`, type = "HC3"))),
+                      `FE E MAN` = se(modlist_COE$`FE E MAN`, "twoway"))
 
 modelsummary(modlist_COE[names(selist_COE)], fmt = 4, 
              statistic_override = selist_COE,
