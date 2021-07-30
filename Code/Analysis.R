@@ -62,6 +62,8 @@ rbsc2 <- discrete_scale(c("colour", "fill"), "gradientn",
 
 dec15 <- decomps$`2015`
 
+ROW <- setdiff(r, EAC)
+
 
 ####################################
 # Part 0: Data Checks: GDP by Sector
@@ -109,7 +111,24 @@ dev.off()
 
 
 # EAC GDP by Sector: Stacked Area
-lapply(decomps, with, Vc * X) %>% 
+# va[eac, ] %>% qDT("CS") %>% 
+#   melt(1, variable.name = "Year", value.name = "VA") %>% 
+#   tfm(Year = as.integer(levels(Year)[Year]),
+#       Country = mfac(cr(CS)), 
+#       Sector = mfac(crm(CS)), 
+#       CS = NULL) %>% 
+
+# This computes it from scratch:
+# lapply(y, function(i) rowSums(T[eac,,i]) + rowSums(FD[eac,,i]) - colSums(T[, eac, i])) %>% 
+#   unlist2d("Year", DT = TRUE) %>% 
+#   melt(1, variable.name = "CS", variable.factor = FALSE, value.name = "VA") %>% 
+#     tfm(Year = as.integer(Year),
+#         Country = mfac(cr(CS)),
+#         Sector = mfac(crm(CS)),
+#         CS = NULL) %>% 
+#   roworder(Year, Country, Sector) %>% 
+#   
+lapply(decomps, with, Vc * X) %>%
   value2df("VA") %>%
   sbt(Country %in% EAC) %>%
 
@@ -186,6 +205,33 @@ settfmv(weaclfl, is.character, `substr<-`, 8L, 8L, value = ">")
 settfmv(weaclfl, is.character, function(x) sub(">", " -> ", x))
 
 stargazer::stargazer(weaclfl, summary = FALSE)
+
+# Ratio of EAC to World Flows ---------------------
+GFLR <- cbind(`ROW/EAC Inflow` = sapply(y, function(i) T_ag[, , i] %>% `diag<-`(0) %>% {sum(.[ROW, EAC])/sum(.[EAC, EAC])}),
+              `ROW/EAC Outflow` = sapply(y, function(i) T_ag[, , i] %>% `diag<-`(0) %>% {sum(.[EAC, ROW])/sum(.[EAC, EAC])})) %>% 
+        qDT("Year") %>% tfm(Year = as.integer(Year))
+
+GFLR %>% melt(1, value.name = "Ratio") %>% 
+  ggplot(aes(x = Year, y = Ratio)) + geom_line() + 
+  facet_wrap( ~ variable, scales = "free_y") +
+  scale_x_continuous(breaks = 2005:2015) +
+  scale_y_continuous(limits = c(4, NA), breaks = extended_breaks(10)) +
+  theme_minimal() + pretty_plot
+
+dev.copy(pdf, "Figures/GROSS_RATIOS.pdf", width = 8.27, height = 4)
+dev.off()
+
+
+GOFL <- cbind(`EAC Outflow` = sapply(y, function(i) T_ag[, , i] %>% `diag<-`(0) %>% {sum(.[EAC, EAC])}),
+              `ROW Outflow` = sapply(y, function(i) T_ag[, , i] %>% `diag<-`(0) %>% {sum(.[EAC, ROW])})) %>% 
+  qDT("Year") %>% tfm(Year = as.integer(Year))
+
+GOFL %>% melt(1, value.name = "Ratio") %>% 
+  ggplot(aes(x = Year, y = Ratio)) + geom_line() + 
+  facet_wrap( ~ variable, scales = "free_y") +
+  scale_x_continuous(breaks = 2005:2015) +
+  scale_y_continuous(limits = c(4, NA), breaks = extended_breaks(10)) +
+  theme_minimal() + pretty_plot
 
 # Direct Value Added ----------------------
 
@@ -561,6 +607,58 @@ unlist2d(VB_eac_ag, "Country", "Source", DT = TRUE, id.factor = TRUE) %>%
 
 dev.copy(pdf, "Figures/heatmap_VB_AG_EAC_tot.pdf", width = 10.69, height = 7.27*2.35)
 dev.off()
+
+# IO Relationships in VA terms -----------------------------------------------------------------------
+names(y) <- y
+T_VA <- simplify2array(lapply(y, function(i) fsum(VB[,,i], TRA = "/") %*% T[,,i]))
+T_VA_ag <- simplify2array(lapply(y, function(i) t(fsum(t(fsum(T_VA[,,i], g)), g))))
+str(T_VA_ag)
+sum(T_VA_ag)/sum(T_ag)
+
+T_VA_ag[, , "2015"] %c/% 1000 %>% log10 %>% .[r, r] %>% 
+  pheatmap(color = colorRampPalette(brewer.pal(n = 7, name ="YlOrRd"))(100),
+           cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
+           legend_breaks = 0:7, # legend_labels = 10^(0:7),
+           display_numbers = TRUE)
+
+dev.copy(pdf, "Figures/heatmap_VA_AG.pdf", width = 7, height = 6)
+dev.off()
+
+VAFLR <- cbind(`ROW/EAC Inflow` = sapply(y, function(i) T_VA_ag[, , i] %>% `diag<-`(0) %>% {sum(.[ROW, EAC])/sum(.[EAC, EAC])}),
+               `ROW/EAC Outflow` = sapply(y, function(i) T_VA_ag[, , i] %>% `diag<-`(0) %>% {sum(.[EAC, ROW])/sum(.[EAC, EAC])})) %>% 
+  qDT("Year") %>% tfm(Year = as.integer(Year))
+
+VAFLR %>% melt(1, value.name = "Ratio") %>% 
+  ggplot(aes(x = Year, y = Ratio)) + geom_line() + 
+  facet_wrap( ~ variable, scales = "free_y") +
+  scale_x_continuous(breaks = 2005:2015) +
+  scale_y_continuous(limits = c(4, NA), breaks = extended_breaks(10)) +
+  theme_minimal() + pretty_plot
+
+dev.copy(pdf, "Figures/VA_RATIOS.pdf", width = 8.27, height = 4)
+dev.off()
+
+# Intermediate goods trade balance in gross and VA terms
+
+IntTB <- cbind(`Gross    ` = sapply(y, function(i) T_ag[, , i] %>% `diag<-`(0) %>% {sum(.[EAC, ROW])/sum(.[ROW, EAC])}),
+               VA = sapply(y, function(i) T_VA_ag[, , i] %>% `diag<-`(0) %>% {sum(.[EAC, ROW])/sum(.[ROW, EAC])})) %>% 
+  qDT("Year") %>% tfm(Year = as.integer(Year))
+
+IntTB %>% melt(1, value.name = "Ratio") %>% 
+  ggplot(aes(x = Year, y = Ratio, colour = variable)) + geom_line() + 
+  scale_x_continuous(breaks = 2005:2015) +
+  scale_y_continuous(breaks = extended_breaks(10)) +
+  # guides(colour = guide_legend("Intermediates Trade Balance:    ")) + 
+  ylab("Exports / Imports Ratio") +
+  theme_minimal() + pretty_plot + theme(legend.title = element_blank())
+
+dev.copy(pdf, "Figures/TB_INTER.pdf", width = 6, height = 4.5)
+dev.off()
+
+mean(IntTB$VA - IntTB$`Gross    `)
+mean(IntTB$VA/IntTB$`Gross    `)
+
+
 
 
 # Decomposed Flows -----------------------------------------------------------------------------------
