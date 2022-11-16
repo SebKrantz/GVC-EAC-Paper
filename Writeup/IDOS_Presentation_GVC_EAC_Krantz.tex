@@ -1,0 +1,688 @@
+\documentclass[compress]{beamer}
+\useoutertheme[subsection=false]{miniframes}  % footline=empty,
+\setbeamercolor{mini frame}{fg=orange,bg=orange} % https://tex.stackexchange.com/questions/228256/control-colors-and-shading-of-navigation-circles-in-beamer-top-line
+\setbeamerfont{headline}{size=\tiny} % Headline font size
+\useinnertheme{circles}% http://blogs.ubc.ca/khead/research/research-advice/better-beamer-presentations
+\setbeamercolor{section number projected}{bg=red,fg=white} % https://tex.stackexchange.com/questions/8011/changing-color-and-bullets-in-beamers-table-of-contents
+\setbeamertemplate{navigation symbols}{} % Swith off naviagation symbols: https://nickhigham.wordpress.com/2013/01/18/top-5-beamer-tips/
+
+% https://tex.stackexchange.com/questions/44983/beamer-removing-headline-and-its-space-on-a-single-frame-for-plan-but-keepin :
+\makeatletter
+\newenvironment{noheadline}{
+    \setbeamertemplate{headline}{}
+    \addtobeamertemplate{frametitle}{\vspace*{-0.9\baselineskip}}{}
+}{}
+\makeatother
+
+\mode<presentation> {
+\setbeamertemplate{caption}[numbeorange]
+\setbeamercolor{frametitle}{fg=orange!140}
+\setbeamercolor{title}{fg=orange!140}
+\setbeamercolor{normal text}{fg=black!85}
+\setbeamercolor{enumerate item}{fg=orange!140}
+\setbeamercolor{enumerate subitem}{fg=orange!140}
+\setbeamercolor{enumerate subsubitem}{fg=orange!140}
+\setbeamercolor{caption name}{fg=orange}
+\setbeamercolor{itemize item}{fg=orange!140}
+\setbeamercolor{itemize subitem}{fg=orange!140}
+\setbeamercolor{itemize subsubitem}{fg=orange!140}
+\setbeamercolor{section in toc}{fg=orange!140}
+\setbeamercolor{subsection in toc}{fg=orange!120}
+\setbeamercolor{footlinecolor0}{fg=white,bg=orange!140}
+\setbeamercolor{footlinecolor1}{fg=white,bg=orange}
+\setbeamercolor{footlinecolor2}{fg=black,bg=orange!60}
+\setbeamertemplate{footline}
+%\includepackage[tab]{beamerthemeclassic}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.25ex,dp=1ex,center]{footlinecolor0}
+  Sebastian Krantz %\insertsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.25ex,dp=1ex,center]{footlinecolor1}
+  IfW Kiel\hspace*{0.5em} %\insertsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{footlinecolor2}% center
+    \insertshorttitle\hspace*{4em} % 3em
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+}
+\usepackage[UKenglish]{babel}
+% \usepackage[latin1]{inputenc}
+\usepackage[T1,OT1]{fontenc}
+\usepackage{adjustbox}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{enumitem}
+\setitemize{label=\textbullet, font=\large \color{red}, itemsep=12pt} %  %https://stackoverflow.com/questions/4968557/latex-very-compact-itemize
+% \usepackage{mathenv}
+\usepackage{amsmath}
+% \usepackage{lipsum}
+\usepackage{float}
+% \usepackage{subcaption} 
+% \usepackage{array}
+% \usepackage{chngcntr}
+% \usepackage{amsmath,amssymb,listings}
+% \usepackage{alltt,algorithmic,algorithm}
+% \usepackage{multicol}
+% \usepackage{array, multirow, makecell}
+% \usepackage{fancyhdr}
+% \usepackage{soul}
+\usepackage{apacite}
+\AtBeginDocument{\urlstyle{APACsame}}
+\usepackage{natbib}
+\def\bibfont{\tiny}
+\graphicspath{{./figures/}} %this is the file in which you should save figures
+}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\title[GVC Participation of EAC Countries]{\textbf{Patterns of Regional and Global Value \\Chain Participation in the EAC}} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Sebastian Krantz} % Your name
+\institute[Kiel Institute for the World Economy]
+{
+Kiel Institute for the World Economy\\ % Your institution for the title page
+\bigskip
+%{\large  International Conference on Capital Flows and Safe Assets} % Conference Name (optional)
+}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{noheadline}
+\begin{frame} 
+\titlepage 
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
+\end{frame}
+
+
+%------------------------------------------------
+\section{Introduction}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Introduction}
+Using global Multi-Region Input-Output (MRIO) data from 2005-2015, I empirically investigate the extent and patterns by which EAC countries have integrated into Global Value Chains (GVCs) and Regional Value Chains (RVCs). \\ \vspace{2mm}
+
+Prior \textbf{Africa-wide analysis} by \citet{foster2015global} using the EORA 25 sector database over the periods from 2000-2011: \\ %\vspace{2mm}
+
+\begin{itemize} \setlength{\itemsep}{0.5em}
+\item Much of the GVC involvement of Africa is in upstream production, and involves the supply of primary goods
+\item Downstream involvement in GVCs is relatively small, and shows little improvement in the 1995-2011 period
+\item Heterogeneity in GVC involvement across African countries, with North Africa heavily involved in GVCs with the EU
+\item Manufacturing and high-tech sectors not very important
+\item Inner-African GVCs not important (except southern Africa). EU biggest GVC partner. South+East Asian shares increasing.
+\end{itemize}
+\end{frame}
+\end{noheadline}
+
+\begin{frame}
+\textbf{Determinants of GVC Participation:} Broad analysis of GVC participation focusing on Africa, the Middle East and Asia by \citet{kowalski2015participation}, using OECD, WIOD and EORA, 1990-2011:  \\ \vspace{1mm}
+
+\begin{itemize} \setlength{\itemsep}{0.5em}
+\item[1.] Structural factors, especially geographic proximity to manufacturing hubs in Europe, North America and East Asia, size of domestic market and the level of development
+\item[2.] Trade and investment policy (low import tariffs, FDI openness), improvements of logistics and customs, intellectual property protection, infrastructure and institutions
+\item[$\Rightarrow$] Very favourable policy environments in low-income countries can substitute for suboptimal structural factors
+\end{itemize} \vspace{2mm}
+\textbf{Benefits of GVC Perticipation}: enhanced productivity, sophistication and diversification of exports. Furthermore:
+\begin{itemize} \setlength{\itemsep}{0.5em}
+\item SSA \& MENA competitive in agriculture \& food processing
+\item Survival of export relationships in Asia $\approx 2\times$ Africa $\to$ stronger regional integration and learning by doing in Asia. 
+\end{itemize}
+\end{frame}
+
+\begin{noheadline}
+\begin{frame}{Why the EAC is Interesting for GVCs}
+\begin{itemize}
+\item Robust growth and macroeconomic stability
+\item Innovation friendly policies (Rwanda [2] and Kenya [4] in top 5 Doing Business in Africa 2020)
+\item Improvements in infrastructure (Tanzania [4], Rwanda [5], and Kenya [7] in top 10 African Logistics Performers in 2018) 
+\item Regional integration (common market with free movement of goods and people)
+\item Planned monetary union (2024/25)
+\end{itemize}
+\end{frame}
+
+
+%------------------------------------------------
+\section{Data}
+%------------------------------------------------
+
+
+\begin{frame}{Data}
+EORA 26 Global ICIO tables for 26 sectors \citet{lenzen2012mapping, lenzen2013building}, aggregated to different regions for the years 2005-2015:
+
+\begin{table}[h!]
+\centering
+\label{tab:ctry}
+\begin{tabular}{llr} \toprule
+\textit{Region} & \textit{Description} & \textit{Countries} \\ \midrule
+EAC & East African Community & 6 \\
+SSA & Sub-Saharan Africa (Excluding EAC) & 42 \\
+EUU & European Union + UK & 28 \\
+ECA & Europe and Central Asia (Non-EU) & 31 \\
+MEA & Middle East and North Africa & 20 \\
+NAC & North America and Canada & 3\\
+LAC & Latin America and Carribean & 42 \\
+ASE & ASEAN & 10 \\
+SAS & South Asia & 8 \\
+CHN & China & 3 \\
+ROA & Rest of Asia & 11 \\
+OCE & Oceania & 14
+ \\ \bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Sectors}
+% \tiny
+\begin{table}[h!]
+\centering
+%\caption{\textsc{Sectors}}
+%\label{tab:sec}
+%\vspace{2mm}
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{ll} \toprule
+\textit{Sector Code} & \textit{Description} \\ \midrule
+AGR & Agriculture \\
+ FIS & Fishing \\
+ MIN & Mining and Quarrying \\
+ FBE & Food \& Beverages \\
+ TEX & Textiles and Wearing Apparel \\
+ WAP & Wood and Paper \\
+ PCM & Petroleum, Chemical and Non-Metallic Mineral Products \\
+ MPR & Metal Products \\
+ ELM & Electrical and Machinery \\
+ TEQ & Transport Equipment \\
+ MAN & Other Manufacturing \\
+ REC & Recycling \\
+ EGW & Electricity, Gas and Water \\
+ CON & Construction \\
+ MRE & Maintenance and Repair \\
+ WTR & Wholesale Trade \\
+ RTR & Retail Trade \\
+ AFS & Hotels and Restraurants \\
+ TRA & Transport \\
+ PTE & Post and Telecommunications \\
+ FIB & Finacial Intermediation and Business Activities \\
+ PAD & Public Administration \\
+ EHO & Education, Health and Other Services \\
+ PHH & Private Households \\
+ OTH & Others \\
+ REI & Re-export \& Re-import \\ \bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
+\begin{frame}{EAC Gross Exports}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:exp}\textsc{EAC Gross Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/exports_stacked_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Gross IO Linkages}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:wld}\textsc{Aggregated MRIO Table: EAC and World Regions}}
+\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=0.8\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_AG".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Gross IO Linkages}
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Largest Intermediates Flows Between the EAC and the World}} 
+  \small{\textit{Millions of 2015 USD at Basic Prices}}
+  \label{tab:weaclfl} 
+  \vspace{2mm}
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{rlrlr} \toprule
+\textbf{\#} & \textbf{Flow} & \textbf{Value} & \textbf{Non-Kenya Flow} & \textbf{Value} \\ 
+\midrule
+1 & KEN.AGR $\to$  EUU.FBE & $459.214$ & EUU.ELM $\to$  TZA.ELM & $128.665$ \\ 
+2 & KEN.AGR $\to$  EUU.REI & $271.547$ & EUU.ELM $\to$  UGA.ELM & $86.675$ \\ 
+3 & MEA.TRA $\to$  KEN.TRA & $186.499$ & SAS.PCM $\to$  TZA.PCM & $73.558$ \\ 
+4 & EUU.TRA $\to$  KEN.TRA & $178.775$ & TZA.AGR $\to$  ROA.FBE & $66.674$ \\ 
+5 & EUU.ELM $\to$  KEN.CON & $165.829$ & EUU.PCM $\to$  TZA.PCM & $62.432$ \\ 
+6 & EUU.PCM $\to$  KEN.PCM & $142.660$ & MEA.ELM $\to$  UGA.ELM & $62.200$ \\ 
+7 & KEN.FBE $\to$  EUU.FBE & $137.057$ & SAS.ELM $\to$  TZA.ELM & $49.312$ \\ 
+8 & EUU.ELM $\to$  TZA.ELM & $128.665$ & UGA.AGR $\to$  EUU.FBE & $48.568$ \\ 
+9 & OCE.AGR $\to$  KEN.FBE & $128.317$ & SSA.ELM $\to$  TZA.ELM & $44.663$ \\ 
+10 & EUU.PCM $\to$  KEN.AGR & $118.039$ & SSA.PCM $\to$  TZA.PCM & $43.131$ \\ 
+11 & EUU.PCM $\to$  KEN.CON & $103.888$ & ROA.WTR $\to$  TZA.WTR & $41.891$ \\ 
+12 & EUU.REI $\to$  KEN.CON & $95.865$ & MEA.ELM $\to$  TZA.ELM & $41.537$ \\ 
+13 & MEA.PCM $\to$  KEN.CON & $95.677$ & TZA.AGR $\to$  EUU.FBE & $39.506$ \\ 
+14 & EUU.ELM $\to$  KEN.ELM & $93.319$ & SAS.ELM $\to$  UGA.ELM & $37.466$ \\ 
+15 & SAS.PCM $\to$  KEN.PCM & $90.327$ & EUU.ELM $\to$  TZA.TEQ & $35.433$ \\ 
+16 & EUU.FBE $\to$  KEN.FBE & $88.536$ & EUU.ELM $\to$  RWA.ELM & $33.555$ \\ 
+17 & KEN.FBE $\to$  EUU.REI & $88.051$ & CHN.ELM $\to$  TZA.ELM & $31.674$ \\ 
+18 & EUU.ELM $\to$  UGA.ELM & $86.675$ & OCE.ELM $\to$  TZA.ELM & $31.160$ \\ 
+19 & SAS.ELM $\to$  KEN.CON & $82.360$ & SAS.PCM $\to$  UGA.PCM & $30.212$ \\ 
+20 & EUU.PCM $\to$  KEN.FBE & $77.832$ & EUU.PCM $\to$  UGA.PCM & $29.267$ \\ 
+\bottomrule
+\end{tabular} 
+}
+\end{table} 
+\end{frame}
+
+\begin{frame}{Percentage of Gross Exports Going to EAC Members}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:exp_EAC_share}\textsc{Percentage of Gross Exports Going to EAC Members}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/exports_EAC_perc_stacked_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Gross IO Linkages in the EAC}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:eac}\textsc{Disaggregated MRIO Table: EAC}}
+\small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=0.8\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+\end{noheadline}
+
+\begin{frame}
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Largest Inter-Country Intermediate Flows within the EAC}} 
+  \small{\textit{Millions of 2015 USD at Basic Prices}}
+  \label{tab:eaclfl} 
+  \vspace{2mm}
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{rlrlr} \toprule
+\textbf{\#} & \textbf{Flow} & \textbf{Value} & \textbf{Non-Kenya Flow} & \textbf{Value} \\ 
+\midrule
+1 & KEN.MIN $\to$ UGA.PCM & $95.270$ & UGA.PCM $\to$ RWA.PCM & $2.539$ \\ 
+2 & KEN.PCM $\to$ UGA.PCM & $63.854$ & UGA.TRA $\to$ RWA.PAD & $2.497$ \\ 
+3 & KEN.PCM $\to$ TZA.PCM & $37.412$ & UGA.MPR $\to$ RWA.MPR & $2.091$ \\ 
+4 & KEN.WAP $\to$ UGA.WAP & $29.109$ & UGA.TRA $\to$ RWA.TRA & $2.003$ \\ 
+5 & KEN.ELM $\to$ UGA.ELM & $25.912$ & UGA.FBE $\to$ RWA.FBE & $1.958$ \\ 
+6 & UGA.AGR $\to$ KEN.FBE & $24.319$ & UGA.MPR $\to$ RWA.ELM & $1.443$ \\ 
+7 & KEN.TRA $\to$ UGA.PAD & $23.140$ & UGA.ELM $\to$ RWA.ELM & $1.346$ \\ 
+8 & KEN.PCM $\to$ UGA.EHO & $20.892$ & UGA.FBE $\to$ RWA.AFS & $1.175$ \\ 
+9 & KEN.TRA $\to$ UGA.TRA & $20.085$ & UGA.WTR $\to$ RWA.WTR & $1.124$ \\ 
+10 & KEN.MIN $\to$ UGA.EGW & $18.863$ & UGA.PCM $\to$ TZA.PCM & $1.088$ \\ 
+11 & KEN.MIN $\to$ TZA.PCM & $18.044$ & TZA.MIN $\to$ UGA.PCM & $0.992$ \\ 
+12 & KEN.WAP $\to$ TZA.WAP & $15.156$ & UGA.AGR $\to$ RWA.FBE & $0.824$ \\ 
+13 & KEN.FBE $\to$ UGA.FBE & $14.913$ & UGA.PCM $\to$ RWA.EHO & $0.817$ \\ 
+14 & KEN.WAP $\to$ UGA.CON & $14.288$ & UGA.WAP $\to$ RWA.WAP & $0.813$ \\ 
+15 & KEN.MPR $\to$ UGA.ELM & $13.857$ & TZA.FBE $\to$ UGA.FBE & $0.742$ \\ 
+16 & KEN.PCM $\to$ TZA.EHO & $11.961$ & UGA.ELM $\to$ TZA.ELM & $0.631$ \\ 
+17 & KEN.ELM $\to$ UGA.MPR & $11.708$ & UGA.MPR $\to$ RWA.CON & $0.535$ \\ 
+18 & KEN.ELM $\to$ TZA.ELM & $11.688$ & UGA.MPR $\to$ RWA.TEQ & $0.479$ \\ 
+19 & KEN.ELM $\to$ UGA.TEQ & $11.555$ & TZA.FBE $\to$ UGA.AFS & $0.471$ \\ 
+20 & KEN.PCM $\to$ UGA.PAD & $11.140$ & UGA.PCM $\to$ RWA.PAD & $0.453$ \\ 
+\bottomrule
+\end{tabular} 
+}
+\end{table} 
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:GR}\textsc{Gross Flows Ratios: ROW/EAC Inflows and Outflows}}
+% \small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/GROSS_RATIOS".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:outshares_ag_ts}\textsc{Decomposition of Output and Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/output_shares_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\section{Value-Added Flows}
+%------------------------------------------------
+
+\begin{noheadline}
+
+\begin{frame}{From Gross Flows to Value Added}
+Let \textbf{x} be a vector of country-sector gross output, \textbf{A} and input shares matrix where each column was divided by output, and \textbf{d} a vector of final demand, then
+\begin{equation}
+\textbf{x} = \textbf{A}\textbf{x} + \textbf{d}
+\end{equation}
+\begin{equation} \label{eq:leontief}
+\textbf{x} = (\textbf{I}-\textbf{A})^{-1} \textbf{d} = \textbf{B}\textbf{d},
+\end{equation}
+where \textbf{Bd} is called the total requirement matrix. Let \textbf{v} be the (own) value added share of each country-sector, defined as
+\begin{equation}
+\textbf{v} = \textbf{1} - \textbf{A}'\textbf{1}.
+\end{equation}
+Now let $\textbf{V} = diag(\textbf{v})$, then from (2)
+\begin{equation} \label{eq:VB}
+\textbf{V}\textbf{x} = \textbf{V}(\textbf{I}-\textbf{A})^{-1} \textbf{d} = \textbf{VBd}.
+\end{equation}
+$\textbf{VB} = \textbf{V}(\textbf{I}-\textbf{A})^{-1}$ is the matrix of value added added shares, such that $\textbf{1}'\textbf{VB} = \textbf{1}$ (each column gives VA from all country-sectors). 
+\end{frame}
+
+\begin{frame}{Aggregated Value Added Share Matrix (\textbf{VB}) in 2015}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:wldVB}\textsc{Aggregated Value Added Share Matrix (\textbf{VB}) 2015}}
+\small{\textit{Shares in Percentage Terms, Columns Sum to 100 Percent}}
+\includegraphics[width=0.8\textwidth, trim= {0 0 0 0}, clip]{"../Figures/heatmap_AG_VB".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Foreign Value Added Shares in EAC Production (VS)}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:EACVB_ts}\textsc{Foreign Value Added Shares in EAC Production (VS)}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_area".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Change in Foreign Value Added Shares in EAC Production}
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:EACVB_ts_bar}\textsc{Change in Foreign Value Added Shares in EAC Production}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_bar".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{GVC Integration of EAC Members: Aggregate}
+We can also consider the share of gross exports being re-exported: 
+\begin{equation} \label{eq:VS1}
+\text{E2R}_{oi} = \frac{1}{E_{oi}} \sum_{uj, u \neq  o} \text{vbe}_{oi, uj}\ \ \forall\ oi.
+\end{equation}
+
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:VSag_ts}\textsc{GVC Integration of EAC Members: Aggregate}}
+\includegraphics[width=0.87\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VS}\textsc{GVC Integration of EAC Members: Sector Level: 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:TBint}\textsc{EAC Trade Balance in Intermediate Goods in Gross and VA Terms}}
+% \small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=0.8\textwidth, trim= {0 0 0 0}, clip]{"../Figures/TB_INTER".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!] % \vspace{-2mm}
+\centering
+\caption{\label{fig:VAR}\textsc{VA Flows Ratios: ROW/EAC Inflows and Outflows}}
+% \small{\textit{Millions of 2015 USD at Basic Prices on a Log10 Scale}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_RATIOS".pdf} %trim={<left> <lower> <right> <upper>}
+% \vspace{-15mm}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Average Annual Growth 2005-2015}
+\begin{figure}[h!]
+\centering
+%\caption{\label{fig:VSgr}\textsc{Annual Growth 2005-2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VS_growth".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}{How can we Measure Regional Integration? 4 Measures:}
+\textbf{1.} foreign VA share in production/exports accounted for by EAC
+
+\begin{equation} \label{eq:VS_EAC}
+\text{VS}_{uj}^{EAC} = \frac{1}{\text{VS}_{uj}}  \sum_{oi \in EAC,\ o \neq  u} \text{vb}_{oi, uj}   \ \ \forall\ uj \in EAC,
+\end{equation}
+
+\textbf{2.} dom. VA share in re-exported exports exported by EAC partners 
+\begin{equation} \label{eq:VS1_EAC}
+\text{VS1}_{oi}^{EAC} =  \sum_{uj \in EAC, u \neq  o} \text{vbe}_{oi, uj} \bigg/ \sum_{uj, u \neq  o} \text{vbe}_{oi, uj}\ \ \forall\ oi \in EAC.
+\end{equation}
+
+We can also compute import measures considering the EAC share in VA imports (including imported intermediate inputs)
+\begin{equation}
+\text{VAI}_u^{EAC} = \sum_{oi \in EAC, o \neq u}  e_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  e_{oi, u}^{VA},  
+\end{equation}
+or, alternatively, in final goods imports (excluding imported inputs)
+\begin{equation}
+\text{VAFI}_{u}^{EAC} = \sum_{oi \in EAC, o \neq u}  fe_{oi, u}^{VA}  \bigg/ \sum_{oi, o \neq u}  fe_{oi, u}^{VA}.
+\end{equation}
+\end{frame}
+\end{noheadline}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:VAEACshares}\textsc{EAC VA Shares in Members VS, VS1, Imports and Final Imports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_EAC_shares_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+Leontief decomposition of gross exports into VA origins also captures so called pure double counted items, and provides no information where VA in exports is absorbed. \citet{koopman2014tracing} decompose country gross exports into 9 VA components:
+
+\begin{figure}[h!]
+\centering
+% \caption{\label{fig:KWW}\textsc{KWW Decomposition of Gross Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW".PNG} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:KWW_fill_ts}\textsc{KWW Decomposition of Gross Exports}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_ts".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+According to \citet{Kummritz20162} and \citet{wang2013quantifying}: \newline
+
+\begin{itemize}
+\item High FVA in final exports relative to total foreign content in exports indicates downstreamness (assembly tasks)
+\item High DVA in intermediate exports relative to total DVA in exports indicates upstreamness (specialization in tasks adding a lot of value to an unfinished product)
+\end{itemize}
+
+\begin{gather*}
+\text{Upstreamness}\quad = \\
+ \frac{\text{DVA}_{INT} + \text{DVA}_{INTrex} + \text{DDC}}{\text{DVA}_{FIN} + \text{DVA}_{INT} + \text{DVA}_{INTrex} + \text{RDV}_{FIN} + \text{RDV}_{INT} + \text{DDC}}
+\end{gather*}
+\begin{equation*} 
+\text{Downstreamness}\quad =\quad \frac{\text{FVA}_{FIN}}{\text{FVA}_{FIN} + \text{FVA}_{INT} + \text{FDC}}
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!] %\vspace{-0.3cm}
+\centering
+\caption{\label{fig:UP_DOWN_ag_ts}\textsc{Upstreamness and Downstreamness Ratios}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
+% \vspace{-1cm}
+\end{figure} 
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:UP_DOWN_ag_growth}\textsc{Upstreamness and Downstreamness Ratios, Difference 2005-2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_growth".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!] %\vspace{-1cm}
+\centering
+\caption{\label{fig:KWW_fill_ts_EAC}\textsc{KWW Decomposition of Gross Exports to the EAC}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_ts_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+% \vspace{-0.8cm}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\begin{figure}[h!] % \vspace{-0.1cm}
+\centering
+\caption{\label{fig:KWW_fill_sec}\textsc{KWW Dec. of Sector-Level Gross Exports in 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_sec".pdf} %trim={<left> <lower> <right> <upper>}
+% \vspace{-1.5cm}
+\end{figure}
+\end{frame}
+
+\begin{frame}{New Revealed Comparative Advantage}
+\begin{itemize}
+\item Popular measure to empirically measure Ricardo's concept of comparative advantage revealed comparative advantage proposed by \citet{balassa1965trade}: Share of a sector in gross country exports, divided by the share that of that sector in gross world exports. A ratio above 1 indicates a comparative advantage of the country in this sector.
+\item Traditional index based on gross flows does not take account of double counting in gross exports, and may thus be noisy and misleading. \citet{koopman2014tracing} therefore propose a new index based on VA flows, which considers the domestic VA in gross exports (or domestic GDP in exports, the sum of terms 1-5 of the KWW decomposition).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA}\textsc{New Revealed Comparative Advantage in 2015}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA_growth}\textsc{NRCA Annualized 2005-2015 Growth Rate}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_growth".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA_EAC}\textsc{NRCA Relative to EAC}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_EAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:NRCA_IEAC}\textsc{NRCA for Inner-EAC Trade}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/NRCA_IEAC".pdf} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\section{GVCs and Industrialization}
+%------------------------------------------------
+
+\begin{noheadline}
+
+\begin{frame}{GVCs and Industrial Development}
+Previous empirical work generally establishes a positive relationship:
+\begin{itemize}
+%\item 
+\item \citet{Kummritz20161}: OECD ICIO's, 61 countries, 34 industries, 1995-2011. Novel IV for GVC participation: value added trade resistance index. 1\%$\uparrow$ in I2E $\to$ 0.11\%$\uparrow$ DVA in avg. industry. 1\%$\uparrow$ in E2R $\to$ 0.60\%$\uparrow$ DVA and 0.33\%$\uparrow$ labour productivity.
+\item \citet{piermartini2014knowledge}: industry-level R\&D and patent data for 29 countries, 2000-2008: knowledge spillovers increase with GVC intensity $+$ larger vis-a-vis traditional trade. 
+\item \citet{benz2015trade}: firm-level data: offshoring leads to knowledge spillovers $+$ stronger spillovers in forward linkages.
+\item \citet{beverelli2019domestic}:  1 SD increase in domestic integration raises GVC integration through backward linkages (I2E) by 0.4\% $+$ DVC integration explains up to 30\% of overall GVC integration. Why?: overcomes fixed cost of fragmentation. % They explain these results with fixed costs of fragementation and switching suppliers: "high fragmentation costs allow, due to their sunk nature, DVCs to act as stepping stones to GVCs" \citep{beverelli2019domestic}. % The results also imply that improving domestic economic integration would further GVC integration in the medium run. 
+\end{itemize}
+% main channels are learning-by-doing, technology transfer or spillovers, gains from specialization in comparative advantage tasks, and terms of trade effects  \citep{Kummritz20161}
+\end{frame}
+\end{noheadline}
+
+\begin{frame}
+Dynamic FE specification following follow \citet{kummritz2015global} and \citet{LiLiu2015moving}, where \emph{lagged} GVC participation affects domestic VA.
+$$
+log(VA_{cst}) = \sum_{i=0}^2 \beta_{1i} I2E_{cs,t-i} + \sum_{i = 0}^2 \beta_{2i} E2R_{cs,t-i}  + \alpha_{cs} + \beta_{ct} +\gamma_{st} + \epsilon_{cst}
+$$
+with country-sector ($\alpha_{cs}$), country-year ($\beta_{ct}$) and sector-year ($\gamma_{st}$) fixed effects. \citet{Kummritz20161} estimates similar IV specification (no lags) and finds that OLS gives similar results. I also estimate a FD-specification: more efficient due to strong serial correlation.
+$$
+\Delta log(VA_{cst}) = \sum_{i=0}^2 \beta_{1i} \Delta I2E_{cs,t-i} + \sum_{i = 0}^2 \beta_{2i} \Delta E2R_{cs,t-i}  + \Delta\beta_{ct} + \Delta\gamma_{st} + \Delta\epsilon_{cst}.
+$$
+GVC participation (I2E and E2R) is measured in shares, log-shares, and log-levels (different specifications). Classical and robust (MM) estimates. Excl. South Sudan and Sectors REC, REI, FIB, EGW, PHH and OTH. Also estimates for manufacturing (FBE, TEX, WAP, PCM, MPR, ELM, TEQ, MAN). Total: 36 reg., 72 lag coef. 
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:GROWTH_REG_TS}\textsc{Time Series of Variables}}
+\begin{adjustbox}{center}
+\includegraphics[width=1.1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/GROWTH_REG_TS".pdf} %trim={<left> <lower> <right> <upper>}
+\end{adjustbox}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:GROWTH_REG_Hists}\textsc{Histograms of Variables}}
+\begin{adjustbox}{center}
+\includegraphics[width=1.12\textwidth, trim= {0 0 0 0}, clip]{"../Figures/GROWTH_REG_Hists".pdf} %trim={<left> <lower> <right> <upper>}
+\end{adjustbox}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Summary of Results}
+\begin{itemize}
+\item A 0.01 unit increase in I2E / E2R ratios yields a 0.81\% / 1.97\% increase in overall VA and a 0.58\% / 2.47\% increase in manufacturing VA after 2 years.
+\item A 1\% increase in I2E / E2R ratios yields a 0.27\% / 0.21\% increase in overall VA and a 0.28\% / 0.31\% increase in manufacturing VA after 2 years.
+\item A 1\% increase in the values of I2E / E2R yields a 0.11\% / 0.082\% increase in overall VA and a 0.15\% / 0.07\% increase in manufacturing VA after 2 years.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Contextualizing the Results}
+\citet{Kummritz20161}, using OECD ICIO tables, estimates a GDP elasticity of 60\% w.r.t. E2R with and elasticities between 10\% and 30\% for I2E. Also labour productivity elasticity of 29\% w.r.t. E2R. \newline 
+
+
+\citet{kummritz2015global} finds that low- and middle-income countries generally benefit less from GVC integration, but benefit relatively more from backward linkages (I2E) compared to high-income countries. \newline
+
+These findings appear to be broadly confirmed by the empirical results of this paper.
+\end{frame}
+
+%------------------------------------------------
+\section{Conclusion}
+%------------------------------------------------
+
+\begin{noheadline}
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize} \setlength{\itemsep}{0.5em}
+\item Foreign content (I2E) and re-exported content (E2R) of exports remain at 10\% - 20\% in most EAC countries. 
+
+\item Trade in intermediates with ROW remains 12-14 times greater in VA terms than EAC trade in intermediates. 
+
+\item Kenya has become an important supplier of inputs to the EAC (higher E2R in EAC partners). 
+
+\item Downstream shift across EAC countries and sectors: more VA (both domestic and foreign) is used for the production of final goods, while maintaining high levels of exports in primary agriculture and mining.
+
+\item Higher I2E and E2R shares increase VA with an average elasticity of $\geq 0.25$ in the course of 2 years. Estimates for manufacturing sectors higher at elasticities $\geq 0.3$ w.r.t. E2R. 
+\item[$\Rightarrow$] Greater GVC integration, especially forward integration (E2R), can boost productivity and growth in the EAC.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{References}
+\tiny
+\bibliographystyle{apacite}
+\bibliography{GVC}
+\end{frame}
+\end{noheadline}
+
+\end{document}
