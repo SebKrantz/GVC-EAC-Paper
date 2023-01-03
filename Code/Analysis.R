@@ -403,7 +403,7 @@ dev.off()
 # Exports Share to EAC Partner States: Stacked Area
 lapply(decomps, function(x) x$ESR[eac, EAC] %>% 
          rowSums %c/% 
-         fsum(rowSums(dec15$ESR[eac, ]), cr(rownam[eac]), TRA = 1L) %>%
+         fsum(rowSums(x$ESR[eac, ]), cr(rownam[eac]), TRA = 1L) %>%
          qDF(TRUE) %>% setNames(.c(Sector, Exports))) %>% 
   unlist2d("Year") %>% 
   tfm(Country = mfac(cr(Sector)), 
