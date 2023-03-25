@@ -942,6 +942,9 @@ VS_df_ag <- VS_df[exports, on = .(Year, Country, Sector)] %>%
 
 # VS1: Export to Re-Export Share: Forward GVC Integration
 VS1 <- lapply(decomps, with, rowSums(Vc * Bm %r*% E) / E) # = The sum of value added going into other countries exports, divided by own exports
+VS1_g <- lapply(decomps, with, t(fsum(t(Vc * Bm %r*% E), g)) / E)
+all.equal(VS1, lapply(VS1_g, rowSums))
+VS1_g_df <- value2df(VS1_g) %>% melt(1:3, value.name = "E2R", variable.name = "Share") %>% sbt(Country %!=% Share) 
 # Same thing (I checked it): all.equal(unattrib(unlist(VS1)), unattrib(VS1_df$E2R))
 VS1_df <- lapply(decomps, function(x) tfm(e2r(leontief(x)), E2R = e2r / x$E)) %>%
           unlist2d("Year", DT = TRUE) %>% tfm(Year = as.integer(Year)) %>%
@@ -950,7 +953,8 @@ VS1_df <- lapply(decomps, function(x) tfm(e2r(leontief(x)), E2R = e2r / x$E)) %>
 VS1_df_ag <- VS1_df[exports, on = .(Year, Country, Sector)] %>% 
   gby(Year, Country) %>% nv %>% fmean(Exports, keep.w = FALSE) 
 
-
+VS1_g_df_ag <- VS1_g_df[exports, on = .(Year, Country, Sector)] %>% 
+  gby(Year, Country, Share) %>% nv %>% fmean(Exports, keep.w = FALSE) 
 
 # Aggregate Plot (ts)
 VS_df_ag %>% slt(-i2e) %>% 
@@ -972,6 +976,23 @@ VS_df_ag %>% slt(-i2e) %>%
   theme_minimal() + pretty_plot 
 
 dev.copy(pdf, "Figures/VS_ag_ts.pdf", width = 11.69, height = 8.27)
+dev.off()
+
+# Sector Level VS1 Plot
+VS1_g_df_ag %>% # EAC_VA_shares %>%
+  sbt(Country %in% EAC) %>% rnm(E2R = Value) %>%
+  ggplot(aes(x = Year, y = Value, fill = Share)) +
+  geom_area(position = "stack", alpha = 0.8) +
+  facet_wrap( ~ Country, scales = "free_y") + 
+  guides(fill = guide_legend(ncol = 1)) + 
+  scale_y_continuous(labels = percent, #trans = "sqrt",
+                     breaks = extended_breaks(10)) + # limits = c(0, 1), 
+  scale_x_continuous(breaks = 2005:2015, expand = c(0,0)) + rbsc2 +
+  #scale_color_brewer(palette = "Set1") +
+  # guides(fill = guide_legend(title = NULL, nrow = 1)) + 
+  theme_minimal() + pretty_plot + theme(legend.position = "right")
+
+dev.copy(pdf, "Figures/E2R_shares_ag_ts_area.pdf", width = 11.69, height = 8.27)
 dev.off()
 
 # Sector Level Plot: 2015
