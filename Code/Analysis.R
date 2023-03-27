@@ -944,7 +944,7 @@ VS_df_ag <- VS_df[exports, on = .(Year, Country, Sector)] %>%
 VS1 <- lapply(decomps, with, rowSums(Vc * Bm %r*% E) / E) # = The sum of value added going into other countries exports, divided by own exports
 VS1_g <- lapply(decomps, with, t(fsum(t(Vc * Bm %r*% E), g)) / E)
 all.equal(VS1, lapply(VS1_g, rowSums))
-VS1_g_df <- value2df(VS1_g) %>% melt(1:3, value.name = "E2R", variable.name = "Share") %>% sbt(Country %!=% Share) 
+VS1_g_df <- value2df(VS1_g) %>% melt(1:3, value.name = "E2R", variable.name = "Share") # %>% sbt(Country %!=% Share) 
 # Same thing (I checked it): all.equal(unattrib(unlist(VS1)), unattrib(VS1_df$E2R))
 VS1_df <- lapply(decomps, function(x) tfm(e2r(leontief(x)), E2R = e2r / x$E)) %>%
           unlist2d("Year", DT = TRUE) %>% tfm(Year = as.integer(Year)) %>%
@@ -994,6 +994,34 @@ VS1_g_df_ag %>% # EAC_VA_shares %>%
 
 dev.copy(pdf, "Figures/E2R_shares_ag_ts_area.pdf", width = 11.69, height = 8.27)
 dev.off()
+
+
+# Simle difference of VA shares
+VS1_g_df_ag %>% 
+  rnm(E2R = Value) %>%
+  sbt(Year %in% c(2005, 2015) & Country %in% EAC) %>% 
+  roworderv() %>% 
+  gby(Share, Country) %>% 
+  mtt(Max = fmax(Value),
+      Diff = flast(fdiff(Value, 10, t = Year))) %>% 
+  fungroup() %>% 
+  mtt(Year = qF(Year)) %>% 
+  sbt(as.character(Country) != as.character(Share)) %>%
+  
+  ggplot(aes(x = Share, y = Value, fill = Year)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_text(aes(label = paste0(round(Diff*100, 2), '%'), y = Max), 
+            vjust = -0.3, size = 2) +
+  facet_wrap( ~ Country, scales = "free_y") + 
+  guides(fill = guide_legend(ncol = 1)) + 
+  scale_y_continuous(labels = percent, #trans = "sqrt",
+                     breaks = extended_breaks(10)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal() + pretty_plot + theme(legend.position = "right")
+
+dev.copy(pdf, "Figures/E2R_shares_ag_ts_bar_diff.pdf", width = 11.69, height = 8.27)
+dev.off()
+
 
 # Sector Level Plot: 2015
 VS_df %>% slt(-i2e) %>% 
