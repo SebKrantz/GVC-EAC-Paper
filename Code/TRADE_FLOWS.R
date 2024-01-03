@@ -63,46 +63,7 @@ EAC_DATA_YRC_USD15_SEC <- EAC_DATA_YRC |>
 # CEPII BACI
 ####################################
 
-BACI_2d <- qs::qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2021/BACI.qs") |> 
-           mutate(code_2d = trunc(k / 10000L)) |> 
-           collap(v + q ~ t + i + j + code_2d, fsum, fill = TRUE, keep.col.order = FALSE)
-
-# Adding Product Codes and aggregating to 2-digit level: Still too detailed...
-product_codes <- fread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2021/product_codes_HS07_V202102.csv")
-# H3 = HS 2007, see: https://wits.worldbank.org/product_concordance.html
-HS <- readxl::read_xls("~/Documents/Data/Classifications/HSProducts.xls", sheet = "H3 Nomenclature") |> 
-      janitor::clean_names()
-# product_codes |> join(HS, on = c("code" = "product_code")) |> View()
-product_codes_2d <- product_codes |> mutate(code_2d = trunc(code / 10000L)) |> 
-  join(subset(HS, tier == 1L) |> mutate(product_code = as.integer(product_code)), 
-       on = c("code_2d" = "product_code")) |> 
-  select(code_2d, product_description) |> 
-  unique(cols = "code_2d") |> 
-  mutate(product_description = qF(product_description))
-
-# Add OTS sections
-ots_commodities_2d <- ots_commodities |> 
-  mutate(code_2d = trunc(as.integer(commodity_code) / 10000L), 
-         section_code = as.integer(section_code),
-         section_fullname_english = qF(section_fullname_english)) |> 
-  subset(is.finite(code_2d) & code_2d > 0, code_2d, section_code, section_fullname_english) |> 
-  unique()
-
-BACI_2d %<>% join(join(product_codes_2d, ots_commodities_2d)) 
-rm(product_codes, product_codes_2d, HS, ots_commodities_2d)
-
-# Adding Countries
-country_codes <- fread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2021/country_codes_V202102.csv") |> 
-                 compute(i = country_code, iso3 = qF(iso_3digit_alpha))
-BACI_2d <- BACI_2d |> transform(
-  i = country_codes$iso3[ckmatch(i, country_codes$i)],   
-  j = country_codes$iso3[ckmatch(j, country_codes$i)]   
-) |> rename(t = year, i = iso3_o, j = iso3_d, v = value, q = quantity)
-rm(country_codes)
-
-# Saving 
-BACI_2d |> qs::qsave("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2021/BACI_2d.qs") 
-BACI_2d <- qs::qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2021/BACI_2d.qs") 
+BACI_2d <- qs::qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") 
 
 # Aggregating: EAC and ROW
 EAC_BACI_SEC <- BACI_2d |> 
@@ -143,14 +104,13 @@ dev.off()
 # library(ggalluvial)
 # Similar to 
 
-
 ####################################
 # IMF DOTS
 ####################################
 
 library(rdbnomics)
-rdb_ds = rdb_dimensions("IMF", "DOT", simplify = TRUE)
-View(unlist2d(rdb_ds))
+# rdb_ds = rdb_dimensions("IMF", "DOT", simplify = TRUE)
+# View(unlist2d(rdb_ds))
 EAC_ISO2 = c("UG", "TZ", "KE", "RW", "BI", "SS", "CD")
 EAC_DOT = rdb("IMF", "DOT", dimensions = list(REF_AREA = c(EAC_ISO2, "W00"),
                                               COUNTERPART_AREA = c(EAC_ISO2, "W00"),
@@ -179,7 +139,6 @@ EAC_DOT_MIG <- EAC_DOT |>
   mutate(ROW = ROW - psum(UGA, TZA, KEN, RWA, BDI, SSD, COD, na.rm = TRUE)) |> 
   pivot(c("iso3_o", "year"), names = list("iso3_d", "value"), na.rm = TRUE) |> 
   colorder(iso3_o, iso3_d)
-
 
 EAC_DOT_MIG_AGG <- EAC_DOT_MIG |> 
   subset(between(year, 2010, 2015)) |> 
@@ -279,14 +238,16 @@ EAC_EORA_MIG |>
 # ROW to Inner EAC Trade According to Different Databases
 
 rowbind(BACI = EAC_BACI_MIG |> select(-quantity), 
-        DOT = EAC_DOT_MIG, 
+        DOTS = EAC_DOT_MIG, 
         EORA = EAC_EORA_MIG, idcol = "data") |> 
   group_by(data, year, inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
   num_vars() |> fsum() |> 
   pivot(1:2, names = "inner_eac", how = "w") |> 
   mutate(ratio = `FALSE`/`TRUE`) |> 
-  subset(year >= 2000) |> 
-  ggplot(aes(x = year, y = ratio, colour = data)) + geom_line() +
+  subset(year >= 2000 & year <= 2021) |> 
+  ggplot(aes(x = year, y = ratio, colour = data)) + 
+    geom_line() +
+    geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
     theme_bw() + labs(y = "EAC-ROW Trade / Inner-EAC Trade", 
                       x = "Year", colour = "Database")
 
