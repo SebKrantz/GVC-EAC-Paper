@@ -92,17 +92,45 @@ EAC_BACI_AGG[iso3_o == "ROW" | iso3_d == "ROW", sum(value)] / EAC_BACI_AGG[iso3_
 
 # Trade Flow Diagram
 # With ROW
-migest::mig_chord(EAC_BACI_AGG) # Millions of current USD
+migest::mig_chord(EAC_BACI_AGG) # Billions of current USD
 dev.copy(pdf, "Figures/REV/BACI_MIG_2010_15_ROW.pdf", width = 5, height = 5)
 dev.off()
 # Without ROW
-migest::mig_chord(subset(EAC_BACI_AGG, iso3_o != "ROW" & iso3_d != "ROW")) # Millions of current USD
+migest::mig_chord(subset(EAC_BACI_AGG, iso3_o != "ROW" & iso3_d != "ROW")) # Billions of current USD
 dev.copy(pdf, "Figures/REV/BACI_MIG_2010_15.pdf", width = 5, height = 5)
 dev.off()
 
 # Also See Alluvial Plots: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
 # library(ggalluvial)
-# Similar to 
+
+# Now looking at specific sectors
+# EAC_BACI_SEC |> gvr("section") |> count() |> View()
+# BACI_2d |> select(code_2d, product_description, section_code, section_fullname_english) |> count() |> View()
+# broad_sec <- list(AGR = 1:4, MIN = 5, MAN = 6:20)
+EAC_BACI_BSEC <- EAC_BACI_SEC |> 
+  mutate(broad_sec = nif(section_code %in% 1:2, "AGR", 
+                         section_code %in% 3:4, "FBE", 
+                         section_code == 5, "MIN", 
+                         section_code %in% 6:20, "MAN", 
+                         default = "OTH")) |> 
+  group_by(year, iso3_o, iso3_d, broad_sec) |> 
+  select(value, quantity) |> 
+  fsum(fill = TRUE)
+
+sec = "FBE"
+EAC_BACI_BSEC |> 
+  subset(broad_sec == sec & between(year, 2010, 2015)) |> 
+  # subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  group_by(iso3_o, iso3_d) |> 
+  select(value, quantity) |> 
+  fmean() |> 
+  mutate(value = value / 1e6) |> 
+  migest::mig_chord()
+  # ggplot(aes(y = value, axis1 = iso3_o, axis2 = iso3_d, fill = iso3_o)) +
+  #   ggalluvial::geom_alluvium() # +
+
+dev.copy(pdf, sprintf("Figures/REV/BACI_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
+dev.off()
 
 ####################################
 # IMF DOTS
@@ -212,6 +240,37 @@ migest::mig_chord(subset(EAC_EORA_MIG_AGG, iso3_o != "ROW" & iso3_d != "ROW"))
 dev.copy(pdf, "Figures/REV/EORA_MIG_2010_15.pdf", width = 5, height = 5)
 dev.off()
 
+# Now looking at specific sectors
+EAC_EORA_BSEC <- EORA$decomps |> get_elem("ESR") |> 
+  unlist2d("year", "country_sector") |> 
+  transform(iso3_o = substr(country_sector, 1, 3),
+            sector = substr(country_sector, 5, 7),
+            country_sector = NULL) |> 
+  pivot(c("year", "iso3_o", "sector"), names = list("iso3_d", "value")) |> 
+  transform(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
+            iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW"),
+            year = as.integer(year), 
+            broad_sec = nif(sector %in% c("AGR", "FIS"), "AGR",
+                            sector == "MIN", "MIN", 
+                            sector == "FBE", "FBE",
+                            sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
+                            default = "SRV")) |> 
+  collap(value ~ year + iso3_o + iso3_d + broad_sec, fsum) |> 
+  subset(iso3_o != iso3_d)
+  
+for (sec in c("AGR", "FBE", "MIN", "MAN", "SRV")) {
+EAC_EORA_BSEC |> 
+  subset(broad_sec == sec & between(year, 2010, 2015)) |> 
+  # subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  group_by(iso3_o, iso3_d) |> 
+  select(value) |> 
+  fmean() |> 
+  mutate(value = value / 1e6) |> 
+  migest::mig_chord()
+
+dev.copy(pdf, sprintf("Figures/REV/EORA_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
+dev.off()
+}
 
 ####################################
 # Trade Flow Time Series
@@ -253,3 +312,22 @@ rowbind(BACI = EAC_BACI_MIG |> select(-quantity),
 
 ggsave("Figures/REV/ROW_EAC_Trade_Ratios.pdf", width = 8, height = 4)  
   
+# ROW to Inner EAC Trade According to Different Databases: Sector Level
+
+rowbind(BACI = EAC_BACI_BSEC |> select(-quantity), 
+        EORA = EAC_EORA_BSEC, idcol = "data") |> 
+  group_by(data, year, broad_sec, 
+           inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
+  num_vars() |> fsum() |> 
+  pivot(1:3, names = "inner_eac", how = "w") |> 
+  mutate(ratio = `FALSE`/`TRUE`) |> 
+  subset(year >= 2000 & year <= 2021 & broad_sec %in% c("AGR", "FBE", "MIN", "MAN")) |> 
+  ggplot(aes(x = year, y = ratio, colour = data)) + 
+    geom_line() + 
+    geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
+    facet_wrap(~broad_sec, scales = "free_y") +
+    scale_colour_brewer(palette = "Paired", direction = -1) +
+    theme_bw() + labs(y = "EAC-ROW Trade / Inner-EAC Trade", 
+                      x = "Year", colour = "Database")
+
+ggsave("Figures/REV/ROW_EAC_Trade_Ratios_Sec.pdf", width = 8, height = 5)  
