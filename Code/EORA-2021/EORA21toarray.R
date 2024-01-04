@@ -1,5 +1,5 @@
 #########################################
-## Aggregating EORA 26 2005-2021for EAC
+## Aggregating EORA 26 2000-2021for EAC
 #########################################
 
 library(fastverse)  
@@ -14,7 +14,7 @@ data_unz_path <- paste0(data_path, "/temp")
 dir.create(data_unz_path)
 
 # Extracting files to temporary folder
-for (i in 2005:2021) unzip(paste0(data_path, "/Eora26_", i, "_bp.zip"), 
+for (i in 2000:2021) unzip(paste0(data_path, "/Eora26_", i, "_bp.zip"), 
                            exdir = data_unz_path)
 
 # function to remove the country name
@@ -85,7 +85,7 @@ all(FDctry %in% c(k, "ROW"))
 
 reg <- trade_class$trade[ckmatch(ctry, trade_class$iso3c)]
 funique(reg)
-EAC <- c("UGA", "TZA", "KEN", "RWA", "BDI", "SSD")
+EAC <- c("UGA", "TZA", "KEN", "RWA", "BDI", "SSD", "COD")
 r <- c(EAC, "SSA", "MEA", "EUU", "ECA", "NAC", "SAS", "ASE", "CHN", "ROA", "LAC", "OCE")
 # r_long <- ... No long names...
 setdiff(funique(reg), r)
@@ -108,7 +108,7 @@ class(FDreg) <- c("factor", "na.included")
 
 
 # Now Aggregating:
-y <- as.character(2005:2021)
+y <- as.character(2000:2021)
 
 T <- lapply(y, function(j) {
   file <- paste0(data_unz_path, "/Eora26_",j,"_bp_T.txt")
