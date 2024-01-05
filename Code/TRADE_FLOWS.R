@@ -195,11 +195,11 @@ dev.copy(pdf, "Figures/REV/DOT_MIG_2010_15.pdf", width = 5, height = 5)
 dev.off()
 
 ####################################
-# EORA
+# EORA 
 ####################################
 
 EORA <- new.env()
-load("Code/EAC_EORA_2021_data.RData", envir = EORA)
+load("Data/EAC_EORA_2021_data_broad_sec.RData", envir = EORA)
 
 EAC_EORA <- EORA$decomps |> get_elem("ESR") |> 
   unlist2d("year", "country_sector") |> 
@@ -246,11 +246,11 @@ EAC_EORA_BSEC <- EORA$decomps |> get_elem("ESR") |>
   transform(iso3_o = substr(country_sector, 1, 3),
             sector = substr(country_sector, 5, 7),
             country_sector = NULL) |> 
-  pivot(c("year", "iso3_o", "sector"), names = list("iso3_d", "value")) |> 
+  pivot(c("year", "iso3_o", "sector"), names = list("iso3_d", "value")) |> # with(unique(sector))
   transform(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
             iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW"),
             year = as.integer(year), 
-            broad_sec = nif(sector %in% c("AGR", "FIS"), "AGR",
+            broad_sec = nif(sector == "AFF", "AGR", # %in% c("AGR", "FIS")
                             sector == "MIN", "MIN", 
                             sector == "FBE", "FBE",
                             sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
@@ -271,6 +271,85 @@ EAC_EORA_BSEC |>
 dev.copy(pdf, sprintf("Figures/REV/EORA_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
 dev.off()
 }
+
+####################################
+# EMERGING: Same Code as EORA
+####################################
+
+EM <- new.env()
+load("Data/EAC_EMERGING_data.RData", envir = EM)
+
+EAC_EM <- EM$decomps |> get_elem("ESR") |> 
+  unlist2d("year", "country_sector") |> 
+  group_by(year, iso3_o = substr(country_sector, 1, 3)) |> 
+  num_vars() |> fsum(fill = TRUE) |> 
+  pivot(1:2, names = list("iso3_d", "value"))
+
+EAC_EM_MIG <- EAC_EM |> 
+  transform(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
+            iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW"),
+            year = as.integer(year)) |> 
+  collap(value ~ year + iso3_o + iso3_d, fsum) |> 
+  subset(iso3_o != iso3_d)
+
+EAC_EM_MIG_AGG <- EAC_EM_MIG |> 
+  subset(between(year, 2010, 2015)) |> 
+  collap(value ~ iso3_o + iso3_d) |> 
+  mutate(value = value / 1e6) |> 
+  as_character_factor() |> qDT()
+
+# Ratios: ROW to EAC Trade
+# Imports
+EAC_EM_MIG_AGG[iso3_o == "ROW", sum(value)] / EAC_EM_MIG_AGG[iso3_o %in% EAC & iso3_d %in% EAC, sum(value)]
+# Exports
+EAC_EM_MIG_AGG[iso3_d == "ROW", sum(value)] / EAC_EM_MIG_AGG[iso3_o %in% EAC & iso3_d %in% EAC, sum(value)]
+# Total
+EAC_EM_MIG_AGG[iso3_o == "ROW" | iso3_d == "ROW", sum(value)] / EAC_EM_MIG_AGG[iso3_o %in% EAC & iso3_d %in% EAC, sum(value)]
+
+# Trade Flow Diagram
+# library(migest)
+# With ROW
+migest::mig_chord(EAC_EM_MIG_AGG) # USD Billions at Basic Prices
+dev.copy(pdf, "Figures/REV/EM_MIG_2010_15_ROW.pdf", width = 5, height = 5)
+dev.off()
+
+# Without ROW
+migest::mig_chord(subset(EAC_EM_MIG_AGG, iso3_o != "ROW" & iso3_d != "ROW"))
+dev.copy(pdf, "Figures/REV/EM_MIG_2010_15.pdf", width = 5, height = 5)
+dev.off()
+
+# Now looking at specific sectors
+EAC_EM_BSEC <- EM$decomps |> get_elem("ESR") |> 
+  unlist2d("year", "country_sector") |> 
+  transform(iso3_o = substr(country_sector, 1, 3),
+            sector = substr(country_sector, 5, 7),
+            country_sector = NULL) |> 
+  pivot(c("year", "iso3_o", "sector"), names = list("iso3_d", "value")) |> # with(unique(sector))
+  transform(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
+            iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW"),
+            year = as.integer(year), 
+            broad_sec = nif(sector == "AFF", "AGR", # %in% c("AGR", "FIS")
+                            sector == "MIN", "MIN", 
+                            sector == "FBE", "FBE",
+                            sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
+                            default = "SRV")) |> 
+  collap(value ~ year + iso3_o + iso3_d + broad_sec, fsum) |> 
+  subset(iso3_o != iso3_d)
+
+for (sec in c("AGR", "FBE", "MIN", "MAN", "SRV")) {
+  EAC_EM_BSEC |> 
+    subset(broad_sec == sec & between(year, 2010, 2015)) |> 
+    # subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+    group_by(iso3_o, iso3_d) |> 
+    select(value) |> 
+    fmean() |> 
+    mutate(value = value / 1e6) |> 
+    migest::mig_chord()
+  
+  dev.copy(pdf, sprintf("Figures/REV/EM_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
+  dev.off()
+}
+
 
 ####################################
 # Trade Flow Time Series
@@ -294,11 +373,18 @@ EAC_EORA_MIG |>
   geom_line() + geom_vline(xintercept = 2015) +
   facet_wrap(~ iso3_o, scales = "free_y")
 
+EAC_EM_MIG |> 
+  subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  ggplot(aes(x = year, y = value, colour = iso3_d)) +
+  geom_line() + geom_vline(xintercept = 2015) +
+  facet_wrap(~ iso3_o, scales = "free_y")
+
 # ROW to Inner EAC Trade According to Different Databases
 
 rowbind(BACI = EAC_BACI_MIG |> select(-quantity), 
         DOTS = EAC_DOT_MIG, 
-        EORA = EAC_EORA_MIG, idcol = "data") |> 
+        EORA = EAC_EORA_MIG,
+        EMERGING = EAC_EM_MIG, idcol = "data") |> 
   group_by(data, year, inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
   num_vars() |> fsum() |> 
   pivot(1:2, names = "inner_eac", how = "w") |> 
@@ -315,7 +401,8 @@ ggsave("Figures/REV/ROW_EAC_Trade_Ratios.pdf", width = 8, height = 4)
 # ROW to Inner EAC Trade According to Different Databases: Sector Level
 
 rowbind(BACI = EAC_BACI_BSEC |> select(-quantity), 
-        EORA = EAC_EORA_BSEC, idcol = "data") |> 
+        EORA = EAC_EORA_BSEC,
+        EMERGING = EAC_EM_BSEC, idcol = "data") |> 
   group_by(data, year, broad_sec, 
            inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
   num_vars() |> fsum() |> 
