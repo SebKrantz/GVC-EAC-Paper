@@ -7,6 +7,8 @@ library(fastverse)
 rm(list = ls())
 gc()
 
+years <- 2000:2021
+broad_sec <- TRUE
 data_path <- "/Users/sebastiankrantz/Documents/Data/EORA/EORA 26 2021"
 
 # Crating temporary folder to extract files
@@ -14,7 +16,7 @@ data_unz_path <- paste0(data_path, "/temp")
 dir.create(data_unz_path)
 
 # Extracting files to temporary folder
-for (i in 2000:2021) unzip(paste0(data_path, "/Eora26_", i, "_bp.zip"), 
+for (i in years) unzip(paste0(data_path, "/Eora26_", i, "_bp.zip"), 
                            exdir = data_unz_path)
 
 # function to remove the country name
@@ -63,7 +65,14 @@ i_long <- i
 i <- sec_class$code[ckmatch(i, sec_class$sector)] 
 ind_long <- ind
 ind[-n] <- sec_class$code[ckmatch(ind[-n], sec_class$sector)]
-ind[n] <- "TOT"
+ind_long[n] <- ind[n] <- "TOT"
+
+if(broad_sec) {
+  i_long <- sec_class$Broad_Sector[ckmatch(i_long, sec_class$sector)]
+  i <- sec_class$Broad_Sector_Code[ckmatch(i, sec_class$code)]
+  ind_long[-n] <- sec_class$Broad_Sector[ckmatch(ind_long[-n], sec_class$sector)]
+  ind[-n] <- sec_class$Broad_Sector_Code[ckmatch(ind[-n], sec_class$code)]
+}
 
 ## Getting classification for aggregation: EAC and world Regions:
 trade_class <- read_xlsx("/Users/sebastiankrantz/Documents/Data/EORA/trade classification.xlsx", range = "A1:B220")
@@ -99,16 +108,15 @@ all_identical(length(FDreg), length(FDctry))
 flast(regi)
 regi_lev <- c(t(outer(r, i, paste, sep = ".")), "ROW.TOT") # c(r, "ROW")
 all(regi %in% regi_lev)
-regi <- factor(regi, levels = regi_lev)
+regi <- factor(regi, levels = unique(regi_lev))
 class(regi) <- c("factor", "na.included")
 
 # Grouping FDreg
 FDreg <- factor(FDreg, levels = c(r, "ROW"))
 class(FDreg) <- c("factor", "na.included")
 
-
 # Now Aggregating:
-y <- as.character(2000:2021)
+y <- as.character(years)
 
 T <- lapply(y, function(j) {
   file <- paste0(data_unz_path, "/Eora26_",j,"_bp_T.txt")
@@ -168,17 +176,15 @@ va <- va[-T_ROW_rm, ]
 va_VA <- va_VA[-T_ROW_rm, ]
 rm(T_ROW_rm)
 
-
 # Creating decomposition Objects:
 library(decompr)
 decomps <- lapply(y, function(j) {
   load_tables_vectors(x = T[, , j],
                       y = FD[, , j],
                       k = r,
-                      i = i,
+                      i = unique(i),
                       o = out[, j],
                       v = va[, j])
-  
 })
 
 names(decomps) <- y
@@ -228,8 +234,8 @@ dimnames(eac) <- list(i, EAC)
 # Removing temporary files
 unlink(data_unz_path, recursive = TRUE)
 rm(list = setdiff(ls(), .c(decomps, T, FD, VA, out, va, va_VA, VB, T_ag, FD_ag, VA_ag, 
-                           out_ag, va_ag, va_VA_ag, VB_ag, 
+                           out_ag, va_ag, va_VA_ag, VB_ag, broad_sec,
                            r, EAC, eac, i, i_long, v, rownam, y, g, cr, crm)))
 
-save.image("Code/EAC_EORA_2021_data.RData")
+save.image(sprintf("Data/EAC_EORA_2021_data%s.RData", if(broad_sec) "_broad_sec" else ""))
 
