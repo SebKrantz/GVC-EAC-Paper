@@ -9,14 +9,15 @@ gc()
 
 years <- 2000:2021
 broad_sec <- TRUE
-data_path <- "/Users/sebastiankrantz/Documents/Data/EORA/EORA 26 2021"
+prices <- "pp"
+data_path <- paste0("/Users/sebastiankrantz/Documents/Data/EORA/EORA 26 2021", if(prices == "pp") " PP" else "")
 
 # Crating temporary folder to extract files
 data_unz_path <- paste0(data_path, "/temp")
 dir.create(data_unz_path)
 
 # Extracting files to temporary folder
-for (i in years) unzip(paste0(data_path, "/Eora26_", i, "_bp.zip"), 
+for (i in years) unzip(paste0(data_path, "/Eora26_", i, "_", prices, ".zip"), 
                            exdir = data_unz_path)
 
 # function to remove the country name
@@ -119,7 +120,7 @@ class(FDreg) <- c("factor", "na.included")
 y <- as.character(years)
 
 T <- lapply(y, function(j) {
-  file <- paste0(data_unz_path, "/Eora26_",j,"_bp_T.txt")
+  file <- paste0(data_unz_path, "/Eora26_",j,"_", prices, "_T.txt")
   Tj <- fread(file, data.table = FALSE) 
   if(!identical(fdim(Tj), dT)) stop("Dimension mismatch in T: ", j)
   Tj[T_USR_rm, T_USR_rm] %>% fsum(regi) %>% qM %>% t %>% fsum(regi) %>% t # We first aggregate the rows of the data frame before converting to matrix
@@ -132,7 +133,7 @@ T <- simplify2array(T)
 str(T)
 
 FD <- lapply(y, function(j) {
-  file <- paste0(data_unz_path, "/Eora26_",j,"_bp_FD.txt")
+  file <- paste0(data_unz_path, "/Eora26_",j,"_", prices, "_FD.txt")
   FDj <- fread(file, data.table = FALSE) 
   if(!identical(fdim(FDj), dFD)) stop("Dimension mismatch in FD: ", j)
   FDj[T_USR_rm, FD_USR_rm] %>% fsum(regi) %>% qM %>% t %>% fsum(FDreg) %>% t # We first aggregate the rows of the data frame before converting to matrix
@@ -145,7 +146,7 @@ FD <- simplify2array(FD)
 str(FD)
 
 VA <- lapply(y, function(j) {
-  file <- paste0(data_unz_path, "/Eora26_",j,"_bp_VA.txt")
+  file <- paste0(data_unz_path, "/Eora26_",j,"_", prices, "_VA.txt")
   VAj <- transpose(fread(file, data.table = FALSE)) %>% setNames(v)
   if(!identical(fdim(VAj), dVA)) stop("Dimension mismatch in VA: ", j)
   VAj[T_USR_rm, ] %>% fsum(regi) %>% qM
@@ -237,5 +238,5 @@ rm(list = setdiff(ls(), .c(decomps, T, FD, VA, out, va, va_VA, VB, T_ag, FD_ag, 
                            out_ag, va_ag, va_VA_ag, VB_ag, broad_sec,
                            r, EAC, eac, i, i_long, v, rownam, y, g, cr, crm)))
 
-save.image(sprintf("Data/EAC_EORA_2021_data%s.RData", if(broad_sec) "_broad_sec" else ""))
+save.image(sprintf("Data/EAC_EORA_2021%s_data%s.RData", if(prices == "pp") "_PP" else "", if(broad_sec) "_broad_sec" else ""))
 
