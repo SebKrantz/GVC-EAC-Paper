@@ -1,6 +1,14 @@
 library(fastverse)
 set_collapse(mask = c("manip", "helper", "special"))
 fastverse_extend(ggplot2)
+vec_ptype2.factor.factor <- function(x, y, ...) x
+
+EAC <- c("UGA", "TZA", "KEN", "RWA", "BDI", "SSD", "COD")
+
+
+####################################
+# World Development Report GVC Data
+####################################
 
 labels <- c(
   cntry = "Country name",
@@ -36,3 +44,6 @@ WDR[cntry %in% EAC, lapply(.SD, sum), by = .(cntry, year = t), .SDcols = gexp:gv
   geom_line() + facet_wrap(~ cntry)
   
   
+######################################
+# Upstreamness and Downstreamness Data
+######################################
