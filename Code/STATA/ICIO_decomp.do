@@ -34,7 +34,7 @@ foreach y in $years {
 	
 	* Load ICIO Table
 	icio_clean
-	icio_load, iciot(user, userp("ICIO_CSV") tablen(EM_`y'.csv) countrylist(EM_countrylist.csv))  
+	icio_load, iciot(user, userp("ICIO_CSV") tablen(EORA_`y'.csv) countrylist(EORA_countrylist.csv))  
 	icio, info
 	
 	qui foreach c in $countries {
@@ -56,7 +56,7 @@ foreach y in $years {
 	}
 }
 
-outsheet using "ICIO_CSV/EM_GVC_KWW_BM19.csv", comma replace
+outsheet using "ICIO_CSV/EORA_GVC_KWW_BM19.csv", comma replace
 
 
 
@@ -84,7 +84,7 @@ foreach y in $years {
 	
 	* Load ICIO Table
 	icio_clean
-	icio_load, iciot(user, userp("ICIO_CSV") tablen(EM_`y'.csv) countrylist(EM_countrylist.csv))  
+	icio_load, iciot(user, userp("ICIO_CSV") tablen(EORA_`y'.csv) countrylist(EORA_countrylist.csv))  
 	icio, info
 
 	* Detailed Decomposition
@@ -129,7 +129,7 @@ foreach y in $years {
 }
 
 
-outsheet using "ICIO_CSV/EM_GVC_BIL_SEC_BM19.csv", comma replace
+outsheet using "ICIO_CSV/EORA_GVC_BIL_SEC_BM19.csv", comma replace
 
 
 
