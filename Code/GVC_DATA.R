@@ -46,4 +46,31 @@ WDR[cntry %in% EAC, lapply(.SD, sum), by = .(cntry, year = t), .SDcols = gexp:gv
   
 ######################################
 # Upstreamness and Downstreamness Data
+# Mancini M., Montalbano P., Nenci S., Vurchio D., 2022, Positioning in Global Value Chains: World Map and Indicators. A new dataset available for GVC analyses.
+# https://www.tradeconomics.com/position/
 ######################################
+
+POS <- haven::read_dta("/Users/sebastiankrantz/Documents/Data/GVCPosition/position_full.dta")
+
+POS |> 
+  mutate(position = upstreamness / downstreamness) |> 
+  collap(position ~ country + t + source) |> 
+  subset(country %in% EAC & t >= 1995) |> 
+  ggplot(aes(x = t, y = position, colour = country)) +
+    geom_line() 
+
+####################################
+# WITS GVC DATA
+# From: https://wits.worldbank.org/gvc/gvc-data-download.html
+####################################
+
+# Trade Data: Very Large, but source data from various databases
+WITS <- fread("unzip -p /Users/sebastiankrantz/Documents/Data/WITSGVCData/gvc_trade.zip")
+qsu(WITS)
+WITS |> qsu(t ~ source, stable = FALSE)
+rm(WITS); gc()
+
+# Standard GVC Data
+GVC <- fread("unzip -p /Users/sebastiankrantz/Documents/Data/WITSGVCData/gvc-output.zip")
+GVC |> qsu(t ~ source, stable = FALSE)
+rm(GVC); gc()
