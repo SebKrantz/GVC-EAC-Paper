@@ -136,20 +136,24 @@ dev.off()
 # IMF DOTS
 ####################################
 
-library(rdbnomics)
-# rdb_ds = rdb_dimensions("IMF", "DOT", simplify = TRUE)
-# View(unlist2d(rdb_ds))
+# library(rdbnomics)
+# # rdb_ds = rdb_dimensions("IMF", "DOT", simplify = TRUE)
+# # View(unlist2d(rdb_ds))
 EAC_ISO2 = c("UG", "TZ", "KE", "RW", "BI", "SS", "CD")
-EAC_DOT = rdb("IMF", "DOT", dimensions = list(REF_AREA = c(EAC_ISO2, "W00"),
-                                              COUNTERPART_AREA = c(EAC_ISO2, "W00"),
-                                              INDICATOR = c("TXG_FOB_USD", "TMG_CIF_USD"), 
-                                              FREQ = "A"))
-EAC_DOT <- EAC_DOT |> janitor::clean_names() |> 
-  pivot(c("ref_area", "counterpart_area", "original_period"), check.dups = TRUE,
-        names = "indicator_2", labels = "indicator", values = "value", how = "w", fill = 0) |> 
-  rename(original_period = year) |> 
-  mutate(year = as.integer(year)) |> 
-  roworderv()
+# EAC_DOT = rdb("IMF", "DOT", dimensions = list(REF_AREA = c(EAC_ISO2, "W00"),
+#                                               COUNTERPART_AREA = c(EAC_ISO2, "W00"),
+#                                               INDICATOR = c("TXG_FOB_USD", "TMG_CIF_USD"), 
+#                                               FREQ = "A"))
+# EAC_DOT <- EAC_DOT |> janitor::clean_names() |> 
+#   pivot(c("ref_area", "counterpart_area", "original_period"), check.dups = TRUE,
+#         names = "indicator_2", labels = "indicator", values = "value", how = "w", fill = 0) |> 
+#   rename(original_period = year) |> 
+#   mutate(year = as.integer(year)) |> 
+#   roworderv()
+# 
+# saveRDS(EAC_DOT, "Data/EAC_IMF_DOT.RData")
+
+EAC_DOT <- readRDS("Data/EAC_IMF_DOT.RData")
 
 # Bring data int MIG form
 EAC_DOT_MIG <- EAC_DOT |> 
@@ -295,7 +299,7 @@ EAC_EM_MIG <- EAC_EM |>
 EAC_EM_MIG_AGG <- EAC_EM_MIG |> 
   subset(between(year, 2010, 2015)) |> 
   collap(value ~ iso3_o + iso3_d) |> 
-  mutate(value = value / 1e6) |> 
+  mutate(value = value / 1e3) |> 
   as_character_factor() |> qDT()
 
 # Ratios: ROW to EAC Trade
@@ -407,7 +411,7 @@ rowbind(BACI = EAC_BACI_BSEC |> select(-quantity),
            inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
   num_vars() |> fsum() |> 
   pivot(1:3, names = "inner_eac", how = "w") |> 
-  mutate(ratio = `FALSE`/`TRUE`) |> 
+  mutate(ratio = replace_outliers(`FALSE`/`TRUE`, 50, NA, "max")) |> 
   subset(year >= 2000 & year <= 2021 & broad_sec %in% c("AGR", "FBE", "MIN", "MAN")) |> 
   ggplot(aes(x = year, y = ratio, colour = data)) + 
     geom_line() + 
