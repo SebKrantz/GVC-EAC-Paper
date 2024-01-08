@@ -7,9 +7,10 @@ fastverse_extend(qs, decompr)
 
 path <- "/Users/sebastiankrantz/Documents/Data/EMERGING"
 
-EM <- qread(paste(path, "EMERGING_EAC_Regions_Agg.qs", sep = "/"))
+EM <- qread(paste(path, "EMERGING_EAC_Regions.qs", sep = "/")) # _Agg : Need sectoral detail for accurate GVC indicators
 
 ICIO_path <- paste(path, "ICIO_CSV", sep = "/")
+unlink(ICIO_path, recursive = TRUE)
 dir.create(ICIO_path)
 
 # Write countrylist
@@ -33,9 +34,10 @@ for (y in years) {
 path <- "/Users/sebastiankrantz/Documents/Data/EORA"
 
 EORA <- new.env()
-load("Data/EAC_EORA_2021_data_broad_sec.RData", envir = EORA)
+load("Data/EAC_EORA_2021_data.RData", envir = EORA) # _broad_sec
 
 ICIO_path <- paste(path, "ICIO_CSV", sep = "/")
+unlink(ICIO_path, recursive = TRUE)
 dir.create(ICIO_path)
 
 # Write countrylist
@@ -52,6 +54,7 @@ for (y in years) {
     fwrite(paste0(ICIO_path, "/EORA_", y, ".csv"), col.names = FALSE)
 }
 
+# Now Execute ICIO_decomp.do
 
 #######################
 # Template Data
