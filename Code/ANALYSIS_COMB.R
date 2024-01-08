@@ -87,6 +87,8 @@ load("Data/EAC_EORA_2021_data_broad_sec.RData", envir = EORA)
 
 EM <- new.env()
 load("Data/EAC_EMERGING_data.RData", envir = EM)
+EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
+EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Agg.qs")
 
 # Basic Comparison ------------------------------------------------------
 
@@ -212,3 +214,29 @@ E_shares$Shares |>
 
 dev.copy(pdf, "Figures/REV/EM_gross_trade_shares_ag.pdf", width = 10, height = 4)
 dev.off()
+
+# Largest Sector-Level intermediate flows. 
+EM_T_DT_Agg <- EM_Agg$DATA[as.character(2015:2019)] |> 
+  get_elem("T") |> pmean() |> qDT("from") |> 
+  transform(set_names(tstrsplit(from, ".", fixed = TRUE), c("from_region", "from_sector"))) |> 
+  pivot(c("from", "from_region", "from_sector"), names = list("to", "value")) |> 
+  transform(set_names(tstrsplit(to, ".", fixed = TRUE), c("to_region", "to_sector"))) |> 
+  colorder(value, pos = "end") |> 
+  subset(from_region != to_region & (from_region %in% EAC6 | to_region %in% EAC6))
+  
+# Largest 20 Flows: Broad Sectors
+add_vars(
+  EM_T_DT_Agg |> 
+    subset(from_region != "COD" & to_region != "COD") |> 
+    select(from, to, value) |> 
+    roworder(-value) |> 
+    head(20),
+  EM_T_DT_Agg |> 
+    subset(from_region %in% EAC6 & to_region %in% EAC6) |> 
+    select(from, to, value) |> 
+    roworder(-value) |> 
+    head(20)
+) |> 
+  xtable::xtable() |> print(booktabs = TRUE)
+  
+  
