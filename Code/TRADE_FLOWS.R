@@ -343,14 +343,14 @@ EAC_EM_BSEC <- EM$decomps |> get_elem("ESR") |>
 for (sec in c("AGR", "FBE", "MIN", "MAN", "SRV")) {
   EAC_EM_BSEC |> 
     subset(broad_sec == sec & between(year, 2010, 2015)) |> 
-    # subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+    subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
     group_by(iso3_o, iso3_d) |> 
     select(value) |> 
     fmean() |> 
-    mutate(value = value / 1e6) |> 
+    mutate(value = value / 1e3) |> 
     migest::mig_chord()
   
-  dev.copy(pdf, sprintf("Figures/REV/EM_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
+  dev.copy(pdf, sprintf("Figures/REV/EM_MIG_%s_2010_15.pdf", sec), width = 5, height = 5)
   dev.off()
 }
 
@@ -388,7 +388,8 @@ EAC_EM_MIG |>
 rowbind(BACI = EAC_BACI_MIG |> select(-quantity), 
         DOTS = EAC_DOT_MIG, 
         EORA = EAC_EORA_MIG,
-        EMERGING = EAC_EM_MIG, idcol = "data") |> 
+        # EMERGING = EAC_EM_MIG, 
+        idcol = "data") |> 
   group_by(data, year, inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
   num_vars() |> fsum() |> 
   pivot(1:2, names = "inner_eac", how = "w") |> 
@@ -397,6 +398,7 @@ rowbind(BACI = EAC_BACI_MIG |> select(-quantity),
   ggplot(aes(x = year, y = ratio, colour = data)) + 
     geom_line() +
     geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
+    # scale_y_continuous(limits = c(5, 25)) + 
     theme_bw() + labs(y = "EAC-ROW Trade / Inner-EAC Trade", 
                       x = "Year", colour = "Database")
 
@@ -412,13 +414,15 @@ rowbind(BACI = EAC_BACI_BSEC |> select(-quantity),
   num_vars() |> fsum() |> 
   pivot(1:3, names = "inner_eac", how = "w") |> 
   mutate(ratio = replace_outliers(`FALSE`/`TRUE`, 50, NA, "max")) |> 
-  subset(year >= 2000 & year <= 2021 & broad_sec %in% c("AGR", "FBE", "MIN", "MAN")) |> 
+  subset(year >= 2000 & year <= 2021 & broad_sec %in% c("AGR", "FBE", "MAN")) |> # "MIN"
   ggplot(aes(x = year, y = ratio, colour = data)) + 
     geom_line() + 
     geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
-    facet_wrap(~broad_sec, scales = "free_y") +
+    facet_wrap(~broad_sec, scales = "fixed", ncol = 3) +
     scale_colour_brewer(palette = "Paired", direction = -1) +
+    scale_y_continuous(n.breaks = 10) +
     theme_bw() + labs(y = "EAC-ROW Trade / Inner-EAC Trade", 
-                      x = "Year", colour = "Database")
+                      x = "Year", colour = "Database:    ") +
+    theme(legend.position = "top")
 
-ggsave("Figures/REV/ROW_EAC_Trade_Ratios_Sec.pdf", width = 8, height = 5)  
+ggsave("Figures/REV/ROW_EAC_Trade_Ratios_Sec.pdf", width = 8, height = 4)  
