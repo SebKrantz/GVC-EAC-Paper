@@ -72,10 +72,15 @@ The main aim of this paper is to map the structure of regional and international
 The 2020 World Development Report, focusing on GVCs, classifies Africa as primarily a supplied of raw materials, with only a handful of countries (Morocco, Tunisia, Namibia, South Africa, Ethiopia, Kenya and Tanzania) engaging in limited manufacturing \citep{world2020trading}. At the same time, the report identifies that GDP per capita grows most rapidly when countries enter limited manufacturing GVCs. The report estimates the average benefits from a a 1 percent increase in GVC participation to boost per capita income by more than 1 percent, much more than the 0.2 percent income gain from standard trade. To enter GVCs, the report stipulates attracting FDI, improving access to finance and keeping labour costs low, as well as trade liberalization, investments in ICT and transport infrastructure, and political stability. The report constantes that African economies score low in all of these dimensions. In particular, overvalued exchange rates and restrictive labor
 regulations raise the cost of labor: "manufacturing labor costs in Bangladesh are in line with its per capita income, but in many African countries, labor costs are more than twice as high." \citep{world2020trading}. \newpage
 
-Examining a sample of 24 emerging economies \citet{jangam2021does} shows that both forward and backward participation has significantly improved domestic value-added exports over the period 1995–2011. \citet{durongkaveroj2023emphasis} studies GVC participation and export earnings at the industry-level in Thailand, and finds that there is no significant relationship between domestic value added and net-export earnings and export-induced income, but greater participation in GVCs significantly increases export performance. 
+Examining a sample of 24 emerging economies \citet{jangam2021does} shows that both forward and backward participation has significantly improved domestic value-added exports over the period 1995–2011. \citet{durongkaveroj2023emphasis} studies GVC participation and export earnings at the industry-level in Thailand, and finds that there is no significant relationship between domestic value added and net-export earnings and export-induced income, but greater participation in GVCs significantly increases export performance. \newline 
+
+\citet{fernandes2022determinants} using a panel with more than 100 countries and a novel identification strategy, show that factor endowments, geography, political stability, liberal trade policies, FDI inflows, and domestic industrial capacity are key determinants of GVC participation, whereas traditional exports are less important.\newline
 
 
+\citet{lwesya2022integration} studies GVC integration in the EAC with respect to economic upgrading using UNCTAD-Eora GVC Panel data from 2005 to 2018. This analyis is largely complimentary to the analysis carried out in this paper. The authors compute measures of backward and forward integration and find that Kenya, Tanzania and Uganda are relatively
+better integrated into GVCs, with Kenya having the deepest level of integration. Overall, the EAC's participation in GVCs is found to be in upstream low- and middle value-added production activities. Then, using a cross-country panel regression framework for domestic value added, which includes GVC indicators and other macroeconomic indicators, they find that domestic credit, foreign direct investment, the quality of institutions and foreign value-added have significant positive effects, but observed no such effects for measures of human capital, infrastructure quality, and GDP per capita. \newline
 
+This paper adds to our understanding of GVCs and regional integration in the EAC in the following significant respects: (1) it uses better data, including gross trade flows data and the EMERGING MRIO tables, which include IO/SUT/SAM tables for 4 EAC countries; (2) it conducts a detailed examination of EAC members global and regional integration using both gross trade flows and value added content shares, paying close attention to specific bilateral linkages and sector-level patterns; (3) It computes detailed GVC decompositions and examines the positioning of EAC members in GVCs as well as revealed comparative advantage in gross and value-added terms; (4) It analyzes the effect of GVC participation on domestic value added using a bilateral-sector-level regression framework with country-sector, country-year and sector-year fixed effects and lagged GVC indicators, and argues that this framework is better able to control for at least some of the endogeneity in GVC participation than a macro-level panel regression. 
 
 \section{Data}
 
@@ -368,7 +373,7 @@ where $\textbf{1} = (1, 1, 1, ..., 1)'$ is a column-vector of 1's\footnote{Thus 
 The term $\textbf{VB} = \textbf{V}(\textbf{I}-\textbf{A})^{-1}$ is known as the matrix of VA multipliers or VA shares, which can be used to obtain the amount of VA generated in each industry (\textbf{Vx}) when producing to satisfy final demand (\textbf{d}). More specifically, the matrix $\textbf{VB}$ contains the amount of VA by each country-sector (row) to the production of one unit of each country-sector's (column's) output. 
 
 
-\subsection{Vertical Specialization}
+\subsection{Backward GVC Participation}
 
 The foreign VA share in domestic production and exports, termed 'Vertical Specialization' (VS) by \citet{hummels2001nature}, is the most widely used measure of backward GVC integration. Consider \textbf{VB} with elements vb$_{oi,uj}$, then VS for a particular country-sector may be expressed as\footnote{In words: sum the elements of \textbf{VB} in each column, excluding domestic country-sectors.}
 
@@ -376,116 +381,283 @@ The foreign VA share in domestic production and exports, termed 'Vertical Specia
 \text{VS}_{uj} = \sum_{oi,\ o \neq  u} \text{vb}_{oi, uj}\ \ \forall uj.
 \end{equation}
 
-Figure \ref{fig:EACVB_ts} displays a breakdown of VS for EAC countries by supplier country-region over the analyzed period. In Uganda, VS has been fluctuating between 10 and 12\%. 2\% of the value of Ugandan produce comes from Kenya, about 1\% from the rest of SSA, 1.5\% from MEA, about 3-4\% from EUU, and 1-1.5\% from SAS. The other regions make up the remaining 2\%. Tanzania and Kenya have similar relative VA contributions of SSA, MEA, EUU, and SAS regions to their production, at overall higher foreign content shares, e.g. VS of 16\% in Kenya. Data for Tanzania and Rwanda show stark trends, but these should be interpreted in light of the data quality\footnote{Particularly the declining GDP estimate of Tanzania (Figure \ref{fig:EAC_GDP_sec}) seems to encourage higher foreign VA to compensate for rising exports (Figure \ref{fig:exp}). Figure \ref{fig:VSag_ts_21} shows that in the extended database VS drops starkly in 2016, lending further support to this interpretation.}. Kenya adds around 1-2\% to Tanzanian output, and Uganda adds about 0.1\% to Kenyan output. The VA share of Kenya and Uganda in Rwandan production of around 1\% and 0.5\% respectively is also clearly visible. It is noteworthy that overall VS appears to have declined in Uganda, Kenya, Rwanda, and Burundi from 2011 onwards. Appendix Figure \ref{fig:EACVB_ts_bar} further shows bars providing the VA share in 2005 and 2015 and their difference. Kenya's VA share has increased slightly in all EAC countries between 2005 and 2015\footnote{%(except for South Sudan\footnote{The data for South Sudan is unreliable, also minding that the country only became independent in 2011.}), 
-Amounting to an increase of 0.17 percentage points of gross output in Uganda, 0.89 percentage points in Tanzania, 0.29 percentage points in Rwanda, and 0.03 percentage points in Burundi.}. Rwanda has also seen increases in the shares of Ugandan VA of around 0.14 percentage points. % All of this indicates that Kenya is becoming a more important supplier of inputs for EAC production, but that integration into regional and global value chains is stagnant otherwise. 
+Figure \ref{fig:EACVB_ag_ts} shows a time series of VS according to different data sources. It is evident that the calculated VS measure using EORA is identical to the WDR2020 one. The extension of EORA through 2021, as mentioned, introduces a large structural break in 2020, which, in some cases such as Tanzania where VS drops to zero or Burundi where VS rises to above 50\% (truncated in Figure \ref{fig:EACVB_ag_ts}) is highly unrealistic. As mentioned, EMERGING is the more reliable database for these countries, and indicates that for all EAC members between 10 and 30\% of gross exports is foreign content. Furthermore, EMERGINIG suggests that the smaller economies Burundi, Rwanda and Uganda have increased their VS, especially in 2015-2019, whereas Kenya and Congo have seen a decline in VS. in Tanzania, VS appears stagnant around 16\%. 
 
 \begin{figure}[h!]
 \centering
-\caption{\label{fig:EACVB_ts}\textsc{Foreign Value Added Shares in EAC Production (VS)}}
-\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_area".pdf} %trim={<left> <lower> <right> <upper>}
+\caption{\label{fig:EACVB_ag_ts}\textsc{EAC Backward GVC Participation}}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/VA_shares_ag_ts.pdf"} %trim={<left> <lower> <right> <upper>}
 \end{figure}
 \FloatBarrier
 
+Apart from its overall size, the composition of the foreign content of exports (and production in the ICIO framework) at the country and sector levels is of interest. Figure \ref{fig:EACVB_ctry} shows a breakdown of foreign content by source country/region, averaged, for EORA, between 2010 and 2015, and for EMERGING between 2015 and 2019. Figure \ref{fig:EACVB_ctry} indicates that, in line with the EAC import share shown in the bottom right panel of Figure \ref{fig:shares_ag}, only Rwanda, Burundi and Uganda source a significant fraction of foreign inputs from EAC partners. According to EMERGING, Kenya supplies 11.5\% of the foreign content in Ugandan exports, 9.8\% in Rwanda, and 8\% in Burundi. Uganda also supplies 9.3\% of the foreign content in Rwandan exports, and 5.5\% in Burundi. In absolute values, Uganda supplies slightly more to Kenyan export production (around 23 million USD according to EMERGING, vs. 20.7 million to Rwanda). This is dwarfed by the 115 million that Kenya supplies for Ugandan export production. \newline 
 
-\subsection{Intermediates Trade in Value Added Terms}
+Overall, the EU and China are the greatest suppliers of foreign content in EAC exports, supplying, in the case of the EU, 33\% of the foreign content of Congolese exports, 23\% in Burundi, 21\% in Rwanda, 17\%, 16\%, 15\% in Uganda, Kenya and Tanzania, respectively. China supplies 27\% of the foreign content of Kenyan and Tanzanian exports (approx. 300 million USD in both cases), 21\% in Uganda, and 16\% in Congo. Thus overall EAC exports have modest amounts of foreign content and most of this foreign content, particularly for major exporters Congo, Kenya and Tanzania, is accounted for by the EU and China. 
 
-To examine direct productive relationships in VA terms, I use the matrix \textbf{VB} to decompose the transaction matrix \textbf{T} of gross IO flows into VA flows % , to see who adds how much value in who's production.  
-
-\begin{equation}
-\textbf{T}^{VA} = \textbf{VB} \textbf{T}.
-\end{equation} 
-
-Appendix Figure \ref{fig:VAwld} shows the resulting aggregate matrix, analogous to the gross flows shown in Figure \ref{fig:wld}. Compared to gross flows, foreign inputs to EAC members' production, both from other EAC countries and from other world regions, are slightly greater in VA terms, while domestic VA content is lower. This indicates that more foreign VA is contained in domestic intermediates of EAC countries than domestic VA in foreign intermediates. The intermediate flow ratios in Figure \ref{fig:TBint} are also larger in VA terms, with ROW providing on average 14 times more VA in EAC country's production than EAC neighbors. \newline % VA relative outflows experienced a similar decline as gross outflows.  %The EAC trade balance in intermediates is also higher in VA terms, which is likely a consequence of the high share of commodity and high-VA processed foods in EAC exports. 
-
-
-Table \ref{tab:VAweaclfl} reports the largest flows involving EAC countries in VA terms. The top panel provides the 10 largest flows between EAC country-sectors and region-sectors outside the EAC, with and without Kenya. The left column shows that the largest flow of almost 600 million USD is Kenyan agricultural inputs into EU food processing sectors, followed by 287 million agricultural goods exports which are just re-exported by the EU. In places 3 and 4 of the largest flows are inputs from Middle Eastern and EU transport sectors to the Kenyan transport sector. The remaining largest flows consist mostly of EU inputs into Kenyan construction, food and beverage, petrochemicals, and electrical machinery sectors. Kenya also provides further agricultural and food and beverage inputs to EU agriculture, accommodation and food services, and petrochemicals (not shown). If Kenya is excluded, the largest flows are EU inputs to Tanzanian and Ugandan electrical machinery, followed by Tanzanian and Ugandan agricultural inputs into EU and ROA % (ROA includes Japan and South Korea) 
-food and beverage sectors. % At 50-78 million these flows are substantially smaller. 
-The remaining flows excluding Kenya mostly comprise EU inputs into Tanzanian and Ugandan financial services and manufacturing sectors. \newline
-
-
-The bottom panel of Table \ref{tab:VAweaclfl} shows that the 10 largest inner-EAC intermediate flows in VA terms are Kenyan mining and petrochemical inputs to Ugandan and Tanzanian petrochemical sectors, valued between 23 and 81 million, followed by Ugandan agriculture input to the Kenyan food and beverage sector valued at 23 million. The remaining flows are dominated by Kenyan inputs into mainly Ugandan manufacturing, utilities, transport, financial, and construction sectors (not shown). When Kenya is taken out, Uganda dominates the scene, supplying small agricultural, manufacturing, and financial service inputs to Rwandan manufacturing, public administration, and transport services, valued at 1-2 million. % These flows are valued at 1-2 million. %Tanzania also supplies mining and financial intermediates to Uganda worth 0.7 million (not shown)\footnote{Again it must be stressed that the macroeconomic data for Tanzania is highly distorted, and the country may be more important for inner-EAC trade than these numbers suggest.}. \newline
-
-% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
-% Date and time: Tue, Jul 20, 2021 - 11:13:32 AM
-\begin{table}[h!] %\vspace{-5mm} 
-   \centering 
-  \caption{\textsc{Largest Intermediate Flows in VA Terms}} 
-  \small{\textit{Millions of 2015 USD at Basic Prices}}
-  \label{tab:VAweaclfl} 
-  \vspace{2mm}
-\begin{tabular}{rlrlr} \toprule
-\textbf{\#} & \textbf{Flow} & \textbf{Value} & \textbf{Non-Kenya Flow} & \textbf{Value} \\ 
-\midrule
-\multicolumn{5}{c}{Between the EAC and the World} \\ \midrule
-1 & KEN.AGR $\to$  EUU.FBE & $597.299$ & EUU.ELM $\to$  TZA.ELM & $86.850$ \\ 
-2 & KEN.AGR $\to$  EUU.REI & $287.130$ & EUU.ELM $\to$  UGA.ELM & $63.770$ \\ 
-3 & MEA.TRA $\to$  KEN.TRA & $156.711$ & TZA.AGR $\to$  ROA.FBE & $61.865$ \\ 
-4 & EUU.TRA $\to$  KEN.TRA & $151.987$ & UGA.AGR $\to$  EUU.FBE & $53.974$ \\ 
-5 & EUU.FIB $\to$  KEN.CON & $120.347$ & EUU.FIB $\to$  TZA.FIB & $49.740$ \\ 
-6 & EUU.ELM $\to$  KEN.CON & $119.281$ & EUU.FIB $\to$  TZA.ELM & $45.964$ \\ 
-7 & KEN.AGR $\to$  EUU.AGR & $109.486$ & EUU.PCM $\to$  TZA.PCM & $44.280$ \\ 
-8 & EUU.PCM $\to$  KEN.CON & $100.395$ & TZA.AGR $\to$  EUU.FBE & $43.597$ \\ 
-9 & OCE.AGR $\to$  KEN.FBE & $94.364$ & MEA.ELM $\to$  UGA.ELM & $38.484$ \\ 
-10 & EUU.PCM $\to$  KEN.PCM & $94.076$ & EUU.ELM $\to$  TZA.TEQ & $35.596$ \\ 
-%11 & EUU.FIB $\to$  KEN.TRA & $93.883$ & EUU.FIB $\to$  UGA.ELM & $33.491$ \\ 
-%12 & KEN.AGR $\to$  EUU.AFS & $91.138$ & EUU.FIB $\to$  UGA.FIB & $32.685$ \\ 
-%13 & EUU.ELM $\to$  TZA.ELM & $86.850$ & EUU.ELM $\to$  TZA.FIB & $31.445$ \\ 
-%14 & EUU.FIB $\to$  KEN.FBE & $83.665$ & SSA.FIB $\to$  TZA.FIB & $31.237$ \\ 
-%15 & EUU.FIB $\to$  KEN.PCM & $79.533$ & EUU.FIB $\to$  TZA.EHO & $30.858$ \\ 
-%16 & EUU.PCM $\to$  KEN.FBE & $76.573$ & EUU.FIB $\to$  TZA.PCM & $29.350$ \\ 
-%17 & KEN.FBE $\to$  EUU.FBE & $76.269$ & ROA.WTR $\to$  TZA.WTR & $29.330$ \\ 
-%18 & KEN.AGR $\to$  EUU.PCM & $74.543$ & SAS.PCM $\to$  TZA.PCM & $29.056$ \\ 
-%19 & EUU.ELM $\to$  KEN.ELM & $73.309$ & SSA.ELM $\to$  TZA.ELM & $28.566$ \\ 
-%20 & EUU.PCM $\to$  KEN.AGR & $72.236$ & EUU.MPR $\to$  TZA.ELM & $28.528$ \\ 
-\midrule \multicolumn{5}{c}{Within the EAC} \\ \midrule
-1 & KEN.MIN $\to$  UGA.PCM & $80.599$ & UGA.TRA $\to$  RWA.PAD & $1.720$ \\ 
-2 & KEN.PCM $\to$  UGA.PCM & $45.927$ & UGA.TRA $\to$  RWA.TRA & $1.366$ \\ 
-3 & KEN.PCM $\to$  TZA.PCM & $23.150$ & UGA.AGR $\to$  RWA.FBE & $1.215$ \\ 
-4 & UGA.AGR $\to$  KEN.FBE & $22.839$ & UGA.MPR $\to$  RWA.MPR & $1.181$ \\ 
-5 & KEN.WAP $\to$  UGA.WAP & $20.393$ & UGA.PCM $\to$  RWA.PCM & $1.170$ \\ 
-6 & KEN.ELM $\to$  UGA.ELM & $19.860$ & UGA.MPR $\to$  RWA.ELM & $1.109$ \\ 
-7 & KEN.PCM $\to$  UGA.EHO & $18.594$ & UGA.FIB $\to$  RWA.ELM & $1.054$ \\ 
-8 & KEN.FIB $\to$  UGA.PCM & $16.246$ & UGA.FIB $\to$  RWA.PCM & $1.007$ \\ 
-9 & KEN.MIN $\to$  TZA.PCM & $14.535$ & UGA.FIB $\to$  RWA.PAD & $0.885$ \\ 
-10 & KEN.MIN $\to$  UGA.EGW & $14.426$ & UGA.FIB $\to$  RWA.FIB & $0.851$ \\ 
-%11 & KEN.PCM $\to$  UGA.CON & $13.471$ & UGA.WTR $\to$  RWA.WTR & $0.796$ \\ 
-%12 & KEN.AGR $\to$  UGA.FBE & $13.217$ & UGA.FIB $\to$  RWA.EHO & $0.787$ \\ 
-%13 & KEN.MIN $\to$  UGA.EHO & $12.528$ & UGA.ELM $\to$  RWA.ELM & $0.733$ \\ 
-%14 & KEN.TRA $\to$  UGA.PAD & $12.271$ & UGA.FIB $\to$  RWA.FBE & $0.665$ \\ 
-%15 & KEN.FIB $\to$  UGA.FIB & $12.121$ & UGA.TRA $\to$  RWA.FIB & $0.665$ \\ 
-%16 & KEN.MIN $\to$  UGA.CON & $11.871$ & TZA.MIN $\to$  UGA.PCM & $0.659$ \\ 
-%17 & KEN.PCM $\to$  UGA.FIB & $11.832$ & TZA.FIB $\to$  UGA.FIB & $0.658$ \\ 
-%18 & KEN.WAP $\to$  UGA.CON & $11.505$ & UGA.FIB $\to$  RWA.MPR & $0.646$ \\ 
-%19 & KEN.TRA $\to$  UGA.TRA & $10.848$ & UGA.FIB $\to$  RWA.CON & $0.645$ \\ 
-%20 & KEN.MPR $\to$  UGA.ELM & $10.620$ & UGA.FIB $\to$  RWA.TRA & $0.579$ \\ 
-\bottomrule
-\end{tabular} 
-\end{table} 
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EACVB_ctry}\textsc{EAC Backward GVC Participation: Sources of Foreign Content}}
+\small{\textit{Average EMERGING 2015-2019 Foreign Content Share in Parentheses}}
+\vspace{2mm}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/VA_shares_ctry.pdf"} %trim={<left> <lower> <right> <upper>}
+\end{figure}
 \FloatBarrier
 
+%Figure \ref{fig:EACVB_ts} displays a breakdown of VS for EAC countries by supplier country-region over the analyzed period. In Uganda, VS has been fluctuating between 10 and 12\%. 2\% of the value of Ugandan produce comes from Kenya, about 1\% from the rest of SSA, 1.5\% from MEA, about 3-4\% from EUU, and 1-1.5\% from SAS. The other regions make up the remaining 2\%. Tanzania and Kenya have similar relative VA contributions of SSA, MEA, EUU, and SAS regions to their production, at overall higher foreign content shares, e.g. VS of 16\% in Kenya. Data for Tanzania and Rwanda show stark trends, but these should be interpreted in light of the data quality\footnote{Particularly the declining GDP estimate of Tanzania (Figure \ref{fig:EAC_GDP_sec}) seems to encourage higher foreign VA to compensate for rising exports (Figure \ref{fig:exp}). Figure \ref{fig:VSag_ts_21} shows that in the extended database VS drops starkly in 2016, lending further support to this interpretation.}. Kenya adds around 1-2\% to Tanzanian output, and Uganda adds about 0.1\% to Kenyan output. The VA share of Kenya and Uganda in Rwandan production of around 1\% and 0.5\% respectively is also clearly visible. It is noteworthy that overall VS appears to have declined in Uganda, Kenya, Rwanda, and Burundi from 2011 onwards. Appendix Figure \ref{fig:EACVB_ts_bar} further shows bars providing the VA share in 2005 and 2015 and their difference. Kenya's VA share has increased slightly in all EAC countries between 2005 and 2015\footnote{%(except for South Sudan\footnote{The data for South Sudan is unreliable, also minding that the country only became independent in 2011.}), 
+%Amounting to an increase of 0.17 percentage points of gross output in Uganda, 0.89 percentage points in Tanzania, 0.29 percentage points in Rwanda, and 0.03 percentage points in Burundi.}. Rwanda has also seen increases in the shares of Ugandan VA of around 0.14 percentage points. % All of this indicates that Kenya is becoming a more important supplier of inputs for EAC production, but that integration into regional and global value chains is stagnant otherwise. 
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:EACVB_ts}\textsc{Foreign Value Added Shares in EAC Production (VS)}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/VA_shares_ag_ts_area".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+There may, however, be additional heterogeneity here at the sector level, both in terms of overall foreign content and its composition. Table \ref{tab:EACVB_sec} shows sectoral the foreign content share by country. In general, manufacturing sectors have higher foreign content, a pattern noted in the WDR 2020, which also notes that a handfull of sectors including electrical machinery and transport equipment drove GVC expansion since 1995. In the average EAC country these manufacturing sectors have more than 20\% foreign content, but there is marked heterogeneity across countries. Notably, in Rwanda manufacturing sectors have less than 15\% foreign content. The highest foreign content sectors by country are electrical machinery in Tanzania (42\%), wood and paper in Kenya (40\%) mining and textiles in Uganda (29\%), sales and repairs in Rwanda (25\%), petro-chemicals in Burundi (47\%) and transport equipment in Congo (36\%). Since Burundi and Congo have no IO table, these figures need to be taken with caution. 
+
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:EACVB_sec}\textsc{EAC Backward GVC Participation: Sectoral Heterogeneity}}
+%\small{\textit{Average EMERGING 2015-2019 Foreign Content Shares}}
+%% \small{\textit{Average EMERGING 2015-2019 Foreign Content Share in Parentheses}}
+%\vspace{2mm}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/VA_shares_sec.pdf"} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
+
+% latex table generated in R 4.3.0 by xtable 1.8-4 package
+% Tue Jan  9 19:37:21 2024
+\begin{table}[ht]
+\centering
+\caption{\label{tab:EACVB_sec}\textsc{EAC Backward GVC Participation: Sectoral Heterogeneity}}
+\small{\textit{Average EMERGING 2015-2019 Foreign Content Shares}}
+\vspace{2mm}
+\begin{tabular}{lrrrrrrrrrr}
+  \toprule
+sector & UGA & TZA & KEN & RWA & BDI & COD & Mean & Median & EAC6 & EAC5 \\ 
+  \midrule
+AFF & 5.9 & 4.1 & 3.7 & 5.8 & 15.2 & 3.3 & 6.3 & 5.0 & 4.2 & 4.4\\ 
+  MIN & 29.2 & 5.5 & 0.0 & 2.0 & 17.0 & 4.7 & 9.7 & 5.1 & 4.6 & 6.8\\ 
+  FBE & 22.7 & 7.6 & 3.1 & 20.6 & 19.3 & 13.6 & 14.5 & 16.4 & 11.1 & 10.7\\ 
+  TEX & 29.6 & 17.1 & 25.2 & 8.3 & 8.5 & 28.6 & 19.6 & 21.2 & 26.1 & 24.1\\ 
+  WAP & 13.7 & 22.7 & 39.5 & 1.4 & 5.9 & 20.1 & 17.2 & 16.9 & 24.8 & 29.2\\ 
+  PCM & 23.9 & 19.8 & 19.5 & 10.2 & 47.1 & 20.6 & 23.5 & 20.2 & 20.0 & 19.7\\ 
+  MPR & 27.0 & 26.9 & 16.2 & 10.2 & 39.7 & 25.0 & 24.2 & 26.0 & 24.3 & 23.6\\ 
+  ELM & 18.7 & 41.9 & 30.7 & 5.2 & 27.4 & 34.9 & 26.5 & 29.1 & 34.9 & 35.2\\ 
+  TEQ & 22.7 & 17.1 & 19.7 & 0.0 & 32.8 & 36.4 & 21.4 & 21.2 & 34.6 & 23.9\\ 
+  MAN & 23.3 & 21.8 & 27.3 & 0.8 & 0.4 & 24.5 & 16.3 & 22.6 & 25.3 & 25.6\\ 
+  EGW & 28.2 & 3.1 & 26.2 & 0.0 &  & 2.1 & 11.9 & 3.1 & 16.9 & 27.1\\ 
+  CON & 15.6 & 13.1 & 16.2 & 7.4 & 5.3 & 30.6 & 14.7 & 14.3 & 12.9 & 12.9\\ 
+  SMH & 5.6 & 11.7 & 9.4 & 25.2 & 14.1 & 15.3 & 13.5 & 12.9 & 10.9 & 10.9\\ 
+  TRA & 7.6 & 18.5 & 6.6 & 4.7 & 0.1 & 4.3 & 7.0 & 5.7 & 11.0 & 11.0\\ 
+  PTE & 11.0 & 21.7 & 5.4 & 0.0 & 0.0 & 2.5 & 6.8 & 4.0 & 11.9 & 12.0\\ 
+  FIB & 0.4 & 8.2 & 0.3 & 1.9 & 0.0 & 4.5 & 2.5 & 1.1 & 1.1 & 0.9\\ 
+  PAO & 5.0 & 2.2 & 8.0 & 0.0 & 0.0 & 4.5 & 3.3 & 3.4 & 6.8 & 7.0\\ 
+   \bottomrule
+\end{tabular}
+\end{table}
+
+The final columns of Table \ref{tab:EACVB_sec} shows the FVA in overall sectoral exports by EAC members, including value addition by other EAC members, with and without Congo. Figure \ref{fig:EACVB_ctry_sec} breaks down the origin of the EAC5 FVA,\footnote{Since Congo is a large exporter and not really integrated yet with other EAC countries in terms of FVA, as Figure \ref{fig:EACVB_ctry} shows.} and thus provides a sector-level perspective of EAC regional integration. According to Figure \ref{fig:EACVB_ctry_sec} the sectors with the highest EAC FVA share are sale and repair of vehicles, fuel trade and hotels (SMH) at 14.5\% and food and beverages (FBE) at 14\%. Other sectors with sizeable shares are petrochemicals (PCM) at 8.6\%, textiles at 7.4\%, agriculture (AFF) at 7.2\%, electricity (EGW) at 6.3\% and transport equipment at 6.2\%. This highlights quantitatively the potential of the food processing sector for regional integration, but also indicates a failure of regional integration in many core manufacturing sectors. For example the electrical machinery (ELM) sector, which has a FVA content around 35\% according to Table \ref{tab:EACVB_sec}, only has a 2.8\% regional FVA share. Multiplying these percentages yields that only 1\% of the gross output (and exports) in EAC ELM is regional FVA, compared to 1.5\% for FBE. \footnote{Given the lower FVA share of 11\% in the FBE sector.} Figure \ref{fig:EACVB_ctry_sec} is thus indicative of both great potential and challenges developing regional manufacturing value chains. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EACVB_ctry_sec}\textsc{EAC Backward GVC Participation: Sources of Foreign Content by Sector}}
+\small{\textit{Based on Average EMERGING 2015-2019 EAC Exports (Excl. Congo)}}
+\vspace{2mm}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/VA_shares_sec_ctry.pdf"} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+%
+%\subsection{Intermediates Trade in Value Added Terms}
+%
+%To examine direct productive relationships in VA terms, I use the matrix \textbf{VB} to decompose the transaction matrix \textbf{T} of gross IO flows into VA flows % , to see who adds how much value in who's production.  
+%
+%\begin{equation}
+%\textbf{T}^{VA} = \textbf{VB} \textbf{T}.
+%\end{equation} 
+%
+%Appendix Figure \ref{fig:VAwld} shows the resulting aggregate matrix, analogous to the gross flows shown in Figure \ref{fig:wld}. Compared to gross flows, foreign inputs to EAC members' production, both from other EAC countries and from other world regions, are slightly greater in VA terms, while domestic VA content is lower. This indicates that more foreign VA is contained in domestic intermediates of EAC countries than domestic VA in foreign intermediates. The intermediate flow ratios in Figure \ref{fig:TBint} are also larger in VA terms, with ROW providing on average 14 times more VA in EAC country's production than EAC neighbors. \newline % VA relative outflows experienced a similar decline as gross outflows.  %The EAC trade balance in intermediates is also higher in VA terms, which is likely a consequence of the high share of commodity and high-VA processed foods in EAC exports. 
+%
+%
+%Table \ref{tab:VAweaclfl} reports the largest flows involving EAC countries in VA terms. The top panel provides the 10 largest flows between EAC country-sectors and region-sectors outside the EAC, with and without Kenya. The left column shows that the largest flow of almost 600 million USD is Kenyan agricultural inputs into EU food processing sectors, followed by 287 million agricultural goods exports which are just re-exported by the EU. In places 3 and 4 of the largest flows are inputs from Middle Eastern and EU transport sectors to the Kenyan transport sector. The remaining largest flows consist mostly of EU inputs into Kenyan construction, food and beverage, petrochemicals, and electrical machinery sectors. Kenya also provides further agricultural and food and beverage inputs to EU agriculture, accommodation and food services, and petrochemicals (not shown). If Kenya is excluded, the largest flows are EU inputs to Tanzanian and Ugandan electrical machinery, followed by Tanzanian and Ugandan agricultural inputs into EU and ROA % (ROA includes Japan and South Korea) 
+%food and beverage sectors. % At 50-78 million these flows are substantially smaller. 
+%The remaining flows excluding Kenya mostly comprise EU inputs into Tanzanian and Ugandan financial services and manufacturing sectors. \newline
+%
+%
+%The bottom panel of Table \ref{tab:VAweaclfl} shows that the 10 largest inner-EAC intermediate flows in VA terms are Kenyan mining and petrochemical inputs to Ugandan and Tanzanian petrochemical sectors, valued between 23 and 81 million, followed by Ugandan agriculture input to the Kenyan food and beverage sector valued at 23 million. The remaining flows are dominated by Kenyan inputs into mainly Ugandan manufacturing, utilities, transport, financial, and construction sectors (not shown). When Kenya is taken out, Uganda dominates the scene, supplying small agricultural, manufacturing, and financial service inputs to Rwandan manufacturing, public administration, and transport services, valued at 1-2 million. % These flows are valued at 1-2 million. %Tanzania also supplies mining and financial intermediates to Uganda worth 0.7 million (not shown)\footnote{Again it must be stressed that the macroeconomic data for Tanzania is highly distorted, and the country may be more important for inner-EAC trade than these numbers suggest.}. \newline
+%
+%% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+%% Date and time: Tue, Jul 20, 2021 - 11:13:32 AM
+%\begin{table}[h!] %\vspace{-5mm} 
+%   \centering 
+%  \caption{\textsc{Largest Intermediate Flows in VA Terms}} 
+%  \small{\textit{Millions of 2015 USD at Basic Prices}}
+%  \label{tab:VAweaclfl} 
+%  \vspace{2mm}
+%\begin{tabular}{rlrlr} \toprule
+%\textbf{\#} & \textbf{Flow} & \textbf{Value} & \textbf{Non-Kenya Flow} & \textbf{Value} \\ 
+%\midrule
+%\multicolumn{5}{c}{Between the EAC and the World} \\ \midrule
+%1 & KEN.AGR $\to$  EUU.FBE & $597.299$ & EUU.ELM $\to$  TZA.ELM & $86.850$ \\ 
+%2 & KEN.AGR $\to$  EUU.REI & $287.130$ & EUU.ELM $\to$  UGA.ELM & $63.770$ \\ 
+%3 & MEA.TRA $\to$  KEN.TRA & $156.711$ & TZA.AGR $\to$  ROA.FBE & $61.865$ \\ 
+%4 & EUU.TRA $\to$  KEN.TRA & $151.987$ & UGA.AGR $\to$  EUU.FBE & $53.974$ \\ 
+%5 & EUU.FIB $\to$  KEN.CON & $120.347$ & EUU.FIB $\to$  TZA.FIB & $49.740$ \\ 
+%6 & EUU.ELM $\to$  KEN.CON & $119.281$ & EUU.FIB $\to$  TZA.ELM & $45.964$ \\ 
+%7 & KEN.AGR $\to$  EUU.AGR & $109.486$ & EUU.PCM $\to$  TZA.PCM & $44.280$ \\ 
+%8 & EUU.PCM $\to$  KEN.CON & $100.395$ & TZA.AGR $\to$  EUU.FBE & $43.597$ \\ 
+%9 & OCE.AGR $\to$  KEN.FBE & $94.364$ & MEA.ELM $\to$  UGA.ELM & $38.484$ \\ 
+%10 & EUU.PCM $\to$  KEN.PCM & $94.076$ & EUU.ELM $\to$  TZA.TEQ & $35.596$ \\ 
+%%11 & EUU.FIB $\to$  KEN.TRA & $93.883$ & EUU.FIB $\to$  UGA.ELM & $33.491$ \\ 
+%%12 & KEN.AGR $\to$  EUU.AFS & $91.138$ & EUU.FIB $\to$  UGA.FIB & $32.685$ \\ 
+%%13 & EUU.ELM $\to$  TZA.ELM & $86.850$ & EUU.ELM $\to$  TZA.FIB & $31.445$ \\ 
+%%14 & EUU.FIB $\to$  KEN.FBE & $83.665$ & SSA.FIB $\to$  TZA.FIB & $31.237$ \\ 
+%%15 & EUU.FIB $\to$  KEN.PCM & $79.533$ & EUU.FIB $\to$  TZA.EHO & $30.858$ \\ 
+%%16 & EUU.PCM $\to$  KEN.FBE & $76.573$ & EUU.FIB $\to$  TZA.PCM & $29.350$ \\ 
+%%17 & KEN.FBE $\to$  EUU.FBE & $76.269$ & ROA.WTR $\to$  TZA.WTR & $29.330$ \\ 
+%%18 & KEN.AGR $\to$  EUU.PCM & $74.543$ & SAS.PCM $\to$  TZA.PCM & $29.056$ \\ 
+%%19 & EUU.ELM $\to$  KEN.ELM & $73.309$ & SSA.ELM $\to$  TZA.ELM & $28.566$ \\ 
+%%20 & EUU.PCM $\to$  KEN.AGR & $72.236$ & EUU.MPR $\to$  TZA.ELM & $28.528$ \\ 
+%\midrule \multicolumn{5}{c}{Within the EAC} \\ \midrule
+%1 & KEN.MIN $\to$  UGA.PCM & $80.599$ & UGA.TRA $\to$  RWA.PAD & $1.720$ \\ 
+%2 & KEN.PCM $\to$  UGA.PCM & $45.927$ & UGA.TRA $\to$  RWA.TRA & $1.366$ \\ 
+%3 & KEN.PCM $\to$  TZA.PCM & $23.150$ & UGA.AGR $\to$  RWA.FBE & $1.215$ \\ 
+%4 & UGA.AGR $\to$  KEN.FBE & $22.839$ & UGA.MPR $\to$  RWA.MPR & $1.181$ \\ 
+%5 & KEN.WAP $\to$  UGA.WAP & $20.393$ & UGA.PCM $\to$  RWA.PCM & $1.170$ \\ 
+%6 & KEN.ELM $\to$  UGA.ELM & $19.860$ & UGA.MPR $\to$  RWA.ELM & $1.109$ \\ 
+%7 & KEN.PCM $\to$  UGA.EHO & $18.594$ & UGA.FIB $\to$  RWA.ELM & $1.054$ \\ 
+%8 & KEN.FIB $\to$  UGA.PCM & $16.246$ & UGA.FIB $\to$  RWA.PCM & $1.007$ \\ 
+%9 & KEN.MIN $\to$  TZA.PCM & $14.535$ & UGA.FIB $\to$  RWA.PAD & $0.885$ \\ 
+%10 & KEN.MIN $\to$  UGA.EGW & $14.426$ & UGA.FIB $\to$  RWA.FIB & $0.851$ \\ 
+%%11 & KEN.PCM $\to$  UGA.CON & $13.471$ & UGA.WTR $\to$  RWA.WTR & $0.796$ \\ 
+%%12 & KEN.AGR $\to$  UGA.FBE & $13.217$ & UGA.FIB $\to$  RWA.EHO & $0.787$ \\ 
+%%13 & KEN.MIN $\to$  UGA.EHO & $12.528$ & UGA.ELM $\to$  RWA.ELM & $0.733$ \\ 
+%%14 & KEN.TRA $\to$  UGA.PAD & $12.271$ & UGA.FIB $\to$  RWA.FBE & $0.665$ \\ 
+%%15 & KEN.FIB $\to$  UGA.FIB & $12.121$ & UGA.TRA $\to$  RWA.FIB & $0.665$ \\ 
+%%16 & KEN.MIN $\to$  UGA.CON & $11.871$ & TZA.MIN $\to$  UGA.PCM & $0.659$ \\ 
+%%17 & KEN.PCM $\to$  UGA.FIB & $11.832$ & TZA.FIB $\to$  UGA.FIB & $0.658$ \\ 
+%%18 & KEN.WAP $\to$  UGA.CON & $11.505$ & UGA.FIB $\to$  RWA.MPR & $0.646$ \\ 
+%%19 & KEN.TRA $\to$  UGA.TRA & $10.848$ & UGA.FIB $\to$  RWA.CON & $0.645$ \\ 
+%%20 & KEN.MPR $\to$  UGA.ELM & $10.620$ & UGA.FIB $\to$  RWA.TRA & $0.579$ \\ 
+%\bottomrule
+%\end{tabular} 
+%\end{table} 
+%\FloatBarrier
+%
+%
 
 
 
-
-\subsection{Re-Exported Exports}
+\subsection{Forward GVC Participation}
 
 Apart from VS, which measures backward GVC integration, \citet{hummels2001nature}, and more formally \citet{daudin2011produces}, introduced the share of domestic exports that enter foreign countries' exports, termed VS1, as a measure of forward GVC Integration. It is defined as\footnote{For completeness I note that VS can be defined in an analogous way as $\text{VS}_{uj} = \frac{1}{E_{uj}} \sum_{oi, o \neq  u} \text{vbe}_{oi, uj}\ \ \forall\ uj$, however, since $\sum_{oi} \text{vb}_{oi, uj} = 1\ \forall\ uj$, the exports cancel out and the equation reduces to Eq. \ref{eq:VS}.}. 
 \begin{equation} \label{eq:VS1}
 \text{VS1}_{oi} = \frac{1}{E_{oi}} \sum_{uj, u \neq  o} \text{vbe}_{oi, uj}\ \ \forall\ oi,
 \end{equation}
-\noindent where $E_{oi}$ are the gross exports of country-sector $oi$ used to normalize the sum along the rows of \textbf{VBE} (excluding domestic sectors) which capture the use of VA from a domestic sector $oi$ in the exports of all foreign sectors $uj$. \newline 
+\noindent where $E_{oi}$ are the gross exports of country-sector $oi$ used to normalize the sum along the rows of \textbf{VBE} (excluding domestic sectors) which capture the use of VA from a domestic sector $oi$ in the exports of all foreign sectors $uj$. \citet{borin2019measuring} show that this measure is biased because it contains double-counted components. They propose (DVA - DAVAX)/E, which is the ratio of domestic VA (excl. double counted items) minus directly absorbed domestic value added in exports (DAVAX) to gross exports as a refined measure of forward GVC participation. \newline 
 
-Figure \ref{fig:EAC_E2R_ts} shows VS1 by exporting region for each EAC member country. It is between 10 and 25\% of gross exports for all EAC members, and similar to the level of VS in most EAC countries (Appendix Figure \ref{fig:VSag_ts} visualizes both measures over time). However, unlike VS, there is a clear downward trend in VS1 for all EAC members apart from Kenya. The literature (e.g. \citet{foster2015global}, \citet{Kummritz20161, Kummritz20162}) associates increased forward integration (VS1) into GVCs with productive upgrading. Figure \ref{fig:EAC_E2R_ts} thus points to a broad-based failure to upgrade production in the EAC. In terms of composition, most VS1 is exported by the EU, with a significant role for Asia, particularly China, but also the MEA and SSA regions. Kenya also exports around 1\% of gross Ugandan exports, and Tanzania and Uganda each export around 0.5\% of gross Kenyan Exports. Appendix Figure \ref{fig:EAC_E2R_ts_bar} further elicits the difference in shares between 2005 and 2015 in Figure \ref{fig:EAC_E2R_ts}, indicating that also inner-EAC VS1 decreased except in Kenya. 
+Accurate computation of forward GVC participation requires a full country-level ICIO database. Due to computational constraints\footnote{EMERGING has 245 countries/territories and 134 sectors, implying 32,830 rows and columns or 1 billion records in the transaction matrix. It is computationally infeasible for me to compute GVC indicators directly on these tables.}, I reduce the number of sectors to 5: AFF, FIB, MIN, MAN (combining 7 manufacturing sectors) and SRV (all other sectors), while preserving the full number of countries and territories (187 for EORA and 245 for EMERGING). Figure \ref{fig:EAC_E2R_ag_ts} shows the corrected measure of forward GVC participation following \citet{borin2019measuring}. Evidently, a reduction of the sectoral dimension attenuates aggregate GVC indicators a bit, but their trends are broadly preserved.  
+% Evidently, the classical VS1 measure induces some upward bias\footnote{Which is due to double counted items but may also be partly affected by the reduced sector dimension.}, but follows the same trend as the corrected measure available in the WDR up to 2015. 
+All indicators shows that commodity exporters such as Congo and Burundi have higher levels of forward GVC integration. The EMERGING measures suggest that VS1 has increased slightly in Congo, and decreased slightly in Kenya, Rwanda and Tanzania since 2010, indicating a slight shift away from commodities in these economies. 
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EAC_E2R_ag_ts}\textsc{EAC Forward GVC Participation}}
+\includegraphics[width=1\textwidth]{"../Figures/REV/GVCF_shares_ag_ts.pdf"} % VS1_shares_ag_ts.pdf 
+\end{figure}
+\FloatBarrier
+
+\todo[inline]{Also report gross exports decomposition under gross flows.}
+
+Since even with the 5-sector ICIO tables bilateral GVC indicators with \citet{belotti2020icio}'s ICIO package are extremely time consuming, I also compute the classical VS1 measure (also called exports to re-exports, short E2R by \citet{baldwin2015supply}) following Eq. \ref{eq:VS1} to examine bilateral relationships. Figure \ref{fig:EACVS1_ctry} shows a breakdown of VS1 by GVC partner. The headers show that E2R (Eq. \ref{eq:VS1}) is indeed upward biased vis-a-vis the corrected measure of \citet{borin2019measuring} (BM). Figure \ref{fig:EACVS1_ctry} indicates that, according to EMERGING, 4.4\% of Kenya's VS1 was re-exported by Uganda, and 3.2\% of Ugandan VS1 is re-exported by Kenya. Other EAC countries also re-export a small share of their re-exported exports through Kenya: Burundi (1.25\%), Rwanda (1.5\%), and Tanzania (1.5\%). Burundi and Rwanda have 2.4\% and 0.8\% of their VS1 through Uganda, respectively. This indicates that forward GVC linkages in the EAC are almost an order of magnitude smaller than backward linkages. The major GVC partner for EAC countries is the EU, accounting for 43\% of Kenyan and Congolese VS1, and close to 30\% of VS1 in the other EAC members. The early literature (e.g. \citet{foster2015global}, \citet{Kummritz20161}) %  Kummritz20162 
+associates increased forward integration (VS1) into GVCs with productive upgrading, which, according to Figure \ref{fig:EACVS1_ctry}, is still in its infancy within the EAC.
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EACVS1_ctry}\textsc{EAC Forward GVC Participation: Re-Exporting GVC Partners}}
+\small{\textit{Average EMERGING 2015-2019 Re-Exported Content Shares (VS1) Reported}}
+\vspace{2mm}
+\includegraphics[width=1\textwidth]{"../Figures/REV/VS1_shares_ctry.pdf"} %trim={<left> <lower> <right> <upper>}
+\vspace{-8mm}
+\end{figure}
+\FloatBarrier
+
+Table \ref{tab:EACVS1_sec} the shows the overall sector-level forward GVC participation similarly to Table \ref{tab:EACVB_sec} for backward GVC participation, and highlights considerable heterogeneity across EAC countries and sectors. But EAC5 (Excl. Congo) yields that around 21\% of gross exports in agriculture and manufactured products is re-exported VA as part of GVCs. 
+
+% latex table generated in R 4.3.0 by xtable 1.8-4 package
+% Fri Jan 12 12:32:02 2024
+\begin{table}[h]  \vspace{-1mm}
+\centering
+\caption{\label{tab:EACVS1_sec}\textsc{EAC Forward GVC Participation: Sectoral Heterogeneity}}
+\small{\textit{Average EMERGING 2015-2019 Re-Exported Content Share (VS1 following BM)}}
+\vspace{2mm}
+\begin{tabular}{lrrrrrrrrrr}
+  \toprule
+sector & UGA & TZA & KEN & RWA & BDI & COD & Mean & Median & EAC6 & EAC5 \\ 
+  \midrule
+AFF & 16.1 & 17.0 & 27.8 & 13.5 & 21.0 & 21.8 & 19.5 & 19.0 & 21.3 & 21.2\\ 
+  MIN & 28.1 & 14.3 & 15.7 & 3.4 & 6.8 & 31.1 & 16.6 & 15.0 & 30.7 & 14.7\\ 
+  FBE & 11.3 & 19.3 & 11.4 & 13.2 & 19.2 & 15.6 & 15.0 & 14.4 & 13.3 & 12.9\\ 
+  MAN & 22.0 & 23.4 & 11.9 & 42.8 & 21.6 & 23.7 & 24.2 & 22.7 & 22.5 & 21.0\\ 
+  SRV & 7.8 & 10.2 & 10.0 & 7.6 & 8.3 & 12.1 & 9.3 & 9.2 & 9.6 & 9.5\\
+   \bottomrule
+\end{tabular}
+\vspace{-2mm}
+\end{table}
+\FloatBarrier
+
+Since forward EAC GVC integration focuses on Uganda and Kenya, I also examine this link at the sector-level, using again the E2R measure available at the bilateral-sector level. In nominal terms, based on EMERGING 2015-19 averages, Kenya exports 81 million USD through Uganda, which amounted to 4.4\% of Kenyas VS1 and 0.76\% of Kenyas gross exports. 54\% of these 81 million are manufactured goods, 20\% are services, and 17\% agricultural products. Thus Kenya functions as a supplier or manufacturing intermediates to Uganda and other EAC partners. Uganda on the other hand exports 30 million USD through Kenya, which amounts to 3.2\% of Ugandan VS1 and 0.58\% of Ugandan gross exports. Of these 30 million, 45\% are agricultural products, 22\% services, and 18\% manufacturing and 16\% processed foods and beverages. Thus Uganda is, at present, mostly a supplier of agricultural inputs for export processing. The links between these two countries account for the bulk of EAC forward GVC integration, summarized compactly by Table \ref{fig:EACVS1_ctry_sec}. Of particular interest in this table is the EAC share in sectoral VS1, which is high at 20.7\% for Kenyan manufactures, indicating that about 1/5th of re-exported VA in Kenyan manufacturing is accounted for by its EAC Partners. Other notable figures are the 41\%/29\% EAC shares in re-exported Rwandan/Kenyan mining exports, which are, however, very small. 
+
+% latex table generated in R 4.3.0 by xtable 1.8-4 package
+% Thu Jan 11 17:38:54 2024
+\begin{table}[h!] \vspace{-1mm}
+\centering
+\caption{\label{fig:EACVS1_ctry_sec}\textsc{EAC Forward GVC Integration at the Sector Level}}
+\small{\textit{Average EMERGING 2015-2019 Traditional VS1 Estimates \citep{koopman2014tracing}}}
+\vspace{2mm}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lrrrrrrrrrrrrr}
+  \toprule
+  & \multicolumn{5}{c}{VS1 (Re-Exported By EAC Partners)} & \multicolumn{3}{c}{Total + EAC Shares} & \multicolumn{5}{c}{EAC Share in Sectoral VS1} \\
+Country & AFF & FBE & MAN & MIN & SRV & TOT & VS1 & EXP & AFF & FBE & MAN & MIN & SRV \\ 
+  \midrule
+UGA & 18.23 & 6.05 & 13.52 & 0.00 & 11.98 & 49.78 & 5.60 & 0.95 & 6.36 & 9.05 & 6.37 & 6.79 & 4.12 \\ 
+  TZA & 11.06 & 9.20 & 12.40 & 1.15 & 17.64 & 51.45 & 2.80 & 0.61 & 3.44 & 5.89 & 3.03 & 8.91 & 1.91 \\ 
+  KEN & 19.58 & 9.24 & 65.88 & 0.98 & 28.33 & 124.01 & 6.83 & 1.17 & 3.22 & 6.50 & 20.74 & 28.73 & 3.86 \\ 
+  RWA & 3.63 & 3.08 & 3.39 & 0.00 & 3.59 & 13.69 & 2.86 & 0.80 & 13.98 & 12.99 & 1.21 & 41.04 & 2.27 \\ 
+  BDI & 0.37 & 1.27 & 0.38 & 0.01 & 0.33 & 2.37 & 4.37 & 0.97 & 5.49 & 7.49 & 2.98 & 3.01 & 2.24 \\ 
+  COD & 0.22 & 0.10 & 1.33 & 0.46 & 0.34 & 2.45 & 0.06 & 0.02 & 0.07 & 0.08 & 0.06 & 0.05 & 0.07 \\ 
+   \bottomrule
+\end{tabular}
+}
+\vspace{-5mm}
+\end{table}
+\FloatBarrier
+
+To complete the picture, Figure \ref{fig:EACVS1_ctry_sec} shows the sector-level shares in forward GVC parters for the EAC5 (Excl. Congo). The EAC share is highest in mining at 13\%, but, Congo being excluded, mining VS1 comprises only 13 million USD, compared to 2.8/3 billion in AFF/FBE, 7.8 billion in manufacturing, and 5.6 billion in services re-exports. Of these the EAC has a share of 4\% in AFF, and 6.7\% in both FBE and MAN, indicating that manufacturing accounts for the bulk of GVC forward regional integration. The biggest forward GVC partner in all sectors remains the EU, at shares between 47\% for AFF and 16\% for MIN and MAN. 
+
+
+\begin{figure}[h!]
+\centering
+\caption{\label{fig:EACVS1_ctry_sec}\textsc{EAC Forward GVC Participation: GVC Partners by Sector}}
+\small{\textit{Based on Average EMERGING 2015-2019 EAC Exports (Excl. Congo)}}
+\vspace{2mm}
+\includegraphics[width=0.7\textwidth]{"../Figures/REV/VS1_shares_sec_ctry.pdf"} %trim={<left> <lower> <right> <upper>}
+\end{figure}
+\FloatBarrier
+
+
+%Figure \ref{fig:EAC_E2R_ts} shows VS1 by exporting region for each EAC member country. It is between 10 and 25\% of gross exports for all EAC members, and similar to the level of VS in most EAC countries (Appendix Figure \ref{fig:VSag_ts} visualizes both measures over time). However, unlike VS, there is a clear downward trend in VS1 for all EAC members apart from Kenya. The literature (e.g. \citet{foster2015global}, \citet{Kummritz20161, Kummritz20162}) associates increased forward integration (VS1) into GVCs with productive upgrading. Figure \ref{fig:EAC_E2R_ts} thus points to a broad-based failure to upgrade production in the EAC. In terms of composition, most VS1 is exported by the EU, with a significant role for Asia, particularly China, but also the MEA and SSA regions. Kenya also exports around 1\% of gross Ugandan exports, and Tanzania and Uganda each export around 0.5\% of gross Kenyan Exports. Appendix Figure \ref{fig:EAC_E2R_ts_bar} further elicits the difference in shares between 2005 and 2015 in Figure \ref{fig:EAC_E2R_ts}, indicating that also inner-EAC VS1 decreased except in Kenya. 
 
 %The following section develops dedicated metrics to better elicit patterns of EAC regional integration relative to EAC members overall GVC integration. % , the following section develops  
 %Figure \ref{fig:VSag_ts} visualizes both measures over time. Uganda has very similar VS and VS1 ratios at 11-12\% of exports towards the end of 2015. The rise of VS in Tanzania, as already noted, is a statistical artifact of declining GDP and rising exports in the EORA data. Like Uganda, Tanzania appears to have experienced a slight decline in forward GVC participation down to 11\% of exports being re-exported in 2015. Kenya exhibits a stable development with VS of around 17\% and VS1 around 12.5\%. Rwanda experienced a stronger decrease in VS1 from initially 22.5\% down to 16\% in 2015. Burundi exhibits a relatively stable development with VS at 16\% and VS1 at 18\% in 2015. It is noteworthy that none of the EAC members significantly increased its forward integration (VS1) into GVCs, which the literature (e.g. \citet{foster2015global}, \citet{Kummritz20161, Kummritz20162}) associates with productive upgrading. %, congruent to the analysis if intermediate inputs in gross and VA terms in previo sections. 
 
-\begin{figure}[h!]
-\centering
-\caption{\label{fig:EAC_E2R_ts}\textsc{EAC Re-Exported Exports Shares (VS1)}}
-\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/E2R_shares_ag_ts_area".pdf} %trim={<left> <lower> <right> <upper>}
-\end{figure}
-\FloatBarrier
+%\begin{figure}[h!]
+%\centering
+%\caption{\label{fig:EAC_E2R_ts}\textsc{EAC Re-Exported Exports Shares (VS1)}}
+%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/E2R_shares_ag_ts_area".pdf} %trim={<left> <lower> <right> <upper>}
+%\end{figure}
+%\FloatBarrier
 
 
 \subsection{Regional Integration in Value Added Trade}
