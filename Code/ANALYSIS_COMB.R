@@ -90,12 +90,23 @@ get_E_shares <- function(T_ag, FD_ag, countries = EAC6, return.E = FALSE, VAS = 
                      Exports = exp_sh_ctry))
 }
 
+value2df <- function(l, nam = NULL) {
+  res <- lapply(l, qDT, "sector") %>% 
+    unlist2d("year", DT = TRUE) %>% 
+    transform(country = qF(cr(sector), sort = FALSE), 
+              sector = qF(crm(sector), sort = FALSE),
+              year = as.integer(year)) %>%
+    colorder(year, country, sector) 
+  if(!is.null(nam)) set_names(res, c("year", "country", "sector", nam)) else res
+}
 
 # Load GVC Data ----------------------------------------------------
 EAC <- c("UGA", "TZA", "KEN", "RWA", "BDI", "SSD", "COD")
 EAC6 <- c("UGA", "TZA", "KEN", "RWA", "BDI", "COD")
 ROW <- c("SSA", "MEA", "EUU", "ECA", "NAC", "SAS", "ASE", "CHN", "ROA", "LAC", "OCE")
 REG <- c("UGA", "TZA", "KEN", "RWA", "BDI", "COD", ROW) #, "SSD")
+MAN <- c("FBE", "TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN")
+
 
 trade_class <- read_xlsx("/Users/sebastiankrantz/Documents/Data/EORA/trade classification.xlsx", range = "A1:B220")
 sec_class <- read_xlsx("/Users/sebastiankrantz/Documents/Data/EORA/trade classification.xlsx", sheet = "Sectors") |> 
@@ -135,14 +146,21 @@ WDR_POS_AGG <- WDR_POS |> group_by(source, year, country) |> select(-sect, -sect
 
 
 EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/Sector_EMERGING.xlsx") |> mutate(id = Code) |> rename(tolower)
+EM_CTRY <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx") |> 
+           transform(Detailed_Region_Code = iif(ISO3 %in% EAC6, ISO3, Detailed_Region_Code),
+                     Detailed_Region = nif(ISO3 %in% EAC6, "East African Community", 
+                                           Detailed_Region_Code == "SSA", "Sub-Saharan Africa (Excluding EAC)", 
+                                           default = Detailed_Region)) |> 
+           rename(tolower) 
 
-KWW <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/ICIO_CSV/EM_GVC_KWW_BM19.csv"),
-               EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/ICIO_CSV/EORA_GVC_KWW_BM19.csv") |> 
+
+KWW <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_KWW_BM19.csv"),
+               EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_KWW_BM19.csv") |> 
                       transformv(is.double, `*`, 1/1000), 
                idcol = "source")
 
-BIL_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/ICIO_CSV/EM_GVC_BIL_SEC_BM19.csv"),
-                   EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/ICIO_CSV/EORA_GVC_BIL_SEC_BM19.csv") |> 
+BIL_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv"),
+                   EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
                           transformv(is.double, `*`, 1/1000), 
                    idcol = "source") |> 
            # Aggregating to Broad Sectors
@@ -157,6 +175,19 @@ BIL_AGG <- BIL_SEC |> group_by(source, year, from_region, to_region) |> select(-
 
 AGG <- BIL_AGG |> group_by(source, year, country = from_region) |> select(-from_region, -to_region) |> fsum()
 
+# These are computed from ICIO using 
+REG_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Countries_Agg_Sectors/EM_GVC_SEC_BM19.csv") |> 
+                      rm_stub("from_") |> 
+                      mutate(sector = structure(sector, levels = c("AFF", "FBE", "MAN", "MIN", "SRV"), class = "factor"), 
+                             sector = factor(sector, levels = c("AFF", "MIN", "FBE", "MAN", "SRV"))),
+                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Countries_Agg_Sectors/EORA_GVC_SEC_BM19.csv") |> 
+                      transformv(is.double, `*`, 1/1000) |> rm_stub("from_") |> 
+                      mutate(sector = structure(sector, levels = c("AFF", "MIN", "FBE", "MAN", "SRV"), class = "factor")), 
+                    idcol = "source") |> 
+            join(select(EM_CTRY, iso3, region = detailed_region_code), on = c("region" = "iso3"), drop = "x") |> 
+            group_by(source, year, region, sector) |> fsum()
+
+REG_AGG <- REG_SEC |> group_by(source, year, region) |> num_vars() |> fsum()
 
 # Load Raw Decomposition Data -------------------------------------------
 
@@ -175,7 +206,7 @@ load("Data/EAC_EMERGING_data.RData", envir = EM_DET)
 EM_DET$y <- colnames(EM_DET$out_ag)
 
 EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
-EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Agg.qs")
+EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Broad_Sectors.qs")
 
 # Basic Comparison ------------------------------------------------------
 
@@ -414,6 +445,15 @@ VS_shares_sec_origin |>
 dev.copy(pdf, "Figures/REV/VA_shares_sec_ctry.pdf", width = 10, height = 5)
 dev.off()
 
+# Show EAC percentage share
+VS_shares_sec_origin |>
+  subset(source %==% "EMERGING") |> 
+  mutate(share = fsum(VAS_PostAgg, Using_Industry, TRA = "/")) |> 
+  subset(Source_Country %in% EAC6) %$%
+  fsum(share, Using_Industry) |> multiply_by(100) |> 
+  # extract(MAN) |> mean()
+  sort(decreasing = TRUE)
+
 # Table Including them...
 VS_shares_sec %>%
   pivot("sector", "value", "country", how = "w", sort = TRUE) %>%
@@ -438,7 +478,182 @@ WDR_POS_AGG |>
   transformv(c(gvc, gvcb, gvcf), `/`, gexp) |> 
   ggplot(aes(x = year, y = gvcf, colour = source, linetype = source)) +
   geom_line() +
-  facet_wrap(~country) + 
-  labs(y = "Forward GVC Participation (VS)", x = "Year", 
+  facet_wrap( ~ country) + 
+  labs(y = "Forward GVC Participation (VS1)", x = "Year", 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
+# Problem: Reduced ICIO (Regions) gives attenuated forward GVC participation
+
+# Computing Classical VS1 Manually: Double counted components are likely small
+EM <- new.env()
+load("Data/EAC_EMERGING_data_Countries_Agg_Sectors.RData", envir = EM)
+EORA <- new.env()
+load("Data/EAC_EORA_data_Countries_Agg_Sectors.RData", envir = EORA)
+
+for (x in list(EM, EORA)) {  
+  # = The sum of value added going into other countries exports, divided by own exports
+  x$E <- lapply(x$decomps, with, E) |> value2df("E")
+  x$E_AGG <- collap(x$E, E ~ year + country, fsum)
+  x$VS1_SEC <- lapply(x$decomps, with, rowSums(Vc * Bm %r*% E)) |> value2df("VS1") |> join(x$E)
+  x$VS1_AGG <-  collap(x$VS1_SEC, E + VS1 ~ year + country, fsum)
+  x$VS1_BIL_SEC <- lapply(x$decomps, with, t(fsum(t(Vc * Bm %r*% E), x$g))) |> value2df() |> 
+                   pivot(1:3, names = list("importer", "VS1")) |> 
+                   join(select(EM_CTRY, iso3, detailed_region_code), on = c("importer" = "iso3")) |> 
+                   group_by(year, country, sector, importer = detailed_region_code) |> 
+                   select(VS1) |> fsum() |> 
+                   mutate(importer = factor(importer, levels = REG)) |> 
+                   join(x$E)
+  x$VS1_BIL <- x$VS1_BIL_SEC |> collap(VS1 ~ year + country + importer, fsum) |> join(x$E_AGG)
+  for (i in grep("VS1", names(x), value = TRUE)) x[[i]] %<>% mutate(VS1_Share = VS1 / E)
+}
+rm(x, i)
+
+# Joint Plot
+rowbind(EMERGING = EM$VS1_AGG |> select(year, country, E2R = VS1_Share),
+        EORA = EORA$VS1_AGG |> select(year, country, E2R = VS1_Share),
+        WDR_EORA = WDR_POS_AGG |> compute(E2R = gvcf / gexp, keep = .c(year, country)),
+        idcol = "source") |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  ggplot(aes(x = year, y = E2R, colour = source, linetype = source)) +
+  geom_line() +
+  facet_wrap( ~ country) + 
+  labs(y = "Forward GVC Participation (VS1)", x = "Year", 
+       colour = "Source:   ", linetype = "Source:   ") +
+  theme_bw() + pretty_plot + rbsc2
+
+dev.copy(pdf, "Figures/REV/VS1_shares_ag_ts.pdf", width = 10, height = 5)
+dev.off()
+
+# Time Series Area Plot
+EORA$VS1_BIL |> 
+  subset(country %in% EAC6) %>% 
+  ggplot(aes(x = year, y = VS1_Share, fill = importer)) +
+  geom_area(position = "stack", alpha = 0.8) +
+  facet_wrap( ~ country, scales = "free_y") + 
+  guides(fill = guide_legend(ncol = 1)) + 
+  scale_y_continuous(labels = percent, breaks = extended_breaks(10)) +
+  scale_x_continuous(expand = c(0,0)) + rbsc2 +
+  theme_minimal() + pretty_plot + theme(legend.position = "right")
+
+# Now Joint Plot Using ICIO Data (Country-sector level decomposition with full country 5-sector tables)
+rowbind(REG_AGG |> compute(E2R = gvcf / gexp, keep = .c(source, year, region)),
+        WDR_POS_AGG |> compute(E2R = gvcf / gexp, region = country, keep = .c(source, year))) |> 
+  subset(region %in% EAC6 & year >= 2000) |> 
+  ggplot(aes(x = year, y = E2R, colour = source, linetype = source)) +
+  geom_line() +
+  facet_wrap( ~ region) + 
+  labs(y = "Forward GVC Participation (VS1)", x = "Year", 
+       colour = "Source:   ", linetype = "Source:   ") +
+  theme_bw() + pretty_plot + rbsc2
+
+dev.copy(pdf, "Figures/REV/GVCF_shares_ag_ts.pdf", width = 10, height = 5)
+dev.off()
+
+# Barplot with both sources
+rowbind(EMERGING = EM$VS1_BIL |> select(year, country, importer, E2R = VS1_Share),
+        EORA = EORA$VS1_BIL |> select(year, country, importer, E2R = VS1_Share),
+        idcol = "source") |> 
+  subset((between(year, 2010, 2015) & source == "EORA") | (year >= 2015 & source == "EMERGING")) |> 
+  collap(E2R ~ source + country + importer) |> 
+  subset(country %in% EAC6) |> 
+  # pivot("importer", "E2R", c("source", "country"), how = "w") |> 
+  # transformv(-1, function(x) proportions(x)*100) |> gvr("importer|EMERGING")
+  mutate(country = setlevels(country, new = paste0(levels(country), " (", 
+     round(fsum(E2R[source == "EMERGING"], country[source == "EMERGING"])[levels(country)]*100,1), "%)"))) |> 
+  ggplot(aes(x = source, y = E2R, fill = importer)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.8) +
+  facet_wrap( ~ country, nrow = 1) + # , scales = "free_y" 
+  guides(fill = guide_legend(ncol = 1)) + 
+  scale_y_continuous(labels = percent, 
+                     breaks = extended_breaks(10), expand = c(0,0), limits = c(0, 1)) +  
+  labs(x = "Database", y = "Share of Re-Exported Exports Content", fill = "Partner") +
+  theme_bw() + pretty_plot + rbsc2 + theme(legend.position = "right")
+
+dev.copy(pdf, "Figures/REV/VS1_shares_ctry.pdf", width = 12, height = 5)
+dev.off()
+
+# Bilateral Sector-Level Breakdown: Uganda and Kenya
+VS1_UGA_KEN_SEC <- EM$VS1_BIL_SEC |> 
+  join(EM$E_AGG, on = c("year", "country"), suffix = "_AGG") |> 
+  mutate(VS1_AGG_Share = VS1 / E_AGG,
+         Share_in_Country_VS1 = fsum(VS1, list(year, country), TRA = "/"),
+         Share_in_Sector_VS1 = fsum(VS1, list(year, sector, country), TRA = "/")) |> 
+  subset(year >= 2015 & country %in% EAC6 & importer %in% EAC6) |> 
+  group_by(country, sector, importer) |> fmean() |> 
+  subset(country %in% c("UGA", "KEN") & importer %in% c("UGA", "KEN") & 
+         as.character(country) != importer) |> 
+  mutate(Sectoral_Partner_Share = fsum(VS1, importer, TRA = "/"))
+
+VS1_UGA_KEN_SEC |> group_by(country) |> 
+  summarise(VS1 = fsum(VS1),
+            E_AGG = fmean(E_AGG), 
+            VS1_AGG_Share = fsum(VS1_AGG_Share),
+            Share_in_Country_VS1 = fsum(Share_in_Country_VS1))
+
+# Breakdown of individual countries and the EAC
+VS1_EAC_SEC <- EM$VS1_BIL_SEC |> 
+  join(EM$E_AGG, on = c("year", "country"), suffix = "_AGG") |> 
+  mutate(VS1_AGG_Share = VS1 / E_AGG,
+         Share_in_Country_VS1 = fsum(VS1, list(year, country), TRA = "/"),
+         Share_in_Sector_VS1 = fsum(VS1, list(year, sector, country), TRA = "/")) |> 
+  subset(year >= 2015 & country %in% EAC6 & importer %in% EAC6) |> 
+  group_by(country, sector, importer) |> fmean() |> 
+  collap( ~ country + sector, custom = list(
+    fsum = .c(VS1, VS1_Share, VS1_AGG_Share, Share_in_Country_VS1, Share_in_Sector_VS1),
+    fmean = .c(E, E_AGG)
+  )) 
+
+# Presentation:
+VS1_EAC_SEC |> 
+  mutate(Share_in_Sector_VS1 = Share_in_Sector_VS1 * 100) |> 
+  pivot("country", values = c("VS1", "Share_in_Sector_VS1"), names = "sector", how = "w") |> 
+  mutate(country = factor(country, levels = EAC6)) |> 
+  roworder(country) |> 
+  join(VS1_EAC_SEC |> # Adding totals
+         collap(VS1 + Share_in_Country_VS1 + VS1_AGG_Share ~ country, fsum, keep.col.order = FALSE) |> 
+         transformv(c(Share_in_Country_VS1, VS1_AGG_Share), `*`, 100)) |> 
+  colorder(VS1_SRV, VS1, Share_in_Country_VS1, VS1_AGG_Share, pos = "after") |> 
+  xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
+  
+
+# Sector-level Re-Export Shares
+REG_SEC[source == "EMERGING", .(year, country = region, sector, VS1 = gvcf, E = gexp)] |> 
+# EM$VS1_SEC |> 
+  subset(year >= 2015 & country %in% EAC6) |> 
+  group_by(country, sector) |> 
+  select(VS1, E) |> fsum() %>%
+  rowbind(
+    group_by(., sector) |> 
+    select(VS1, E) |> fsum() |> 
+    mutate(country = "EAC")
+  ) |> 
+  mutate(VS1_Share = VS1 / E, 
+         country = factor(country, levels = c(EAC6, "EAC"))) |> 
+  pivot("sector", "VS1_Share", "country", how = "w") |> 
+  replace_outliers(c(0, 1)) %>%
+  transform(Mean = pmean(select(., -sector, -EAC), na.rm = TRUE), 
+            Median = fmedian(transpose(select(., -sector, -EAC)))) |> 
+  colorder(EAC, pos = "end")
+
+# GVC Partners for EAC Sector-level Re-Exports
+EM$VS1_BIL_SEC |> 
+  subset(year >= 2015 & country %in% EAC6) |> 
+  group_by(importer, sector) |> 
+  summarise(VS1 = fsum(VS1)) |> 
+
+  ggplot(aes(x = sector, y = VS1, fill = importer)) +
+  geom_bar(stat = "identity", position = "stack", alpha = 0.8) +
+  # guides(fill = guide_legend(ncol = 1)) + 
+  scale_y_continuous(# labels = percent, 
+                     breaks = extended_breaks(10), expand = c(0,0)) +  # , limits = c(0, 1)
+  labs(y = "Share of Re-Exported Content (VS1)", fill = "Partner") +
+  theme_bw() + pretty_plot + rbsc2 + theme(legend.position = "right")
+
+dev.copy(pdf, "Figures/REV/VA_shares_sec_ctry.pdf", width = 10, height = 5)
+dev.off()
+
+# Correct Levels
+REG_SEC[source == "EMERGING" & region %in% EAC6 & year >= 2015, 
+        .(VS1 = sum(gvcf)), by = sector] |> 
+  ggplot(aes(x = sector, y = VS1)) +
+  geom_bar(stat = "identity", position = "stack", alpha = 0.8)
