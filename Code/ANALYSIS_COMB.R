@@ -7,98 +7,8 @@
 # Load Libraries and Functions -----------------------
 library(fastverse)
 set_collapse(mask = c("manip", "helper", "special"), nthreads = 4, sort = TRUE)
-fastverse_extend(ggplot2, scales, RColorBrewer, readxl, pheatmap, qs, decompr, install = TRUE)
-vec_ptype2.factor.factor <- function(x, y, ...) x
-
-pretty_plot <-
-  theme(
-    axis.title.x = element_text(size = 14, margin = ggplot2::margin(t = 10, b = 5)),
-    axis.title.y = element_text(size = 14, margin = ggplot2::margin(r = 10, l = 5)),
-    # axis.text.x = element_text(
-    #   angle = 315,
-    #   hjust = 0,
-    #   margin = ggplot2::margin(t = 0)
-    # ),
-    legend.position = "top",
-    strip.text = element_text(size = 12),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    legend.text = element_text(size = 12)
-  )
-
-rbsc <- discrete_scale(c("colour", "fill"), "hue", rainbow, na.value = "grey50") # hcl.colors
-
-crbpal <- gradient_n_pal(recode_char(rainbow(26L),  
-                                     "#00FF14" = "#00CC66", # Dark Green 
-                                     "#FF003B" = "#FF0000")) # Red / Magenta
-rbsc2 <- discrete_scale(c("colour", "fill"), "gradientn", 
-                        function(x) crbpal(seq(0, 1, 1/x)), na.value = "grey50")
-
-# function to get the country name
-cr <- function(x) {
-  if(is.character(x)) return(substr(x, 1L, 3L))
-  names(x) <- substr(names(x), 1L, 3L)
-  x
-}
-crm <- function(x) {
-  if(is.character(x)) return(substr(x, 5L, 10000L))
-  names(x) <- substr(names(x), 5L, 10000L)
-  x
-}
-
-mat_agg <- function(x) {
-  gr <- qF(cr(rownames(x)), sort = FALSE, na.exclude = FALSE)
-  gc <- qF(cr(colnames(x)), sort = FALSE, na.exclude = FALSE)
-  x |> fsum(gr) |> t() |> fsum(gc) |> t()
-}
-
-get_E_shares <- function(T_ag, FD_ag, countries = EAC6, return.E = FALSE, VAS = TRUE) {
-  
-  nam <- rownames(T_ag)
-  out <- rowSums(T_ag) + rowSums(FD_ag)
-  
-  if(!all_identical(nam, colnames(T_ag), rownames(FD_ag)))
-    stop("Matrices not or nor equally named")
-  
-  T_ag_exp <- T_ag
-  diag(T_ag_exp) <- 0
-  FD_ag_exp <- FD_ag
-  diag(FD_ag_exp) <- 0
-  
-  E <- cbind(T_ag_exp, FD_ag_exp) 
-  
-  if(return.E) return(E)
-  ckmatch(countries, nam)
-  ckmatch(countries, colnames(FD_ag))
-  
-  imp_sh_ctry <- cbind(Intermediate = colSums(T_ag_exp[countries, ]) / colSums(T_ag_exp),
-                       Final = colSums(FD_ag_exp[countries, ]) / colSums(FD_ag_exp))
-  imp_sh <- colSums(T_ag_exp) / colSums(T_ag)  # What proportion of inputs was imported ?
-  
-  # Export share (Proportion of Output Exported)
-  exp_sh_ctry <- cbind(Intermediate = rowSums(T_ag_exp[, countries]) / rowSums(T_ag_exp),
-                       Final = rowSums(FD_ag_exp[, countries]) / rowSums(FD_ag_exp))
-  exp_sh <- rowSums(E) / out
-  
-  if(!all_obj_equal(names(imp_sh), names(exp_sh), rownames(imp_sh_ctry), rownames(exp_sh_ctry)))
-    stop("Names mismatch")
-  
-  list(Aggregate = cbind(`Value Added` = if(VAS) {1 - colSums(T_ag) / out} else NULL,
-                         `Percent of Inputs Imported` = imp_sh, 
-                         `Percent of Output Exported` = exp_sh),
-       Shares = list(Imports = imp_sh_ctry, 
-                     Exports = exp_sh_ctry))
-}
-
-value2df <- function(l, nam = NULL) {
-  res <- lapply(l, qDT, "sector") %>% 
-    unlist2d("year", DT = TRUE) %>% 
-    transform(country = qF(cr(sector), sort = FALSE), 
-              sector = qF(crm(sector), sort = FALSE),
-              year = as.integer(year)) %>%
-    colorder(year, country, sector) 
-  if(!is.null(nam)) set_names(res, c("year", "country", "sector", nam)) else res
-}
+fastverse_extend(ggplot2, ggh4x, scales, RColorBrewer, readxl, pheatmap, qs, decompr, install = TRUE)
+source("Code/helpers.R")
 
 # Load GVC Data ----------------------------------------------------
 EAC <- c("UGA", "TZA", "KEN", "RWA", "BDI", "SSD", "COD")
@@ -348,23 +258,26 @@ dev.off()
 vs_agg_share <- AGG[source == "EMERGING" & year >= 2015, .(VSS = mean(gvcb/gexp)), by = country] |> 
   with(set_names(VSS, country))
 
-list(EORA = EORA_DET, EMERGING = EM_DET) |> 
+VS_EAC_BIL <- list(EORA = EORA_DET, EMERGING = EM_DET) |> 
   lapply(function(x) {
-    sapply(x$y, function(i) x$VB_ag[, EAC6, i], # mat_agg(leontief(x$decomps[[i]], long = FALSE))[, EAC6],
+    sapply(x$y, function(i) mat_agg(leontief(x$decomps[[i]], long = FALSE))[, EAC6], # fsum(x$VB_ag[, EAC6, i], TRA = "/"), 
            simplify = FALSE) |> 
     unlist2d("year", "share", DT = TRUE) |> 
     mutate(year = as.integer(year)) |> 
-    pivot(1:2, names = list("country", "value"))
-  }) |> rowbind(idcol = "source") |> 
+    pivot(1:2, names = list("country", "value")) 
+  }) |> rowbind(idcol = "source") 
+  
+VS_EAC_BIL |> 
   subset((between(year, 2010, 2015) & source == "EORA") | (year >= 2015 & source == "EMERGING")) |> 
-  mutate(share = factor(setv(share, "SSD", "SSA"), levels = REG)) |> 
+  mutate(share = factor(setv(share, "SSD", "SSA"), levels = REG),
+         value = fsum(value, list(source, year, country), TRA = "/")) |> 
   group_by(source, share, country) |> 
   select(value) |> fmean() |> 
   subset(as.character(country) != as.character(share)) |> 
   # # mutate(value = fsum(value, list(source, country), TRA = "/")) |> 
   # subset(share %!in% EAC6 & source == "EMERGING") |> 
   # roworder(-value)
-  mutate(country = setlevels(country, new = paste0(levels(country), " (", round(vs_agg_share[levels(country)]*100,1), "%)"))) |> 
+  mutate(country = set_attr(country, "levels", paste0(levels(country), " (", round(vs_agg_share[levels(country)]*100,1), "%)"))) |> 
   ggplot(aes(x = source, y = value, fill = share)) +
     geom_bar(stat = "identity", position = "fill", alpha = 0.8) +
     facet_wrap( ~ country, nrow = 1) + # , scales = "free_y" 
@@ -671,3 +584,156 @@ REG_SEC[source == "EMERGING" & region %in% EAC5 & year >= 2015,
         .(VS1 = sum(gvcf)), by = sector] |> 
   ggplot(aes(x = sector, y = VS1)) +
   geom_bar(stat = "identity", position = "stack", alpha = 0.8)
+
+
+#############################
+# Regional Integration
+#############################
+
+# Regional Integration in VA Trade 
+
+# exports_VA <- lapply(EM_DET$decomps, leontief) %>% 
+#   unlist2d("Year", DT = TRUE) %>% 
+#   tfmv(is.character, qF, sort = FALSE) %>% 
+#   tfm(Year = as.integer(as_numeric_factor(Year)))
+
+# (1) EAC Share in VS
+VS_EAC <- VS_EAC_BIL |> 
+  subset(country %in% EAC5 & share != country) |> 
+  group_by(source, year, country, EAC_share = share %in% EAC5) |> 
+  summarise(value = fsum(value)) %>% {
+  rowbind(
+    mutate(., value = fsum(value, list(source, year, country), TRA = "/")) |> 
+      subset(EAC_share, -EAC_share),
+    collap(., value ~ source + year + EAC_share, fsum) |> 
+      mutate(value = fsum(value, list(source, year), TRA = "/"), 
+             country = "EAC") |> 
+      subset(EAC_share, -EAC_share)
+  )}
+
+# (2) EAC Share in VS1
+VS1_EAC <- rowbind(EMERGING = EM$VS1_BIL,
+                   EORA = EORA$VS1_BIL, idcol = "source") |> 
+  subset(country %in% EAC5 & as.character(country) != importer) |> 
+  group_by(source, year, country, EAC_importer = importer %in% EAC5) |> 
+  summarise(VS1 = fsum(VS1)) %>% {
+  rowbind(
+    mutate(., value = fsum(VS1, list(source, country, year), TRA = "/")) |> 
+    subset(EAC_importer, -EAC_importer, -VS1),
+    collap(., VS1 ~ source + year + EAC_importer, fsum) |> 
+    mutate(value = fsum(VS1, list(source, year), TRA = "/"), 
+           country = "EAC") |> 
+    subset(EAC_importer, -EAC_importer, -VS1)
+  )}
+
+# Value Added in exports to the EAC by country origin
+exports_EAC_VA <- list(EORA = EORA_DET, EMERGING = EM_DET) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) with(o, (Vc * B) %*% ESR[, EAC5]) %>% fsum(X$g)) %>% 
+      unlist2d("year", "exporter", DT = TRUE) %>%
+      mutate(year = as.integer(year)) %>% 
+      pivot(1:2, names = list("importer", "value")) 
+  }) |> rowbind(idcol = "source")
+
+# Value Added in final goods exports to the EAC by country origin
+FD_exports_EAC_VA <- list(EORA = EORA_DET, EMERGING = EM_DET) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) with(o, (Vc * B) %*% Efd[, EAC5]) %>% fsum(X$g)) %>% 
+      unlist2d("year", "exporter", DT = TRUE) %>%
+      mutate(year = as.integer(year)) %>% 
+      pivot(1:2, names = list("importer", "value")) 
+  }) |> rowbind(idcol = "source")
+
+
+# TODO: Could also compute using DVA in bilateral exports following BM (DAVAX), but does not work for final imports
+.c(VAI_EAC, VAFI_EAC) %=% lapply(
+  list(exports_EAC_VA, FD_exports_EAC_VA), function(data) {data |> 
+  subset(importer %in% EAC5 & exporter != importer) |> 
+  group_by(source, year, importer, EAC_exporter = exporter %in% EAC5) |> 
+  summarise(value = fsum(value)) %>% {
+    rowbind(
+      mutate(., value = fsum(value, list(source, year, importer), TRA = "/")) |> 
+        subset(EAC_exporter, -EAC_exporter),
+      collap(., value ~ source + year + EAC_exporter, fsum) |> 
+        mutate(value = fsum(value, list(source, year), TRA = "/"), 
+               importer = "EAC") |> 
+        subset(EAC_exporter, -EAC_exporter)
+    )} |> 
+  rename(importer = country)})
+
+
+EAC_GVC_DATA <- rowbind(VS = VS_EAC, 
+                        VS1 = VS1_EAC, 
+                        VAI = VAI_EAC, 
+                        VAFI = VAFI_EAC, idcol = "variable")
+# Plot as in current paper
+# EAC_GVC_DATA |> 
+#   mutate(country = factor(country, levels = EAC5)) |> 
+#   subset(source == "EORA" & between(year, 2005, 2015)) |> 
+# 
+#   ggplot(aes(x = year, y = value, color = variable)) +
+#   geom_line() +
+#   facet_wrap( ~ country, scales = "free_y") + 
+#   scale_y_continuous(labels = percent, breaks = extended_breaks(7)) + 
+#   guides(color = guide_legend(title = NULL)) +
+#   theme_minimal() + pretty_plot 
+
+# Adding robust trend
+fastverse_extend(robustbase)
+EAC_GVC_DATA <- EAC_GVC_DATA |> 
+  mutate(country = factor(country, levels = c(EAC5, "EAC"))) |> 
+  group_by(variable, source, country) |> 
+  mutate(as.list(set_names(coef(lmrob(value ~ year, weights = (source == "EMERGING" | year <= 2015) + 0.1, 
+                                      setting = "KS2011", maxit.scale = 10000)), c("icpt", "slope")))) |>
+  ungroup() |> 
+  mutate(trend = icpt + year * slope)
+
+# Improved plot
+EAC_GVC_DATA |> 
+  rename(value = Value, trend = "MM Trend") |> 
+  pivot(1:4, values = c("Value", "MM Trend"), names = list("measure", "value")) |> 
+  ggplot(aes(x = year, y = value, color = country, linetype = measure)) +
+  geom_line() + 
+  facet_grid2(source ~ variable, scales = "free", independent = "all") + 
+  scale_y_continuous(labels = percent, limits = c(0, NA),
+                     breaks = extended_breaks(7)) + 
+  scale_x_continuous(n.breaks = 4) +
+  guides(color = guide_legend(title = "Country:  ", nrow = 1)) +
+  scale_color_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
+  labs(x = NULL, y = NULL, linetype = "        Measure:  ") +
+  theme_bw() + pretty_plot 
+
+dev.copy(pdf, "Figures/REV/VA_EAC5_shares_ts.pdf", width = 11.69, height = 6)
+dev.off()
+
+# Plotting slope coefficients
+EAC_GVC_DATA |> 
+  group_by(variable, source, country) |>
+  select(slope) |> ffirst() |> 
+  ggplot(aes(x = variable, y = slope, fill = country)) +
+    geom_bar(stat = "identity", position = position_dodge(0.9)) + 
+    geom_hline(yintercept = 0) +
+    facet_wrap( ~ source, scales = "free") + 
+    scale_y_continuous(labels = percent, # limits = c(0, NA),
+                       breaks = extended_breaks(7)) + 
+    guides(fill = guide_legend(title = "Country:  ", nrow = 1)) +
+    scale_fill_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
+    labs(x = NULL, y = NULL) +
+    theme_bw() + pretty_plot 
+
+dev.copy(pdf, "Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
