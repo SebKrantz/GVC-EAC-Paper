@@ -7,9 +7,9 @@ library(fastverse)
 rm(list = ls())
 gc()
 
-years <- 2000:2021
+years <- 1995:2021
 broad_sec <- TRUE
-prices <- "pp"
+prices <- "bp"
 data_path <- paste0("/Users/sebastiankrantz/Documents/Data/EORA/EORA 26 2021", if(prices == "pp") " PP" else "")
 
 # Crating temporary folder to extract files
@@ -235,8 +235,9 @@ dimnames(eac) <- list(i, EAC)
 # Removing temporary files
 unlink(data_unz_path, recursive = TRUE)
 rm(list = setdiff(ls(), .c(decomps, T, FD, VA, out, va, va_VA, VB, T_ag, FD_ag, VA_ag, 
-                           out_ag, va_ag, va_VA_ag, VB_ag, broad_sec,
+                           out_ag, va_ag, va_VA_ag, VB_ag, broad_sec, prices,
                            r, EAC, eac, i, i_long, v, rownam, y, g, cr, crm)))
 
-save.image(sprintf("Data/EAC_EORA_2021%s_data%s.RData", if(prices == "pp") "_PP" else "", if(broad_sec) "_broad_sec" else ""))
+save.image(sprintf("Data/EAC_EORA_2021%s_data%s.RData", 
+                   if(prices == "pp") "_PP" else "", if(broad_sec) "_broad_sec" else ""))
 
