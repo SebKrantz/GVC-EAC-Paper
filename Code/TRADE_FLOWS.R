@@ -4,6 +4,7 @@ fastverse_extend(ggplot2)
 vec_ptype2.factor.factor <- function(x, y, ...) x
 
 EAC <- c("UGA", "TZA", "KEN", "RWA", "BDI", "SSD", "COD")
+EAC5 <- c("UGA", "TZA", "KEN", "RWA", "BDI")
 
 ####################################
 # UN Comtrade, Accessed Through OTS
@@ -63,11 +64,12 @@ EAC_DATA_YRC_USD15_SEC <- EAC_DATA_YRC |>
 # CEPII BACI
 ####################################
 
-BACI_2d <- qs::qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") 
+EM_ISO3 <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx")$ISO3
+BACI_2d <- qs::qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
+           subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) 
 
 # Aggregating: EAC and ROW
 EAC_BACI_SEC <- BACI_2d |> 
-  subset(iso3_o %in% africamonitor::am_countries_wld$ISO3 & iso3_d %in% africamonitor::am_countries_wld$ISO3) |> 
   mutate(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
          iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW")) |> 
   collap(value + quantity + section_fullname_english ~ year + iso3_o + iso3_d + section_code, 
@@ -361,18 +363,21 @@ for (sec in c("AGR", "FBE", "MIN", "MAN", "SRV")) {
 
 EAC_BACI_MIG |> 
   subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  mutate(value = BY(value, list(iso3_o, iso3_d), frollmean, 5)) |> 
   ggplot(aes(x = year, y = value, colour = iso3_d)) +
   geom_line() + # geom_vline(xintercept = 2015) +
   facet_wrap(~ iso3_o, scales = "free_y")
 
 EAC_DOT_MIG |> 
   subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  mutate(value = BY(value, list(iso3_o, iso3_d), frollmean, 5)) |> 
   ggplot(aes(x = year, y = value, colour = iso3_d)) +
   geom_line() + # geom_vline(xintercept = 2015) +
   facet_wrap(~ iso3_o, scales = "free_y")
 
 EAC_EORA_MIG |> 
   subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  mutate(value = BY(value, list(iso3_o, iso3_d), frollmean, 5)) |> 
   ggplot(aes(x = year, y = value, colour = iso3_d)) +
   geom_line() + geom_vline(xintercept = 2015) +
   facet_wrap(~ iso3_o, scales = "free_y")
@@ -385,25 +390,79 @@ EAC_EM_MIG |>
 
 # ROW to Inner EAC Trade According to Different Databases
 
+# Total Trade
 rowbind(BACI = EAC_BACI_MIG |> select(-quantity), 
         DOTS = EAC_DOT_MIG, 
         EORA = EAC_EORA_MIG,
         # EMERGING = EAC_EM_MIG, 
         idcol = "data") |> 
-  group_by(data, year, inner_eac = iso3_o %in% EAC & iso3_d %in% EAC) |> 
+  subset(iso3_o %in% EAC5 | iso3_d %in% EAC5) |> 
+  group_by(data, year, inner_eac = iso3_o %in% EAC5 & iso3_d %in% EAC5) |> 
   num_vars() |> fsum() |> 
   pivot(1:2, names = "inner_eac", how = "w") |> 
-  mutate(ratio = `FALSE`/`TRUE`) |> 
+  mutate(ratio = `FALSE`/`TRUE`,
+         ratio_ma = BY(ratio, data, frollmean, 5)) |> 
   subset(year >= 2000 & year <= 2021) |> 
-  ggplot(aes(x = year, y = ratio, colour = data)) + 
+  ggplot(aes(x = year, y = ratio_ma, colour = data)) + 
     geom_line() +
-    geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
-    # scale_y_continuous(limits = c(5, 25)) + 
-    theme_bw() + labs(y = "EAC-ROW Trade / Inner-EAC Trade", 
+    # geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
+    # scale_y_continuous(limits = c(10, 30)) + 
+    theme_bw() + labs(y = "EAC-ROW/Inner-EAC Trade, 5 Year MA", 
                       x = "Year", colour = "Database")
 
-ggsave("Figures/REV/ROW_EAC_Trade_Ratios.pdf", width = 8, height = 4)  
+ggsave("Figures/REV/ROW_EAC5_Trade_Ratios_5YMA.pdf", width = 8, height = 4)  
   
+
+# Exports and Imports
+EAC5_TRADE_Share <- rowbind(
+  DOTS = EAC_DOT_MIG,
+  BACI = EAC_BACI_MIG |> select(-quantity),
+  # EORA = EAC_EORA_MIG,
+  idcol = "source") %>% 
+  subset(iso3_o %in% EAC5 | iso3_d %in% EAC5) %>% {
+    rowbind(
+      `Export Destination` = rowbind(
+        mutate(., value = fsum(value, list(source, iso3_o, year), TRA = "/")) |>
+          subset(iso3_o %in% EAC5 & iso3_d %in% EAC5, -iso3_d) |> 
+          group_by(source, country = iso3_o, year) |> select(value) |> fsum(),
+        group_by(., source, iso3_o = iso3_o %in% EAC5, iso3_d = iso3_d %in% EAC5, year) |> fsum() |> 
+          mutate(value = fsum(value, list(source, iso3_o, year), TRA = "/")) |> 
+          subset(iso3_o & iso3_d, -iso3_o, -iso3_d) |> 
+          mutate(country = "EAC")
+      ),
+      `Import Origin` = rowbind(
+        mutate(., value = fsum(value, list(source, iso3_d, year), TRA = "/")) |>
+          subset(iso3_o %in% EAC5 & iso3_d %in% EAC5, -iso3_o) |> 
+          group_by(source, country = iso3_d, year) |> select(value) |> fsum(),
+        group_by(., source, iso3_o = iso3_o %in% EAC5, iso3_d = iso3_d %in% EAC5, year) |> fsum() |> 
+          mutate(value = fsum(value, list(source, iso3_d, year), TRA = "/")) |> 
+          subset(iso3_o & iso3_d, -iso3_o, -iso3_d) |> 
+          mutate(country = "EAC")
+      ),
+      idcol = "share"
+    )}
+
+# Simpler Plot
+EAC5_TRADE_Share |> 
+  roworderv() |> 
+  mutate(value = BY(value, list(share, source, country), frollmean, 5)) |> 
+  subset(year >= 2000) |> 
+  ggplot(aes(x = year, y = value, color = country, linetype = source)) +
+  geom_line() + 
+  facet_wrap(~ share, scales = "fixed") + 
+  scale_y_continuous(labels = percent, limits = c(0, NA),
+                     breaks = extended_breaks(7)) + 
+  scale_x_continuous(n.breaks = 4) +
+  guides(color = guide_legend(title = "Country:  ", nrow = 1)) +
+  scale_color_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
+  labs(x = NULL, y = "EAC Share, 5-Year MA", linetype = " Source:  ") +
+  theme_bw() + pretty_plot 
+
+dev.copy(pdf, "Figures/REV/GT_EAC5_shares_ts.pdf", width = 8, height = 4)
+dev.off()
+
+
+
 # ROW to Inner EAC Trade According to Different Databases: Sector Level
 
 rowbind(BACI = EAC_BACI_BSEC |> select(-quantity), 
