@@ -239,5 +239,6 @@ rm(list = setdiff(ls(), .c(decomps, T, FD, VA, out, va, va_VA, VB, T_ag, FD_ag, 
                            r, EAC, eac, i, i_long, v, rownam, y, g, cr, crm)))
 
 save.image(sprintf("Data/EAC_EORA_2021%s_data%s.RData", 
-                   if(prices == "pp") "_PP" else "", if(broad_sec) "_broad_sec" else ""))
+                   if(prices == "pp") "_PP" else "", 
+                   if(broad_sec) "_broad_sec" else ""))
 
