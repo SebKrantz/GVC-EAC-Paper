@@ -114,7 +114,6 @@ EM$y <- colnames(EM$out_ag)
 
 EM_DET <- new.env()
 load("Data/EAC_EMERGING_data.RData", envir = EM_DET)
-EM_DET$y <- colnames(EM_DET$out_ag)
 
 EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
 EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Broad_Sectors.qs")
@@ -667,24 +666,24 @@ EAC_GVC_DATA <- rowbind(VS = VS_EAC,
                         VAI = VAI_EAC, 
                         VAFI = VAFI_EAC, idcol = "variable")
 # Plot as in current paper
-# EAC_GVC_DATA |> 
-#   mutate(country = factor(country, levels = EAC5)) |> 
-#   subset(source == "EORA" & between(year, 2005, 2015)) |> 
-# 
-#   ggplot(aes(x = year, y = value, color = variable)) +
-#   geom_line() +
-#   facet_wrap( ~ country, scales = "free_y") + 
-#   scale_y_continuous(labels = percent, breaks = extended_breaks(7)) + 
-#   guides(color = guide_legend(title = NULL)) +
-#   theme_minimal() + pretty_plot 
+EAC_GVC_DATA |>
+  mutate(country = factor(country, levels = c(EAC5, "EAC"))) |>
+  subset(source == "EMERGING") |> 
+  # subset(source == "EORA" & between(year, 2005, 2015)) |>
 
-# Adding robust trend
-fastverse_extend(robustbase)
+  ggplot(aes(x = year, y = value, color = variable)) +
+  geom_line() +
+  facet_wrap( ~ country, scales = "free_y") +
+  scale_y_continuous(labels = percent, breaks = extended_breaks(7)) +
+  guides(color = guide_legend(title = NULL)) +
+  theme_minimal() + pretty_plot
+
+# Adding weighted linear trend
 EAC_GVC_DATA <- EAC_GVC_DATA |> 
-  mutate(country = factor(country, levels = c(EAC5, "EAC"))) |> 
+  mutate(country = factor(country, levels = c(EAC5, "EAC")), 
+         weight = nif(source == "EMERGING" & year == 2010L, 2, source == "EORA" & year > 2015, 0.1, default = 1)) |> 
   group_by(variable, source, country) |> 
-  mutate(as.list(set_names(coef(lmrob(value ~ year, weights = (source == "EMERGING" | year <= 2015) + 0.1, 
-                                      setting = "KS2011", maxit.scale = 10000)), c("icpt", "slope")))) |>
+  mutate(as.list(set_names(coef(lm(value ~ year, weights = weight)), c("icpt", "slope")))) |>
   ungroup() |> 
   mutate(trend = icpt + year * slope)
 
@@ -713,6 +712,7 @@ EAC_GVC_DATA |>
   ggplot(aes(x = variable, y = slope, fill = country)) +
     geom_bar(stat = "identity", position = position_dodge(0.9)) + 
     geom_hline(yintercept = 0) +
+    geom_text(aes(label = round(slope*100, 2), vjust = iif(slope > 0, -0.3, 1.3)), size = 2, position = position_dodge(0.9)) +
     facet_wrap( ~ source, scales = "free") + 
     scale_y_continuous(labels = percent, # limits = c(0, NA),
                        breaks = extended_breaks(7)) + 
@@ -725,15 +725,155 @@ dev.copy(pdf, "Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
 dev.off()
 
 
+# Analysis at the sector-level using broad-sector ICIO's: ----------------------------
+
+# (1) EAC Share in VS
+VS_EAC_BIL_SEC <- 
+  list(EORA = EORA, EMERGING = EM) |> 
+  lapply(function(x) lapply(x$decomps, function(z) leontief(z) |> 
+      subset(Using_Country %iin% EAC5) |> 
+      collap(FVAX ~ Source_Country + Using_Country + Using_Industry, fsum, na.rm = FALSE) 
+  )) |> 
+  unlist2d(c("source", "year"), DT = TRUE) |> 
+  mutate(year = as.integer(year)) |> 
+  rename(Source_Country = share, Using_Country = country, Using_Industry = sector, FVAX = value)
+
+VS_EAC_SEC <- VS_EAC_BIL_SEC |> 
+  subset(country %in% EAC5 & share != country) |> 
+  group_by(source, year, country, sector, EAC_share = share %in% EAC5) |> 
+  summarise(value = fsum(value)) %>% {
+    rowbind(
+      mutate(., value = fsum(value, list(source, year, country, sector), TRA = "/")) |> 
+        subset(EAC_share, -EAC_share),
+      collap(., value ~ source + year + sector + EAC_share, fsum) |> 
+        mutate(value = fsum(value, list(source, year, sector), TRA = "/"), 
+               country = "EAC") |> 
+        subset(EAC_share, -EAC_share)
+    )}
+
+# (2) EAC Share in VS1
+VS1_EAC_SEC <- rowbind(EMERGING = EM$VS1_BIL_SEC,
+                       EORA = EORA$VS1_BIL_SEC, idcol = "source") |> 
+  subset(country %in% EAC5 & as.character(country) != importer) |> 
+  group_by(source, year, country, sector, EAC_importer = importer %in% EAC5) |> 
+  summarise(VS1 = fsum(VS1)) %>% {
+    rowbind(
+      mutate(., value = fsum(VS1, list(source, country, sector, year), TRA = "/")) |> 
+        subset(EAC_importer, -EAC_importer, -VS1),
+      collap(., VS1 ~ source + year + sector + EAC_importer, fsum) |> 
+        mutate(value = fsum(VS1, list(source, year, sector), TRA = "/"), 
+               country = "EAC") |> 
+        subset(EAC_importer, -EAC_importer, -VS1)
+    )}
+
+# Value Added in exports to the EAC by country origin
+exports_EAC_VA_SEC <- list(EORA = EORA, EMERGING = EM) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) with(o, (Vc * B) %*% ESR[, EAC5])) |> 
+      value2df() |> 
+      rename(country = exporter) |> 
+      pivot(1:3, names = list("importer", "value")) 
+  }) |> rowbind(idcol = "source")
+
+# Value Added in final goods exports to the EAC by country origin
+FD_exports_EAC_VA_SEC <- list(EORA = EORA, EMERGING = EM) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) with(o, (Vc * B) %*% Efd[, EAC5])) |> 
+      value2df() |> 
+      rename(country = exporter) |> 
+      pivot(1:3, names = list("importer", "value")) 
+  }) |> rowbind(idcol = "source")
 
 
+# TODO: Could also compute using DVA in bilateral exports following BM (DAVAX), but does not work for final imports
+.c(VAI_EAC_SEC, VAFI_EAC_SEC) %=% lapply(
+  list(exports_EAC_VA_SEC, FD_exports_EAC_VA_SEC), function(data) {data |> 
+      subset(importer %in% EAC5 & as.character(exporter) != importer) |> 
+      group_by(source, year, importer, sector, EAC_exporter = exporter %in% EAC5) |> 
+      summarise(value = fsum(value)) %>% {
+        rowbind(
+          mutate(., value = fsum(value, list(source, year, importer, sector), TRA = "/")) |> 
+            subset(EAC_exporter, -EAC_exporter),
+          collap(., value ~ source + year + sector + EAC_exporter, fsum) |> 
+            mutate(value = fsum(value, list(source, year, sector), TRA = "/"), 
+                   importer = "EAC") |> 
+            subset(EAC_exporter, -EAC_exporter)
+        )} |> 
+      rename(importer = country)})
 
 
+EAC_GVC_DATA_SEC <- rowbind(VS = VS_EAC_SEC, 
+                            VS1 = VS1_EAC_SEC, 
+                            VAI = VAI_EAC_SEC, 
+                            VAFI = VAFI_EAC_SEC, idcol = "variable") |> 
+                    na_omit() |> 
+                    subset(GRPN(list(variable, source, country, sector)) > 4L)
 
 
+# Plot as in current paper
+EAC_GVC_DATA_SEC |>
+  mutate(country = factor(country, levels = c(EAC5, "EAC"))) |>
+  subset(source == "EMERGING") |> # & between(year, 2005, 2015)) |>
+  
+  ggplot(aes(x = year, y = value, color = variable)) +
+  geom_line() +
+  facet_grid2(sector ~ country, scales = "free_y", independent = "y") +
+  scale_y_continuous(labels = percent, breaks = extended_breaks(7)) +
+  guides(color = guide_legend(title = NULL)) +
+  theme_minimal() + pretty_plot
 
 
+# Adding weighted linear trend
+EAC_GVC_DATA_SEC <- EAC_GVC_DATA_SEC |> 
+  mutate(country = factor(country, levels = c(EAC5, "EAC")),
+         weight = nif(source == "EMERGING" & year == 2010L, 2, source == "EORA" & year > 2015, 0.1, default = 1)) |> 
+  group_by(variable, source, country, sector) |> 
+  mutate(as.list(set_names(coef(lm(value ~ year, weights = weight)), c("icpt", "slope")))) |> 
+  ungroup() |> 
+  mutate(trend = icpt + year * slope)
 
+# Improved plot
+EAC_GVC_DATA_SEC |> 
+  subset(source == "EMERGING") |> 
+  rename(value = Value, trend = "MM Trend") |> 
+  pivot(1:5, values = c("Value", "MM Trend"), names = list("measure", "value")) |> 
+  ggplot(aes(x = year, y = value, color = country, linetype = measure)) +
+  geom_line() + 
+  facet_grid2(sector ~ variable, scales = "free", independent = "all") + 
+  scale_y_continuous(labels = percent, limits = c(0, NA),
+                     breaks = extended_breaks(7)) + 
+  scale_x_continuous(n.breaks = 4) +
+  guides(color = guide_legend(title = "Country:  ", nrow = 1)) +
+  scale_color_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
+  labs(x = NULL, y = NULL, linetype = "        Measure:  ") +
+  theme_bw() + pretty_plot 
+
+dev.copy(pdf, "Figures/REV/EM_VA_EAC5_shares_ts_sec.pdf", width = 11.69, height = 10)
+dev.off()
+
+# Plotting slope coefficients
+
+EAC_GVC_DATA_SEC |> 
+  subset(source == "EMERGING" & sector != "MIN") |> 
+  group_by(variable, source, country, sector) |> 
+  select(slope) |> ffirst() |> 
+  mutate(slope_tr = nif(slope > 0.01, 0.01 + (slope-0.01) * 0.1, slope < -0.01, -0.01 + (slope+0.01) * 0.1, default = slope)) |> 
+  
+  ggplot(aes(x = variable, y = slope_tr, fill = country)) +
+    geom_bar(stat = "identity", position = position_dodge(0.9)) + 
+    geom_hline(yintercept = 0) + 
+    geom_hline(yintercept = c(-0.01, 0.01), linetype = "dotted") + 
+    geom_text(aes(label = round(slope*100, 2), vjust = iif(slope > 0, -0.3, 1.3)), size = 2, position = position_dodge(0.9)) +
+    facet_wrap("sector", scales = "fixed") + 
+    scale_y_continuous(labels = percent, limits = c(-0.013, 0.013), expand = c(0,0),
+                       breaks = extended_breaks(7)) + 
+    guides(fill = guide_legend(title = "Country:  ", nrow = 1)) +
+    scale_fill_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
+    labs(x = NULL, y = NULL) +
+    theme_bw() + pretty_plot 
+  
+dev.copy(pdf, "Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 7)
+dev.off()
 
 
 
