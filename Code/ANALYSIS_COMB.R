@@ -49,11 +49,17 @@ WDR_POS <- fread("/Users/sebastiankrantz/Documents/Data/WDR2020GVCdata/WDR2020_g
   mutate(cntry = recode_char(cntry, SUD = "SDN", SDS = "SSD", ANT = "ATG")) |> 
   join(trade_class, on = c("cntry" = "iso3c")) |> 
   subset(!is.na(trade) & source == "eora", -source, -cntry) |> 
-  collap(~ year + trade + sect, fsum) |> 
+  group_by(year, trade, sect) |> 
+  summarise(across(gexp:gvcf, fsum), 
+            sect_name = fmode(sect_name), 
+            across(c(upstreamness, downstreamness), fmean, w = gexp)) |> 
+  # collap(~ year + trade + sect, fsum) |> 
   mutate(source = qF("WDR_EORA")) |> 
   colorder(source, year, country = trade, sect, sect_name)
 
-WDR_POS_AGG <- WDR_POS |> group_by(source, year, country) |> select(-sect, -sect_name) |> fsum()
+WDR_POS_AGG <- WDR_POS |> group_by(source, year, country) |> 
+  summarise(across(gexp:gvcf, fsum), 
+            across(c(upstreamness, downstreamness), fmean, w = gexp))
 
 
 EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/Sector_EMERGING.xlsx") |> mutate(id = Code) |> rename(tolower)
@@ -64,20 +70,17 @@ EM_CTRY <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx") |>
                                            default = Detailed_Region)) |> 
            rename(tolower) 
 
-
-KWW <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_KWW_BM19.csv"),
-               EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_KWW_BM19.csv") |> 
-                      transformv(is.double, `*`, 1/1000), 
-               idcol = "source")
+SEC_ALL <- list(EORA = sec_class, EMERGING = EM_SEC) |> 
+  lapply(select, id, broad_sector_code) |> 
+  rowbind(idcol = "source") |> 
+  mutate(id = as.integer(id))
 
 BIL_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv"),
                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
                           transformv(is.double, `*`, 1/1000), 
                    idcol = "source") |> 
            # Aggregating to Broad Sectors
-           join(list(EORA = sec_class, EMERGING = EM_SEC) |> 
-                lapply(select, id, from_sector = broad_sector_code) |> 
-                rowbind(idcol = "source"), 
+           join(SEC_ALL |> rename(broad_sector_code = from_sector), 
                 on = c("source", "from_sector" = "id"), drop = "x") |> 
            group_by(source, year, from_region, from_sector, to_region) |> 
            fsum()
@@ -877,3 +880,238 @@ dev.off()
 
 
 
+
+
+#############################
+# KWW Decomposition
+#############################
+
+KWW <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_KWW_BM19.csv"),
+               EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_KWW_BM19.csv") |> 
+                 transformv(is.double, `*`, 1/1000), 
+               idcol = "source")
+
+KWW_BSEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Countries_Agg_Sectors/EM_GVC_KWW_BM19.csv"),
+                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Countries_Agg_Sectors/EORA_GVC_KWW_BM19.csv") |> 
+                           transformv(is.double, `*`, 1/1000), 
+                    idcol = "source")
+
+KWW |> with(gexp / psum(vax, ref, ddc, fva, fdc)) |> descr() |> print(digits = 4)
+# Source-Based Decomposition
+AGG |> with(gexp / psum(davax, vax-davax, ref, ddc, fva, fdc)) |> descr() |> print(digits = 4)
+AGG |> with(gvcf / (dva - davax)) |> descr() |> print(digits = 4) # Check definition of forward gvc integration
+
+KWW_EAC6 <- KWW |> 
+  subset(country %in% EAC6) |> 
+  join(compute(AGG, davax_ratio = davax / vax, keep = .c(source, year, country))) |> 
+  mutate(davax = vax * davax_ratio, 
+         ndavax = vax - davax, 
+         country = factor(country, levels = EAC6)) 
+
+KWW_EAC6 |> 
+  # transformv(c("davax", "ndavax", "ref", "ddc", "fva", "fdc"), `/`, gexp) |> subset(year >= 2015) |> collap(~ source)
+  # pivot(1:3, values = c("davax", "ndavax", "ref", "ddc", "fva", "fdc")) |> 
+  pivot(1:3, values = c("davax", "ndavax", "ref", "ddc", "fva", "fdc")) |> 
+  mutate(variable = set_attr(variable, "levels", toupper(levels(variable)))) |> 
+  
+  ggplot(aes(x = year, y = value, fill = variable)) +
+      geom_area(position = "fill", alpha = 0.8) +
+      facet_grid2(source ~ country, scales = "free", independent = "x") +
+      scale_y_continuous(labels = percent, breaks = extended_breaks(7), 
+                         expand = c(0, 0)) +
+      scale_x_continuous(n.breaks = 6, expand = c(0, 0)) + rbsc2 +
+      labs(x = NULL, y = "VA Share in Gross Exports", fill = "Component") +
+      theme_linedraw() + pretty_plot +
+      theme(legend.position = "right", 
+            axis.text.x = element_text(angle = 315, vjust = 0))
+
+ggsave("Figures/REV/KWW_DEC_NEW.pdf", width = 11.69, height = 5)    
+    
+
+# Upstreamness and Downstreamness ------------------------------------------
+
+# Linear Trends
+KWW_EAC6_USDS <- KWW_EAC6 |> 
+  transform(upstreamness = (ndavax + ddc) / dc,
+            downstreamness = fva / fc) |>  # Imperfect !! -> should be FVA in final vs. intermediate goods
+  pivot(1:3, values = c("upstreamness", "downstreamness")) |> 
+  mutate(weight = nif(source == "EMERGING" & year == 2010L, 2, source == "EORA" & year > 2015, 0.1, default = 1)) |> 
+  group_by(source, variable, country) |> 
+  mutate(as.list(set_names(coef(lm(value ~ year, weights = weight)), c("icpt", "slope")))) |> 
+  ungroup() |> 
+  mutate(trend = icpt + year * slope)
+
+KWW_EAC6_USDS |> 
+  ggplot(aes(x = year, y = value, colour = variable, linetype = source)) +
+  geom_line() +
+  facet_wrap(~ country, scales = "fixed", nrow = 1) +
+  scale_y_continuous(labels = percent, breaks = extended_breaks(7)) +
+  scale_x_continuous(n.breaks = 6, expand = c(0, 0)) + 
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "Upstreamness and Downstreamness", colour = "Indicator:  ") +
+  theme_bw() + pretty_plot +
+  theme(axis.text.x = element_text(angle = 315, vjust = 0))
+
+KWW_EAC6_USDS |> 
+  ggplot(aes(x = year, y = value, colour = variable)) +
+  geom_line() +
+  geom_line(aes(y = trend), linetype = "dotted") +
+  facet_grid2(source ~ country, scales = "free_x", independent = "x") +
+  scale_y_continuous(labels = percent, breaks = extended_breaks(7)) +
+  scale_x_continuous(n.breaks = 6, expand = c(0, 0)) + 
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "Upstreamness and Downstreamness", colour = "Indicator:  ") +
+  theme_bw() + pretty_plot +
+  theme(axis.text.x = element_text(angle = 315, vjust = 0))
+
+ggsave("Figures/REV/UP_DOWN_ag_ts.pdf", width = 11.69, height = 8.27)
+
+# Plotting slope coefficients
+KWW_EAC6_USDS |> 
+  group_by(variable, source, country) |> 
+  select(slope) |> ffirst() |> 
+  ggplot(aes(x = variable, y = slope, fill = country)) +
+  geom_bar(stat = "identity", position = position_dodge(0.9)) + 
+  geom_hline(yintercept = 0) +
+  geom_text(aes(label = round(slope*100, 2), vjust = iif(slope > 0, -0.3, 1.3)), size = 2, position = position_dodge(0.9)) +
+  facet_wrap( ~ source, scales = "free") + 
+  scale_y_continuous(labels = percent, # limits = c(0, NA),
+                     breaks = extended_breaks(7)) + 
+  guides(fill = guide_legend(title = "Country:  ", nrow = 1)) +
+  scale_fill_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
+  labs(x = NULL, y = NULL) +
+  theme_bw() + pretty_plot 
+
+dev.copy(pdf, "Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
+dev.off()
+
+# Now plotting Mancini et al's measures. 
+WDR_POS_AGG |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  mutate(country = factor(country, levels = EAC6), 
+         position = upstreamness / downstreamness) |> 
+  pivot(c("year", "country"), c("upstreamness", "downstreamness", "position")) |> 
+  
+  ggplot(aes(x = year, y = value, colour = variable)) +
+  geom_line() +
+  facet_wrap(~ country, scales = "fixed", nrow = 1) +
+  scale_y_continuous(breaks = extended_breaks(7)) +
+  scale_x_continuous(n.breaks = 6, expand = c(0, 0)) + 
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "Upstreamness and Downstreamness", colour = "Indicator:  ") +
+  theme_bw() + pretty_plot +
+  theme(axis.text.x = element_text(angle = 315, vjust = 0))
+  
+
+# Upstreamness following Antras et al. 2013: (no nnventory correction yet as in mancini et al GVC Positioning database)
+U <- list(EORA = EORA, EMERGING = EM) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) {
+      tmp = o$B %*% rowSums(o$Y)
+      cbind(U = drop((o$B %*% tmp) %/=% tmp), E = o$E)
+    }) |> value2df()
+  }) |> rowbind(idcol = "source")
+
+U_DET <- list(EORA = EORA_DET, EMERGING = EM_DET) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) {
+      tmp = o$B %*% rowSums(o$Y)
+      cbind(U = drop((o$B %*% tmp) %/=% tmp), E = o$E)
+    }) |> value2df()
+  }) |> rowbind(idcol = "source")
+
+# Comparison
+U_DET_ALL <- WDR_POS |> 
+  select(source, year, country, sector = sect, U = upstreamness, E = gexp) |> 
+  rowbind(U_DET)
+
+U_DET_ALL |> 
+  group_by(source, year, country) |> 
+  num_vars() |> fmean(E, keep.w = FALSE) |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  mutate(country = factor(country, levels = EAC6)) |> 
+  
+  ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
+  geom_line() +
+  facet_wrap(~ country, scales = "fixed", nrow = 2) +
+  labs(y = "Upstreamness Index", x = "Year", 
+       colour = "Source:   ", linetype = "Source:   ") +
+  theme_bw() + pretty_plot + rbsc2
+
+dev.copy(pdf, "Figures/REV/Upstreamness_ag_ts.pdf", width = 10, height = 5)
+dev.off()
+
+
+# At the Broad Sector Level
+U_DET_ALL_BSEC <- U_DET_ALL |> 
+  join(rowbind(sbt(SEC_ALL, source == "EMERGING"), 
+               sbt(SEC_ALL, source == "EORA") |> mtt(source = "WDR_EORA"),
+               mtt(slt(sec_class, id = code, broad_sector_code), source = "EORA")), 
+       on = c("source", "sector" = "id")) |> 
+  mutate(sector = NULL) |> 
+  group_by(source, year, country, sector = broad_sector_code) |> 
+  select(U, E) |> fmean(E)
+
+U_DET_ALL |> 
+  group_by(source, year, country) |> 
+  num_vars() |> fmean(E, keep.w = FALSE) |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  mutate(country = factor(country, levels = EAC6)) |> 
+  
+  ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
+  geom_line() +
+  facet_wrap(~ country, scales = "fixed", nrow = 2) +
+  labs(y = "Upstreamness Index", x = "Year", 
+       colour = "Source:   ", linetype = "Source:   ") +
+  theme_bw() + pretty_plot + rbsc2
+
+dev.copy(pdf, "Figures/REV/Upstreamness_ag_ts.pdf", width = 10, height = 5)
+dev.off()
+
+
+# Downstreamness following Antras et al. 2013: (no nnventory correction yet as in mancini et al GVC Positioning database)
+# Problem: missing values (NA's) being generated, particularly for EMERGING!!!
+# -> better compute from scratch!!
+D <- list(EORA = EORA, EMERGING = EM) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) {
+      A = solve(o$B)
+      diag(A) = diag(A) - 1
+      A %*=% -1
+      T = A %r*% o$X
+      B = T / o$X # This is not the leontief inverse
+      BB = solve(diag(ncol(B)) %-=% B)
+      # if(anyNA(BB)) stop("errors")
+      tmp = BB %*% (o$Vc * o$X)
+      cbind(D = drop((BB %*% tmp) %/=% tmp), E = o$E)
+    }) |> value2df()
+  }) |> rowbind(idcol = "source")
+
+D_DET <- list(EORA = EORA_DET, EMERGING = EM_DET) %>% 
+  lapply(function(X) {
+    lapply(X$decomps, function(o) {
+      A = solve(o$B)
+      diag(A) = diag(A) - 1
+      A %*=% -1
+      T = A %r*% o$X
+      B = T %c/% o$X # This is not the leontief inverse
+      BB = solve(diag(ncol(B)) %-=% B)
+      tmp = BB %*% (o$Vc * o$X)
+      cbind(D = drop((BB %*% tmp) %/=% tmp), E = o$E)
+    }) |> value2df()
+  }) |> rowbind(idcol = "source")
+
+# Comparison
+WDR_POS |> 
+  select(source, year, country, sector = sect, D = downstreamness, E = gexp) |> 
+  rowbind(D) |> 
+  group_by(source, year, country) |> 
+  num_vars() |> fmean(E, keep.w = FALSE) |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  
+  ggplot(aes(x = year, y = D, colour = source, linetype = source)) +
+  geom_line() +
+  facet_wrap(~ country, scales = "fixed", nrow = 2) +
+  labs(y = "Downstreamness Index", x = "Year", 
+       colour = "Source:   ", linetype = "Source:   ") +
+  theme_bw() + pretty_plot + rbsc2
