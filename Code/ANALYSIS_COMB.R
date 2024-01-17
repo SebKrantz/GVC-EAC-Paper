@@ -1052,24 +1052,102 @@ U_DET_ALL_BSEC <- U_DET_ALL |>
   group_by(source, year, country, sector = broad_sector_code) |> 
   select(U, E) |> fmean(E)
 
-U_DET_ALL |> 
-  group_by(source, year, country) |> 
-  num_vars() |> fmean(E, keep.w = FALSE) |> 
+# Detailed Plot
+U_DET_ALL_BSEC |> 
   subset(country %in% EAC6 & year >= 2000) |> 
-  mutate(country = factor(country, levels = EAC6)) |> 
+  mutate(country = factor(country, levels = EAC6), 
+         sector = factor(sector, levels = SEC)) |> 
   
   ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
   geom_line() +
-  facet_wrap(~ country, scales = "fixed", nrow = 2) +
+  facet_grid2(sector ~ country, scales = "free", independent = "y") +
   labs(y = "Upstreamness Index", x = "Year", 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/Upstreamness_ag_ts.pdf", width = 10, height = 5)
+dev.copy(pdf, "Figures/REV/Upstreamness_sec_ts.pdf", width = 10, height = 15)
 dev.off()
 
+# Aggregate Sectors
+ U_DET_ALL_BSEC |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  mutate(country = factor(country, levels = EAC6), 
+         sector = nif(sector == "AFF", "AGR", # %in% c("AGR", "FIS")
+                      sector == "MIN", "MIN", 
+                      sector == "FBE", "FBE",
+                      sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
+                      default = "SRV")) |> 
+  group_by(source, year, country, sector) |> fmean(sum.E) |> 
+  
+  ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
+  geom_line() +
+  facet_grid2(sector ~ country, scales = "free", independent = "y") +
+  labs(y = "Upstreamness Index", x = "Year", 
+       colour = "Source:   ", linetype = "Source:   ") +
+  theme_bw() + pretty_plot + rbsc2
 
-# Downstreamness following Antras et al. 2013: (no nnventory correction yet as in mancini et al GVC Positioning database)
+dev.copy(pdf, "Figures/REV/Upstreamness_broad_sec_ts.pdf", width = 10, height = 8)
+dev.off()
+
+# Aggregating the Time Dimension 
+U_DET_ALL_BSEC |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  group_by(source, country, sector, 
+           year = nif(year < 2010, "2000-2009", year < 2015, "2010-2014", year < 2020, "2015-2019")) |> 
+  fmean(sum.E) |> 
+  subset(source != "EORA" & !is.na(year)) |> 
+  group_by(source, country, sector) |> 
+  fdiff(t = year) |> 
+  ungroup() |> 
+  subset(year == "2015-2019") |> 
+  pivot(c("source", "sector"), "U", "country", how = "w")
+
+# Both Sectors and Time Dimension
+U_DET_ALL_BSEC |> 
+  subset(country %in% EAC6 & year >= 2000) |> 
+  mutate(country = factor(country, levels = EAC6), 
+         sector = nif(sector == "AFF", "AFF", 
+                      sector == "MIN", "MIN", 
+                      sector == "FBE", "FBE",
+                      sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
+                      # sector == "TRA", "TRA",
+                      # sector == "PTE", "PTE",
+                      # sector == "FIB", "FIB",
+                      default = "SRV")) |> 
+  group_by(source, year, country, sector) |> fmean(sum.E) |> 
+  mutate(year = nif(year < 2010, "2000-2009", year < 2015, "2010-2014", year < 2020, "2015-2019")) |> 
+  group_by(source, year, country, sector) |> fmedian() |> 
+  subset(!is.na(year) & source != "EORA") |> 
+  pivot(c("sector", "year"), "U", c("source", "country"), how = "w") |> 
+  subset(year != "2000-2009") %>%
+  rowbind(G(., by = ~ sector, t = ~ year, stub = FALSE) |> 
+          subset(year == "2015-2019") |> 
+          mutate(year = "Growth Rate")) |> 
+  roworder(sector, year) |> 
+  xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
+
+# Check Global Average Shift
+U_DET_ALL_BSEC |> 
+  mutate(sector = nif(sector == "AFF", "AFF", 
+                      sector == "MIN", "MIN", 
+                      sector == "FBE", "FBE",
+                      sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
+                      sector == "TRA", "TRA",
+                      default = "SRV")) |> 
+  group_by(source, year, sector) |> num_vars() |> fmean(sum.E) |> 
+  # subset(between(year, 2015, 2019)) |> 
+  # group_by(source, sector) |> num_vars() |> fmedian() |> 
+  mutate(year = nif(year < 2010, "2000-2009", year < 2015, "2010-2014", year < 2020, "2015-2019")) |> 
+  group_by(source, year, sector) |> fmedian() |> 
+  subset(year != "2000-2009" & source != "EORA") |>
+  pivot(c("sector", "year"), "U", "source", how = "w") %>%
+  rowbind(G(., by = ~ sector, t = ~ year, stub = FALSE) |> 
+            subset(year == "2015-2019") |> 
+            mutate(year = "Growth Rate")) 
+
+
+
+# Downstreamness following Antras et al. 2013: (no inventory correction yet as in mancini et al GVC Positioning database)
 # Problem: missing values (NA's) being generated, particularly for EMERGING!!!
 # -> better compute from scratch!!
 D <- list(EORA = EORA, EMERGING = EM) %>% 
