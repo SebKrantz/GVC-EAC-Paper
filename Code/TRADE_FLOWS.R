@@ -68,15 +68,21 @@ EM_ISO3 <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx")$ISO3
 BACI_2d <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
            subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) 
 
-# Aggregating: EAC and ROW
+# BACI_2d |> select(code_2d, product_description, section_code, section_fullname_english) |> 
+#  unique(sort = TRUE) |> View()
+# Sector Classifiction: same as EMERGING!!!
+EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/Sector_EMERGING.xlsx") |> mutate(id = Code) |> rename(tolower)
+
+# Aggregating: EAC and ROW by broad sector
 EAC_BACI_SEC <- BACI_2d |> 
+  join(select(EM_SEC, code, broad_sector_code, broad_sector) |> tfmv(-1, qF), 
+       on = c("code_2d" = "code")) |> 
   mutate(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
          iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW")) |> 
-  collap(value + quantity + section_fullname_english ~ year + iso3_o + iso3_d + section_code, 
-         fsum, flast, na.rm = FALSE) |> 
-  subset(iso3_o != iso3_d)
+  collap(value + quantity + broad_sector ~ year + iso3_o + iso3_d + broad_sector_code, 
+         fsum, flast, na.rm = FALSE) 
 
-EAC_BACI_MIG <- EAC_BACI_SEC |> group_by(iso3_o, iso3_d, year) |> select(value, quantity) |> fsum()
+EAC_BACI_MIG <- EAC_BACI_SEC |> subset(iso3_o != iso3_d) |> group_by(iso3_o, iso3_d, year) |> select(value, quantity) |> fsum()
 
 EAC_BACI_AGG <- EAC_BACI_MIG |> 
   subset(between(year, 2010, 2015)) |> 
@@ -117,19 +123,20 @@ dev.off()
 # BACI_2d |> select(code_2d, product_description, section_code, section_fullname_english) |> count() |> View()
 # broad_sec <- list(AGR = 1:4, MIN = 5, MAN = 6:20)
 EAC_BACI_BSEC <- EAC_BACI_SEC |> 
-  mutate(broad_sec = nif(section_code %in% 1:2, "AGR", 
-                         section_code %in% 3:4, "FBE", 
-                         section_code == 5, "MIN", 
-                         section_code %in% 6:20, "MAN", 
+  mutate(broad_sec = nif(broad_sector_code %in% "AFF", "AGR", 
+                         broad_sector_code == "FBE", "FBE", 
+                         broad_sector_code == "MIN", "MIN", 
+                         broad_sector_code %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
                          default = "OTH")) |> 
   group_by(year, iso3_o, iso3_d, broad_sec) |> 
   select(value, quantity) |> 
   fsum(fill = TRUE)
 
-sec = "FBE"
+sec = "AGR"
 EAC_BACI_BSEC |> 
+  subset(iso3_o != iso3_d) |> 
   subset(broad_sec == sec & between(year, 2010, 2015)) |> 
-  # subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
   group_by(iso3_o, iso3_d) |> 
   select(value, quantity) |> 
   fmean() |> 
@@ -138,7 +145,7 @@ EAC_BACI_BSEC |>
   # ggplot(aes(y = value, axis1 = iso3_o, axis2 = iso3_d, fill = iso3_o)) +
   #   ggalluvial::geom_alluvium() # +
 
-dev.copy(pdf, sprintf("Figures/REV/BACI_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
+dev.copy(pdf, sprintf("Figures/REV/BACI_MIG_%s_2010_15.pdf", sec), width = 5, height = 5)
 dev.off()
 
 ####################################
