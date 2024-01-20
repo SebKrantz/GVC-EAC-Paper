@@ -112,20 +112,27 @@ REG_AGG <- REG_SEC |> group_by(source, year, region) |> num_vars() |> fsum()
 
 # Load Raw Decomposition Data -------------------------------------------
 
+# Broad Sector
+# EORA <- new.env()
+# load("Data/EAC_EORA_2021_data_broad_sec.RData", envir = EORA)
+# 
+# EM <- new.env()
+# load("Data/EAC_EMERGING_data_broad_sec.RData", envir = EM)
+# EM$y <- colnames(EM$out_ag)
+
+EM <- new.env()
+load("Data/EAC_EMERGING_data_Countries_Agg_Sectors.RData", envir = EM)
+
 EORA <- new.env()
-load("Data/EAC_EORA_2021_data_broad_sec.RData", envir = EORA)
+load("Data/EAC_EORA_data_Countries_Agg_Sectors.RData", envir = EORA)
 
 EORA_DET <- new.env()
 load("Data/EAC_EORA_2021_data.RData", envir = EORA_DET)
 
-EM <- new.env()
-load("Data/EAC_EMERGING_data_broad_sec.RData", envir = EM)
-EM$y <- colnames(EM$out_ag)
-
 EM_DET <- new.env()
 load("Data/EAC_EMERGING_data.RData", envir = EM_DET)
 
-EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
+# EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
 EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Broad_Sectors.qs")
 
 # Basic Comparison ------------------------------------------------------
@@ -408,10 +415,6 @@ WDR_POS_AGG |>
 # Problem: Reduced ICIO (Regions) gives attenuated forward GVC participation
 
 # Computing Classical VS1 Manually: Double counted components are likely small
-EM <- new.env()
-load("Data/EAC_EMERGING_data_Countries_Agg_Sectors.RData", envir = EM)
-EORA <- new.env()
-load("Data/EAC_EORA_data_Countries_Agg_Sectors.RData", envir = EORA)
 
 for (x in list(EM, EORA)) {  
   # = The sum of value added going into other countries exports, divided by own exports
@@ -1078,7 +1081,7 @@ dev.copy(pdf, "Figures/REV/Upstreamness_sec_ts.pdf", width = 10, height = 15)
 dev.off()
 
 # Aggregate Sectors
- U_DET_ALL_BSEC |> 
+U_DET_ALL_BSEC |> 
   subset(country %in% EAC6 & year >= 2000) |> 
   mutate(country = factor(country, levels = EAC6), 
          sector = nif(sector == "AFF", "AGR", # %in% c("AGR", "FIS")
@@ -1155,43 +1158,21 @@ U_DET_ALL_BSEC |>
             mutate(year = "Growth Rate")) 
 
 
-
 # Downstreamness following Antras et al. 2013: (no inventory correction yet as in mancini et al GVC Positioning database)
-# Problem: missing values (NA's) being generated, particularly for EMERGING!!!
-# -> better compute from scratch!!
 D <- list(EORA = EORA, EMERGING = EM) %>% 
   lapply(function(X) {
-    lapply(X$decomps, function(o) {
-      A = solve(o$B)
-      diag(A) = diag(A) - 1
-      A %*=% -1
-      T = A %r*% o$X
-      B = T / o$X # This is not the leontief inverse
-      BB = solve(diag(ncol(B)) %-=% B)
-      # if(anyNA(BB)) stop("errors")
-      tmp = BB %*% (o$Vc * o$X)
-      cbind(D = drop((BB %*% tmp) %/=% tmp), E = o$E)
-    }) |> value2df()
+    lapply(X$decomps, function(o) cbind(D = fsum(o$B), E = o$E)) |> value2df()
   }) |> rowbind(idcol = "source")
 
 D_DET <- list(EORA = EORA_DET, EMERGING = EM_DET) %>% 
   lapply(function(X) {
-    lapply(X$decomps, function(o) {
-      A = solve(o$B)
-      diag(A) = diag(A) - 1
-      A %*=% -1
-      T = A %r*% o$X
-      B = T %c/% o$X # This is not the leontief inverse
-      BB = solve(diag(ncol(B)) %-=% B)
-      tmp = BB %*% (o$Vc * o$X)
-      cbind(D = drop((BB %*% tmp) %/=% tmp), E = o$E)
-    }) |> value2df()
+    lapply(X$decomps, function(o) cbind(D = fsum(o$B), E = o$E)) |> value2df()
   }) |> rowbind(idcol = "source")
 
 # Comparison
 WDR_POS |> 
   select(source, year, country, sector = sect, D = downstreamness, E = gexp) |> 
-  rowbind(D) |> 
+  rowbind(D_DET) |> 
   group_by(source, year, country) |> 
   num_vars() |> fmean(E, keep.w = FALSE) |> 
   subset(country %in% EAC6 & year >= 2000) |> 
@@ -1202,6 +1183,12 @@ WDR_POS |>
   labs(y = "Downstreamness Index", x = "Year", 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
+
+
+
+# Note: they are positively correlated !!!
+join(U_DET, slt(D_DET, -E), verbose = 0) %$% pwcor(U, D)
+join(U_DET, slt(D_DET, -E), verbose = 0) |> STD(~source+country+sector, stub =FALSE) %$% pwcor(U, D)
 
 
 #######################################
@@ -1401,3 +1388,435 @@ rowbind("Overall" = RCA_ALL,
 
   dev.copy(pdf, "Figures/REV/NRCA_EAC5_ALL_Growth.pdf", width = 10, height = 7)
   dev.off()
+
+  
+########################################################
+# GVC's and Industrial Development (Regression Analysis)
+########################################################
+  
+# Checks:
+EORA_DET %$% sapply(y, function(i) all.equal(va[, i], decomps[[i]]$X * decomps[[i]]$Vc))
+
+# sapply(y, function(i) all.equal(sbt(VS_df, Year == as.integer(i), i2e)[[1]], 
+#                                 unattrib(collapv(leontief(decomps[[i]]), 1:2, fsum, cols = "FVAX")[[3]])))
+  
+RM_EORA_SEC <- c("REC", "REI", "FIB", "EGW", "OTH", "PHH")  
+
+# Now constructing datasets at full sector resolution.   
+EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutate(VA = VA / 1000)
+
+EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
+               transformv(is.double, `*`, 1/1000) |> 
+               join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> 
+               group_by(year, country = from_region, sector = from_sector) |> 
+               num_vars() |> fsum() |> 
+               join(EORA21_VA) |> 
+               colorder(country, sector, VA, pos = "after") |> 
+               transform(I2E = gvcb / gexp, 
+                         E2R = gvcf / gexp) |> 
+               subset(sector %!in% RM_EORA_SEC) |> 
+               droplevels()
+               
+WDR_EORA15_DATA <- WDR_POS |> 
+               join(select(sec_class, id, sector = code), on = c("sect" = "id")) |> 
+               mutate(sect = NULL) |> 
+               subset(year >= 2000) |> 
+               join(EORA21_VA) |> 
+               colorder(country, sector, sector_name = sect_name, VA, pos = "after") |> 
+               transform(I2E = gvcb / gexp, 
+                         E2R = gvcf / gexp) |> 
+               subset(sector %!in% RM_EORA_SEC) |> 
+               droplevels()
+  
+EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
+
+EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
+        group_by(year, country = from_region, sector = from_sector) |> 
+        select(gexp:gvcf) |> fsum() |> 
+        join(EM_VA) |> 
+        colorder(country, sector, VA, pos = "after") |> 
+        transform(I2E = gvcb / gexp, 
+                  E2R = gvcf / gexp)
+        
+# names(y) <- y
+# data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc * X) (I checked)
+#   value2df("VA") %>%
+#   merge(value2df(lapply(y, function(i) VA[, , i]))) %>% # Disaggregated VA
+#   tfm(VA_SUM = COE + TAX + SUB + NOS + NMI + COF, 
+#       COE_NOS = COE + NOS) %>%
+#   tfm(slt(., COE, TAX, SUB, NOS, NMI, COF, COE_NOS) %c/% 
+#         VA_SUM %>% add_stub("_S", FALSE)) %>% # Adding Shares
+#   merge(VS_df) %>% 
+#   merge(VS1_df) %>%
+#   merge(exports) %>%
+#   tfm(DVA_Exports = Exports - i2e)
+# 
+# 
+# all.equal(unattrib(data %$% (I2E * Exports)), unattrib(data$i2e))
+# all.equal(unattrib(data %$% (E2R * Exports)), unattrib(data$e2r))
+  
+# Plot Data ----------------------------------
+
+EORA21_DATA |> with({
+  # Histograms: https://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r
+  oldpar <- par(mfrow = c(1, 3), mar = c(2.5, 4, 2.1, 0), lwd = 0.5) # bottom, left, top, right
+  # VA
+  VA <- replace_outliers(VA, 1, "clip", single = "min")
+  hist(log10(VA), xlab = NA, main = expression('log'[10](VA))) # , breaks = seq(2.5,7.5,0.2), xlim = c(2.5, 7.5))
+  hist(log10(VA[sector %in% MAN]), xlab = NA, # , breaks = seq(2.5,7.5,0.2), xlim = c(2.5, 7.5), 
+       col = "orange", add = TRUE)
+  abline(v = fmedian(log10(VA)), lwd = 1.5)
+  abline(v = fmedian(log10(VA[sector %in% MAN])), col = "red", lwd = 1.5)
+  legend("topleft", c("Overall", "Manufacturing"), lty = 1, lwd = 1.5,
+         col = c("black", "red"), bty = "n", y.intersp = 2, seg.len = 1)
+  # I2E
+  I2E <- replace_outliers(I2E, c(0,1))
+  hist(I2E, breaks = seq(0, 1, 0.025), xlab = NA, main = expression('I2E'), xaxt = 'n')
+  axis(side = 1, at = seq(0, 0.1, 0.10)) # https://stackoverflow.com/questions/25997337/in-r-how-to-set-the-breaks-of-x-axis
+  hist(I2E[sector %in% MAN], breaks = seq(0,1,0.025), xlab = NA, xlim = c(0, 0.75), 
+       col = "orange", add = TRUE)
+  abline(v = fmedian(I2E), lwd = 1.5)
+  abline(v = fmedian(I2E[sector %in% MAN]), col = "red", lwd = 1.5)
+  # E2R
+  E2R <- replace_outliers(E2R, c(0,0.75))
+  hist(E2R, breaks = seq(0,0.75,0.025), xlab = NA, main = expression('E2R'))
+  hist(E2R[sector %in% MAN], breaks = seq(0,0.75,0.025), xlab = NA, xlim = c(0, 0.75), 
+       col = "orange", add = TRUE)
+  abline(v = fmedian(E2R), lwd = 1.5)
+  abline(v = fmedian(E2R[sector %in% MAN]), col = "red", lwd = 1.5)
+  par(oldpar)
+})
+
+dev.copy(pdf, "Figures/REV/GROWTH_REG_Hists.pdf", width = 10.27, height = 4)
+dev.off()
+
+
+# TS Charts
+EORA21_DATA |> index_by(country, sector, year)  |> with({
+  oldpar <- par(mfrow = c(1, 3), mar = c(4.5, 2.5, 2.1, 1.5)) # bottom, left, top, right
+  mat <- psmat(log10(VA))
+  man_sec <- substr(rownames(mat), 5, 7) %in% MAN
+  colour <- ifelse(man_sec, "orange", "grey")
+  plot(mat, xlab = "Year", ylab = NA, main = expression('log'[10](VA)), colours = colour)  
+  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
+  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
+  legend("topleft", c("Overall Median", "Manufacturing Median"), lty = 1, lwd = 1.5,
+         col = c("black", "red"), bty = "n", y.intersp = 1.5, seg.len = 1)
+  mat <- psmat(I2E) |> replace_outliers(c(0, 1))
+  plot(mat, xlab = "Year", ylab = NA, main = expression('I2E'), colours = colour)  
+  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
+  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
+  mat <- psmat(E2R) |> replace_outliers(c(0, 1))
+  plot(mat, xlab = "Year", ylab = NA, main = expression('E2R'), colours = colour)  
+  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
+  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
+  par(oldpar)
+  rm(mat, man_sec, colour)
+})
+
+dev.copy(pdf, "Figures/REV/GROWTH_REG_TS.pdf", width = 10.27, height = 5)
+dev.off()
+
+
+# GVC Instrument following Kummritz (2016) ------------------------------------------------------------
+
+# Using ESCAP Database: https://www.unescap.org/resources/escap-world-bank-trade-cost-database
+# -> Theoretically derived trade costs as tariff equivalent (in percent)
+
+ESCAP <- rowbind(
+  readxl::read_xlsx("/Users/sebastiankrantz/Documents/Data/ESCAP/20230505-ESCAP-WB-tradecosts-dataset-1995-2010.xlsx", sheet = "GTT"),
+  readxl::read_xlsx("/Users/sebastiankrantz/Documents/Data/ESCAP/20230505-ESCAP-WB-tradecosts-dataset-2011-2021.xlsx", sheet = "GTT")) |> 
+  transformv(c(reporter, partner), \(x) vswitch(x, c("ZAR", "TMP", "ROM", "MNT"), c("COD", "TLS", "ROU", "MNE"), default = x))
+descr(ESCAP)
+fndistinct(ESCAP$sector)
+
+# Data is unique but contains mirror flows
+ESCAP |> select(reporter, partner, year, sector) |> any_duplicated()
+
+# ESCAP |> subset(reporter %in% EAC5) |> psmat(tij ~ reporter + partner, ~year) |> plot()
+ESCAP |> group_by(reporter, partner) |> 
+  summarise(cor = cor(tij, year, use = "na.or.complete")) |> 
+  with(fmean(abs(cor))) # Could do linear interpretation, but better use locf...
+
+mean_impfun <- function(x) if(fnobs.default(x) > 3L) frollmean(x, 3L, align = "center", hasNA = TRUE) |> na_locf(TRUE) |> na_focb(TRUE) else fmean.default(x, TRA = 1)
+
+ESCAP <- ESCAP |> 
+  roworder(reporter, partner, year) |> 
+  group_by(reporter, partner) |> 
+  mutate(across(c(tij, geometric_avg_tariff, nontariff_tij), list(imp = mean_impfun), .names = TRUE)) |> 
+  ungroup() 
+
+
+BACI_BIL_AGG <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
+                group_by(iso3_o, iso3_d, year) |> summarise(exports = fsum(value, fill = TRUE))
+
+# Imputing
+BACI_BIL_AGG <- expand.grid(iso3_o = unique(BACI_BIL_AGG$iso3_o, sort = TRUE),
+                            iso3_d = unique(BACI_BIL_AGG$iso3_d, sort = TRUE),
+                            year = unique(BACI_BIL_AGG$year, sort = TRUE)) |> 
+                join(BACI_BIL_AGG) |> 
+                roworderv(1:3) |> group_by(1:2) |> 
+                mutate(exports = mean_impfun(exports)) |> 
+                ungroup()
+
+# Trade-Weighted aggregation
+ESCAP_REG <- ESCAP |> 
+  rename(reporter = iso3_o, partner = iso3_d) |> 
+  join(select(EM_CTRY, iso3_o = iso3, region_o = detailed_region_code)) |> 
+  join(select(EM_CTRY, iso3_d = iso3, region_d = detailed_region_code)) |> 
+  join(BACI_BIL_AGG) |>
+  subset(is.finite(exports) & is.finite(tij_imp)) |> 
+  collap(tij_imp + geometric_avg_tariff_imp + nontariff_tij_imp ~ region_o + region_d + year, 
+         w = ~exports, keep.col.order = FALSE) |> 
+  subset(region_o != region_d)
+
+# Inner-EAC Trade Cost Matrix
+ESCAP_REG |> 
+  subset(region_o %in% EAC6 & region_d %in% EAC6 & between(year, 2010, 2020)) %$%
+  table(region_o, region_d, w = tij_imp, wFUN = fmean)
+
+# Panel-Variation
+ESCAP_REG |> 
+  subset(region_o %in% EAC6 & region_d %in% EAC6) |> 
+  qsu(pid = tij_imp ~ region_o + region_d)
+
+# Plot
+ESCAP_REG |> 
+  subset(region_o %in% EAC6 & region_d %in% EAC6) |> 
+  psmat(tij_imp ~ region_o + region_d, ~ year) |> plot(legend = TRUE)
+
+# Now Kummritz Instrument: Exports weighted trade costs excluding bilateral partner
+w_mean_excl <- function(x, w) vapply(seq_along(x), function(i) fmean.default(x[-i], w = w[-i]), 1)
+  
+ESCAP_REG <- ESCAP_REG |>  
+  group_by(region_o, year) |> 
+  mutate(tij_imp_instr = w_mean_excl(tij_imp, exports)) |> 
+  ungroup()
+
+# Now: Upstreamness and Downstreamness
+rem_SSD <- function(x) factor(copyv(as.character(x), "SSD", "SSA"), levels = REG)
+rem_SSD_IMP <- function(x, imp = TRUE) {
+  col <- if(anyv(names(x), "U")) "U" else "D"
+  ids <- c("source", "country", "sector", "year")
+  x <- x |> 
+    mutate(country = rem_SSD(country)) |> 
+    collapv(ids, cols = col, w = "E", sort = TRUE, keep.col.order = FALSE) 
+  if(!imp) return(x)
+  x |> transformv(col, BY, gv(x, ids), mean_impfun)
+}
+
+U_ALL_BIL <- select(rem_SSD_IMP(U_DET), -E) |> rename(U = U_source) |> 
+  join(select(rem_SSD_IMP(D_DET), -E) |> rename(D = D_using), 
+       on = c("source", "year"), 
+       suffix = c("_source", "_using"), multiple = TRUE) |> # gvr("source|using|year") |> any_duplicated()
+  join(select(rem_SSD_IMP(U_DET), source, country_using = country, sector_using = sector, year, U_using = U)) |> 
+  colorder(source, country_source, sector_source, country_using, sector_using, year) |> 
+  transformv(U_source:U_using, replace_outliers, c(1, 10), set = TRUE) |> 
+  subset(is.finite(U_source) & is.finite(D_using)) |> 
+  roworderv(1:6) 
+  
+# Panel-Variation
+U_DET |> qsu(U ~ source, pid = ~ country + sector) |> aperm()
+D_DET |> qsu(D ~ source, pid = ~ country + sector) |> aperm()
+# -> Substantially more between-variation, but there is some within variation
+  
+# Aggregate Version: Collapsed as in Kummritz (2016)
+U_AGG_BIL <- join(
+  rem_SSD_IMP(U_DET, FALSE)[source == "EMERGING" | year <= 2015, .(U_source = mean(U, na.rm = TRUE)), by = .(source, sector)],
+  rem_SSD_IMP(D_DET, FALSE)[source == "EMERGING" | year <= 2015, .(D_using = mean(D, na.rm = TRUE)), by = .(source, sector)],
+  on = "source", suffix = c("_source", "_using"), multiple = TRUE
+) |> 
+  join(rem_SSD_IMP(U_DET, FALSE)[source == "EMERGING" | year <= 2015, .(U_using = mean(U, na.rm = TRUE)), 
+                                 by = .(source, sector_using = sector)]) |> 
+  subset(is.finite(U_source) & is.finite(D_using))
+  
+# Constructing instrument
+U_ALL_BIL <- U_ALL_BIL |> 
+  join(U_AGG_BIL, on = c("source", "sector_source", "sector_using"), suffix = "_tiv") |> 
+  join(select(ESCAP_REG, country_source = region_o, country_using = region_d, year, tij_imp, tij_imp_instr))
+
+# This captures all the cases
+U_ALL_BIL %$% any(is.na(tij_imp_instr) & country_source != country_using)
+
+# renaming
+setrename(U_ALL_BIL,
+          country_source = source_country,
+          sector_source = source_sector,
+          country_using = using_country, 
+          sector_using = using_sector)
+
+table(U_ALL_BIL$source)
+
+# Now adding GVC data (FVAX)
+U_ALL_BIL <- U_ALL_BIL |> join(
+  list(EORA = EORA_DET, EMERGING = EM_DET) |> 
+  lapply(function(X) X$decomps |> 
+    lapply(leontief, post = "exports") |> 
+    rowbind(idcol = "year")) |> 
+  rowbind(idcol = "source") |> 
+  rename(tolower) |> rename(sub, pat = "industry", rep = "sector") |> 
+  transformv(c(source_country, using_country), rem_SSD) |> 
+  group_by(source:using_sector) |> fsum(na.rm = FALSE) |> 
+  mutate(year = as.integer(levels(year))[year])
+) |> 
+  subset(is.finite(tij_imp_instr) & source_country != using_country & is.finite(fvax) & fvax >= 0)
+
+gc()
+
+if(anyNA(U_ALL_BIL)) stop("Missing values")
+
+# Check correlations
+U_ALL_BIL %$% cor(fvax, tij_imp_instr)
+U_ALL_BIL %$% fwithin(list(fvax = fvax, tij = tij_imp_instr), source_all) %$% cor(fvax, tij)
+U_ALL_BIL %$% fwithin(list(fvax = fvax, tij = tij_imp_instr), list(source_all, using_country, using_sector)) %$% cor(fvax, tij)
+
+# Now constructing the instrument
+fastverse_extend(fixest, install = TRUE)
+
+predict_fvax <- function(data, stub) {
+  fml <- sprintf("log(fvax+1) ~ 0 | source[log(instrument)] + source^%s_country^%s_sector + source^%s_country^year + source^%s_sector^year", stub, stub, stub, stub)
+  feols(as.formula(fml), data = U_ALL_BIL, fixef.tol = 1e-7, mem.clean = TRUE) %>% fitted() %>% exp() %-=% 1
+}
+
+# Estimation
+gc()
+U_ALL_BIL[, instrument := tij_imp_instr / (U_source * D_using)]
+U_ALL_BIL[, i2e_inddist := predict_fvax("using")]
+U_ALL_BIL[, e2r_inddist := predict_fvax("source")]
+U_ALL_BIL[, instrument := tij_imp_instr / (U_source / U_using)]
+U_ALL_BIL[, i2e_inddist_U := predict_fvax("using")]
+U_ALL_BIL[, e2r_inddist_U := predict_fvax("source")]
+U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv * D_using_tiv)]
+U_ALL_BIL[, i2e_inddist_tiv := predict_fvax("using")]
+U_ALL_BIL[, e2r_inddist_tiv := predict_fvax("source")]
+U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv / U_using_tiv)]
+U_ALL_BIL[, i2e_inddist_U_tiv := predict_fvax("using")]
+U_ALL_BIL[, e2r_inddist_U_tiv := predict_fvax("source")]
+U_ALL_BIL[, instrument := NULL]
+gc()
+
+# Intelligible estimates
+
+est_i2e <- feols(log(fvax+1) ~ log(instrument) | using_country^using_sector + using_country^year + using_sector^year, 
+                 data = U_ALL_BIL, split = ~ source, subset = ~ using_country %in% c("UGA", "TZA", "KEN", "RWA", "BDI"), 
+                 fixef.tol = 1e-7, mem.clean = TRUE) 
+esttable(est_i2e)
+
+est_e2r <- feols(log(fvax+1) ~ log(instrument) | source_country^source_sector + source_country^year + source_sector^year, 
+                 data = U_ALL_BIL, split = ~ source, subset = ~ source_country %in% c("UGA", "TZA", "KEN", "RWA", "BDI"),
+                 fixef.tol = 1e-7, mem.clean = TRUE)
+esttable(est_e2r)
+
+esttex(est_i2e, est_e2r, digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE)
+
+# TODO: Better Estimate with subset ??
+
+# Compute GVC indicators:
+GVC_DATA <- U_ALL_BIL |>
+  group_by(source, using_country, using_sector, year) |>
+  gvr("^fvax$|i2e_") |> fsum() |> rename(fvax = i2e) |> rm_stub("using_") |> 
+  join(validate = "1:1",
+    U_ALL_BIL |>
+      group_by(source, source_country, source_sector, year) |>
+      gvr("^fvax$|e2r_") |> fsum() |> rename(fvax = e2r) |> rm_stub("source_")
+  )
+
+### Previous Effort: Running estimation by source contry-sector: too detailed, not what Kummritz does...
+#
+# # Computing industry distances
+# settransform(U_ALL_BIL,
+# inddist = 1 / (U_source * D_using),
+# inddist_U = 1 / (U_source / U_using),
+# inddist_tiv = 1 / (U_source_tiv * D_using_tiv),
+# inddist_U_tiv = 1 / (U_source_tiv / U_using_tiv),
+# source_all = interaction(source, source_country, source_sector, sort = FALSE) # In appearance order
+# )
+# # Split sample: Can get coefficient table, but seems to remove obs...
+# U_ALL_BIL[, instrument := log(inddist * tij_imp_instr)]
+# mods <- feols(log(fvax+1) ~ instrument | using_country^using_sector + using_country^year + using_sector^year, 
+#               split = ~ source_all, data = U_ALL_BIL, verbose = 0) # lean = TRUE, mem.clean = TRUE)
+# mods %<>% get_elem("obs_selection", invert = TRUE) %>% lapply(set_class, "fixest")
+# coeftable <- mods |> lapply(coeftable) |> unlist2d("sample", "variable")
+# descr(coeftable)
+# fitted_vals <- mods |> lapply(fitted) |> rename(sub, pat = "sample.var: source_all; sample: ", rep = "", fixed = TRUE)
+# rm(mods); gc()
+# fitted_vals %<>% extract(vlengths(fitted_vals) > 0)
+# U_ALL_BIL %<>% subset(source_all %in% names(fitted_vals)) %>% droplevels()
+# gc()
+# if(!identical(levels(U_ALL_BIL$source_all), names(fitted_vals))) stop("name mismatch")
+# U_ALL_BIL[, fvax_fit := exp(unlist(fitted_vals, use.names = FALSE)) %-=% 1]
+# rm(fitted_vals); gc()
+# # All in one go (more efficient and takes along all obs)
+# predict_fvax <- function() {
+#   feols(log(fvax+1) ~ 0 | source_all[instrument] + source_all^using_country^using_sector + source_all^using_country^year + source_all^using_sector^year,
+#         data = U_ALL_BIL, fixef.tol = 1e-7, mem.clean = TRUE) %>% fitted() %>% exp() %-=% 1
+# }
+# U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source * D_using))]
+# U_ALL_BIL[, fvax_inddist := predict_fvax()]
+# U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source / U_using))]
+# U_ALL_BIL[, fvax_inddist_U := predict_fvax()]
+# U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source_tiv * D_using_tiv))]
+# U_ALL_BIL[, fvax_inddist_tiv := predict_fvax()]
+# # Same as above
+# # U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source_tiv / U_using_tiv))]
+# # U_ALL_BIL[, fvax_inddist_U_tiv := predict_fvax()]
+# U_ALL_BIL[, instrument := NULL]
+# U_ALL_BIL[, lapply(.SD, cor, fvax), .SDcols = fvax_inddist:fvax_inddist_tiv] |> raise_to_power(2)
+# U_ALL_BIL |> 
+#   group_by(source, using_country, using_sector, year) |> 
+#   select(fvax, fvax_inddist, fvax_inddist_U, fvax_inddist_tiv) |> 
+#   fsum() |> num_vars() |> pwcor() |> raise_to_power(2)
+# # -> Too high R^2. Kummritz does not put in source-sector FE and runs two different estimations
+
+
+# Regressions ---------------------------------------------------------------
+
+fastverse_extend(fixest, robustbase)
+
+.c(WDR_EORA15_DATA, EORA21_DATA, EM_DATA) %=% lapply(list(WDR_EORA15_DATA, EORA21_DATA, EM_DATA), index_by, country, sector, year)
+
+# Normal FEOLS
+feols(log(VA) ~ L(log(gvcb), 0:2) + L(log(gvcf), 0:2) | year^country + year^sector + country^sector, 
+      data = EORA21_DATA[country %in% EAC5])
+
+feols(Dlog(VA) ~ L(Dlog(gvcb), 0:2) + L(Dlog(gvcf), 0:2), #  | country^sector 
+      data = EORA21_DATA[country %in% EAC5])
+
+feols(log(VA) ~ L(log(I2E), 0:2) + L(log(E2R), 0:2) | year^country + year^sector + country^sector, 
+      data = EORA21_DATA[country %in% EAC5])
+
+feols(Dlog(VA) ~ L(Dlog(I2E), 0:2) + L(Dlog(E2R), 0:2), #  | country^sector 
+      data = EORA21_DATA[country %in% EAC5])
+
+# Robust Difference Estimates
+
+lmrob(VA ~ gvcb + L1.gvcb + L2.gvcb + gvcf + L1.gvcf + L2.gvcf, #  | country^sector # TODO: 
+      data = EORA21_DATA[country %in% EAC5, L(fdiff(list(VA = VA, gvcb = gvcb, gvcf = gvcf), log = TRUE), 0:2)], setting = "KS2014", k.max = 10000)
+
+lmrob(VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, #  | country^sector 
+      data = EORA21_DATA[country %in% EAC5, L(fdiff(list(VA = VA, I2E = I2E, E2R = E2R), log = TRUE), 0:2)] |> replace_inf(), setting = "KS2014", k.max = 10000)
+
+# Now EMERGING
+  
+feols(log(VA) ~ L(log(gvcb), 0:2) + L(log(gvcf), 0:2) | year^country + year^sector + country^sector, 
+      data = EM_DATA[country %in% EAC5])
+
+feols(Dlog(VA) ~ L(Dlog(gvcb), 0:2) + L(Dlog(gvcf), 0:2), 
+      data = EM_DATA[country %in% EAC5])
+
+feols(log(VA) ~ L(log(I2E), 0:2) + L(log(E2R), 0:2) | year^country + year^sector + country^sector, 
+      data = EM_DATA[country %in% EAC5])
+
+feols(Dlog(VA) ~ L(Dlog(I2E), 0:2) + L(Dlog(E2R), 0:2), 
+      data = EM_DATA[country %in% EAC5])
+  
+# Robust Difference Estimates
+
+lmrob(VA ~ gvcb + L1.gvcb + L2.gvcb + gvcf + L1.gvcf + L2.gvcf, setting = "KS2014", k.max = 10000,
+      data = EM_DATA[country %in% EAC5, L(fdiff(list(VA = VA, gvcb = gvcb, gvcf = gvcf), log = TRUE), 0:2)] |> replace_inf())
+
+lmrob(VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, setting = "KS2014", k.max = 10000, 
+      data = EM_DATA[country %in% EAC5, L(fdiff(list(VA = VA, I2E = I2E, E2R = E2R), log = TRUE), 0:2)] |> replace_inf())
+
+
+
