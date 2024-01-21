@@ -1417,11 +1417,13 @@ ESCAP |> group_by(reporter, partner) |>
 
 mean_impfun <- function(x) if(fnobs.default(x) > 3L) frollmean(x, 3L, align = "center", na.rm = TRUE, hasNA = TRUE) |> na_locf(TRUE) |> na_focb(TRUE) else fmean.default(x, TRA = 1)
 
-ESCAP <- ESCAP |> 
-  roworder(reporter, partner, year) |> 
-  group_by(reporter, partner) |> 
-  mutate(across(c(tij, geometric_avg_tariff, nontariff_tij), list(imp = mean_impfun), .names = TRUE)) |> 
-  ungroup() 
+ESCAP <- ESCAP |>
+  roworder(reporter, partner, year) |>
+  group_by(reporter, partner) |>
+  mutate(across(c(tij, geometric_avg_tariff, nontariff_tij), list(imp = mean_impfun), .names = TRUE)) |>
+  ungroup()
+
+# select(ESCAP, tij, geometric_avg_tariff, nontariff_tij) %<>% add_stub("_imp", FALSE)
 
 
 BACI_BIL_AGG <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
@@ -1495,12 +1497,15 @@ rem_SSD_IMP <- function(x, imp = TRUE) {
     mutate(country = rem_SSD(country)) |> 
     collapv(ids, cols = col, w = "E", sort = TRUE, keep.col.order = FALSE) 
   if(!imp) return(x)
-  # Sector-level rolling average to smooth change...
+  # # Sector-level rolling average to smooth change... only method that has enough signal...
   x <- transformv(x, col, BY, gv(x, ids[1:3]), mean_impfun)
-  # TODO: use simple average?? (technology in poor countries may be better represented)
-  # -> Kummritz uses simple average across countries and years: I do the same here... lets EAC have more weight
-  # Problem: having bilateral country information on source and using industry might induce endogeneity
-  fmean(x[[col]], gv(x, ids[-2L]), NULL, "fill", set = TRUE) # X$E
+  # # TODO: use simple average?? (technology in poor countries may be better represented)
+  # # -> Kummritz uses simple average across countries and years: I do the same here... lets EAC have more weight
+  # # Problem: having bilateral country information on source and using industry might induce endogeneity
+  # fmean(x[[col]], gv(x, ids[-2L]), NULL, "fill", set = TRUE) # X$E
+  # New solution: time invariant, but at the bilateral sector-level
+  # fmean(x[[col]], gv(x, ids[1:3]), NULL, "fill", set = TRUE)
+  # -> Also not enough signal !!!
   x
 }
 
@@ -1555,6 +1560,7 @@ U_ALL_BIL <- U_ALL_BIL |> join(
 ) |> 
   subset(is.finite(tij_imp_instr) & source_country != using_country & is.finite(fvax) & fvax >= 0)
 
+# rm(EORA_DET, EM_DET)
 gc()
 
 if(anyNA(U_ALL_BIL)) stop("Missing values")
@@ -1568,25 +1574,27 @@ U_ALL_BIL %$% pwcor(log(fvax+1), log(tij_imp_instr))
 fastverse_extend(fixest, install = TRUE)
 # setFixest_nthreads(4)
 
-predict_fvax <- function(stub) {
-  fml <- sprintf("log(fvax+1) ~ 0 | source[log(instrument)] + source^%s_country^%s_sector + source^%s_country^year + source^%s_sector^year", stub, stub, stub, stub)
-  feols(as.formula(fml), data = U_ALL_BIL, fixef.tol = 1e-7, mem.clean = TRUE) %>% fitted() %>% exp() %-=% 1
+predict_fvax <- function(data, stub) {
+  fml <- sprintf("log(fvax+1) ~ log(instrument) | %s_country^%s_sector + %s_country^year + %s_sector^year", stub, stub, stub, stub)
+  feols(as.formula(fml), data = data, fixef.tol = 1e-7, mem.clean = FALSE) %>% fitted() %>% exp() %-=% 1
 }
+SDcols <- function(stub) c("fvax", "instrument", paste0(stub, "_country"), paste0(stub, "_sector"), "year")
+
 
 # Estimation
 gc()
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source * D_using)]
-U_ALL_BIL[, i2e_hat := predict_fvax("using")]
-U_ALL_BIL[, e2r_hat := predict_fvax("source")]
+U_ALL_BIL[, i2e_hat := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
+U_ALL_BIL[, e2r_hat := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
 # U_ALL_BIL[, instrument := tij_imp_instr / (U_source / U_using)] # -> Predictive power inferior to above
-# U_ALL_BIL[, i2e_hat_U := predict_fvax("using")]
-# U_ALL_BIL[, e2r_hat_U := predict_fvax("source")]
+# U_ALL_BIL[, i2e_hat_U := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
+# U_ALL_BIL[, e2r_hat_U := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv * D_using_tiv)]
-U_ALL_BIL[, i2e_hat_tiv := predict_fvax("using")]
-U_ALL_BIL[, e2r_hat_tiv := predict_fvax("source")]
+U_ALL_BIL[, i2e_hat_tiv := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
+U_ALL_BIL[, e2r_hat_tiv := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
 # U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv / U_using_tiv)] # -> Predictive power inferior to above
-# U_ALL_BIL[, i2e_hat_U_tiv := predict_fvax("using")]
-# U_ALL_BIL[, e2r_hat_U_tiv := predict_fvax("source")]
+# U_ALL_BIL[, i2e_hat_U_tiv := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
+# U_ALL_BIL[, e2r_hat_U_tiv := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
 U_ALL_BIL[, instrument := NULL]
 gc()
 
@@ -1608,9 +1616,10 @@ esttex(est_i2e, est_e2r, digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simpl
 
 # Saving
 qsave(U_ALL_BIL, "Data/U_ALL_BIL.qs", compress_level = 5L)
+# U_ALL_BIL <- qread("Data/U_ALL_BIL.qs")
 
 # Compute GVC indicators:
-GVC_DATA_INSTR <- U_ALL_BIL |>
+GVC_INSTR_DATA <- U_ALL_BIL |>
   group_by(source, using_country, using_sector, year) |>
   gvr("^fvax$|i2e_") |> fsum() |> rename(fvax = i2e) |> rm_stub("using_") |> 
   join(validate = "1:1", how = "full", column = TRUE,
@@ -1619,7 +1628,19 @@ GVC_DATA_INSTR <- U_ALL_BIL |>
       gvr("^fvax$|e2r_") |> fsum() |> rename(fvax = e2r) |> rm_stub("source_")
   )
 
-qsave(GVC_DATA_INSTR, "Data/GVC_DATA_INSTR.qs", compress_level = 5L)
+qsave(GVC_INSTR_DATA, "Data/GVC_INSTR_DATA.qs", compress_level = 5L)
+
+
+# First stages -> Weak IV for EAC, maybe need to run EAC specific regressions
+feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
+      data = GVC_INSTR_DATA[source == "EORA" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
+feols(log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year + sector^year, 
+      data = GVC_INSTR_DATA[source == "EORA" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
+feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
+      data = GVC_INSTR_DATA[source == "EMERGING" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
+feols(log(e2r) ~ log(e2r_hat) | country^sector + country^year + sector^year, 
+      data = GVC_INSTR_DATA[source == "EMERGING" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
+
 
 ### Previous Effort: Running estimation by source contry-sector: too detailed, not what Kummritz does...
 #
@@ -1716,6 +1737,7 @@ EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_
   transform(I2E = gvcb / gexp, 
             E2R = gvcf / gexp)
 
+
 # names(y) <- y
 # data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc * X) (I checked)
 #   value2df("VA") %>%
@@ -1797,7 +1819,7 @@ dev.off()
 
 
 
-# Regressions ---------------------------------------------------------------
+# Regressions: OLS + Lags ---------------------------------------------------------------
 
 fastverse_extend(fixest, robustbase)
 
@@ -1848,3 +1870,43 @@ lmrob(VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, setting = "KS2014", k.
 
 
 
+
+
+# Regressions: IV ---------------------------------------------------------------
+fastverse_extend(fixest)
+
+GVC_INSTR_DATA <- qread("Data/GVC_INSTR_DATA.qs")
+
+EORA21_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join))
+WDR_EORA15_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join))
+# EORA21_DATA |> num_vars() |> pwcor()
+
+# First stages -> Weak IV for EAC, maybe need to run EAC specific regressions
+feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
+      data = EORA21_DATA[country %in% EAC5])
+feols(log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year + sector^year, 
+      data = EORA21_DATA[country %in% EAC5])
+
+feols(log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
+      data = WDR_EORA15_DATA[country %in% EAC5])
+feols(log(gvcf) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year + sector^year, 
+      data = WDR_EORA15_DATA[country %in% EAC5])
+
+EM_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EMERGING", -source, -.join))
+
+feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
+      data = EM_DATA[country %in% EAC5])
+
+
+# FULL 2SLS
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv), 
+            data = WDR_EORA15_DATA, vcov = "threeway") # DK ~ year
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+            data = WDR_EORA15_DATA, vcov = "threeway")
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+# plot(fixef(mod))
