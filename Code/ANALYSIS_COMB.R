@@ -1538,7 +1538,7 @@ ESCAP |> group_by(reporter, partner) |>
   summarise(cor = cor(tij, year, use = "na.or.complete")) |> 
   with(fmean(abs(cor))) # Could do linear interpretation, but better use locf...
 
-mean_impfun <- function(x) if(fnobs.default(x) > 3L) frollmean(x, 3L, align = "center", hasNA = TRUE) |> na_locf(TRUE) |> na_focb(TRUE) else fmean.default(x, TRA = 1)
+mean_impfun <- function(x) if(fnobs.default(x) > 3L) frollmean(x, 3L, align = "center", na.rm = TRUE, hasNA = TRUE) |> na_locf(TRUE) |> na_focb(TRUE) else fmean.default(x, TRA = 1)
 
 ESCAP <- ESCAP |> 
   roworder(reporter, partner, year) |> 
@@ -1594,6 +1594,22 @@ ESCAP_REG <- ESCAP_REG |>
   ungroup()
 
 # Now: Upstreamness and Downstreamness
+
+# Panel-Variation
+U_DET |> qsu(U ~ source, pid = ~ country + sector) |> aperm()
+D_DET |> qsu(D ~ source, pid = ~ country + sector) |> aperm()
+# -> Substantially more between-variation, but there is some within variation
+# EAC vs ROW
+U_DET |> mutate(EAC = country %in% EAC) |> qsu(U ~  source + EAC, pid = ~ sector) #  + sector
+U_DET |> collap(U ~ source + year + sector) |> qsu(U ~ source, ~sector)
+# 
+U_DET |> collap(U ~ source + country + sector) |> subset(source == "EORA") |> with(fvar(W(U, sector))/fvar(B(U, sector)))
+# Between within sectors
+U_DET |> collap(U ~ source + year + sector) |> subset(source == "EORA") |> with(fvar(W(U, sector))/fvar(B(U, sector)))
+
+
+# -> Not much between sector variation...
+
 rem_SSD <- function(x) factor(copyv(as.character(x), "SSD", "SSA"), levels = REG)
 rem_SSD_IMP <- function(x, imp = TRUE) {
   col <- if(anyv(names(x), "U")) "U" else "D"
@@ -1602,7 +1618,13 @@ rem_SSD_IMP <- function(x, imp = TRUE) {
     mutate(country = rem_SSD(country)) |> 
     collapv(ids, cols = col, w = "E", sort = TRUE, keep.col.order = FALSE) 
   if(!imp) return(x)
-  x |> transformv(col, BY, gv(x, ids), mean_impfun)
+  # Sector-level rolling average to smooth change...
+  x <- transformv(x, col, BY, gv(x, ids[1:3]), mean_impfun)
+  # TODO: use simple average?? (technology in poor countries may be better represented)
+  # -> Kummritz uses simple average across countries and years: I do the same here... lets EAC have more weight
+  # Problem: having bilateral country information on source and using industry might induce endogeneity
+  fmean(x[[col]], gv(x, ids[-2L]), NULL, "fill", set = TRUE) # X$E
+  x
 }
 
 U_ALL_BIL <- select(rem_SSD_IMP(U_DET), -E) |> rename(U = U_source) |> 
@@ -1614,11 +1636,6 @@ U_ALL_BIL <- select(rem_SSD_IMP(U_DET), -E) |> rename(U = U_source) |>
   transformv(U_source:U_using, replace_outliers, c(1, 10), set = TRUE) |> 
   subset(is.finite(U_source) & is.finite(D_using)) |> 
   roworderv(1:6) 
-  
-# Panel-Variation
-U_DET |> qsu(U ~ source, pid = ~ country + sector) |> aperm()
-D_DET |> qsu(D ~ source, pid = ~ country + sector) |> aperm()
-# -> Substantially more between-variation, but there is some within variation
   
 # Aggregate Version: Collapsed as in Kummritz (2016)
 U_AGG_BIL <- join(
@@ -1666,14 +1683,15 @@ gc()
 if(anyNA(U_ALL_BIL)) stop("Missing values")
 
 # Check correlations
-U_ALL_BIL %$% cor(fvax, tij_imp_instr)
-U_ALL_BIL %$% fwithin(list(fvax = fvax, tij = tij_imp_instr), source_all) %$% cor(fvax, tij)
-U_ALL_BIL %$% fwithin(list(fvax = fvax, tij = tij_imp_instr), list(source_all, using_country, using_sector)) %$% cor(fvax, tij)
+U_ALL_BIL %$% pwcor(log(fvax+1), log(tij_imp_instr))
+# U_ALL_BIL %$% fwithin(list(fvax = log(fvax), tij = tij_imp_instr), source_all) %$% cor(fvax, tij)
+# U_ALL_BIL %$% fwithin(list(fvax = fvax, tij = tij_imp_instr), list(source_all, using_country, using_sector)) %$% cor(fvax, tij)
 
 # Now constructing the instrument
 fastverse_extend(fixest, install = TRUE)
+setFixest_nthreads(4)
 
-predict_fvax <- function(data, stub) {
+predict_fvax <- function(stub) {
   fml <- sprintf("log(fvax+1) ~ 0 | source[log(instrument)] + source^%s_country^%s_sector + source^%s_country^year + source^%s_sector^year", stub, stub, stub, stub)
   feols(as.formula(fml), data = U_ALL_BIL, fixef.tol = 1e-7, mem.clean = TRUE) %>% fitted() %>% exp() %-=% 1
 }
@@ -1683,15 +1701,15 @@ gc()
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source * D_using)]
 U_ALL_BIL[, i2e_inddist := predict_fvax("using")]
 U_ALL_BIL[, e2r_inddist := predict_fvax("source")]
-U_ALL_BIL[, instrument := tij_imp_instr / (U_source / U_using)]
-U_ALL_BIL[, i2e_inddist_U := predict_fvax("using")]
-U_ALL_BIL[, e2r_inddist_U := predict_fvax("source")]
+# U_ALL_BIL[, instrument := tij_imp_instr / (U_source / U_using)] # -> Predictive power inferior to above
+# U_ALL_BIL[, i2e_inddist_U := predict_fvax("using")]
+# U_ALL_BIL[, e2r_inddist_U := predict_fvax("source")]
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv * D_using_tiv)]
 U_ALL_BIL[, i2e_inddist_tiv := predict_fvax("using")]
 U_ALL_BIL[, e2r_inddist_tiv := predict_fvax("source")]
-U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv / U_using_tiv)]
-U_ALL_BIL[, i2e_inddist_U_tiv := predict_fvax("using")]
-U_ALL_BIL[, e2r_inddist_U_tiv := predict_fvax("source")]
+# U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv / U_using_tiv)] # -> Predictive power inferior to above
+# U_ALL_BIL[, i2e_inddist_U_tiv := predict_fvax("using")]
+# U_ALL_BIL[, e2r_inddist_U_tiv := predict_fvax("source")]
 U_ALL_BIL[, instrument := NULL]
 gc()
 
