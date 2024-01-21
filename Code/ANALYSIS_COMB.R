@@ -1394,129 +1394,6 @@ rowbind("Overall" = RCA_ALL,
 # GVC's and Industrial Development (Regression Analysis)
 ########################################################
   
-# Checks:
-EORA_DET %$% sapply(y, function(i) all.equal(va[, i], decomps[[i]]$X * decomps[[i]]$Vc))
-
-# sapply(y, function(i) all.equal(sbt(VS_df, Year == as.integer(i), i2e)[[1]], 
-#                                 unattrib(collapv(leontief(decomps[[i]]), 1:2, fsum, cols = "FVAX")[[3]])))
-  
-RM_EORA_SEC <- c("REC", "REI", "FIB", "EGW", "OTH", "PHH")  
-
-# Now constructing datasets at full sector resolution.   
-EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutate(VA = VA / 1000)
-
-EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
-               transformv(is.double, `*`, 1/1000) |> 
-               join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> 
-               group_by(year, country = from_region, sector = from_sector) |> 
-               num_vars() |> fsum() |> 
-               join(EORA21_VA) |> 
-               colorder(country, sector, VA, pos = "after") |> 
-               transform(I2E = gvcb / gexp, 
-                         E2R = gvcf / gexp) |> 
-               subset(sector %!in% RM_EORA_SEC) |> 
-               droplevels()
-               
-WDR_EORA15_DATA <- WDR_POS |> 
-               join(select(sec_class, id, sector = code), on = c("sect" = "id")) |> 
-               mutate(sect = NULL) |> 
-               subset(year >= 2000) |> 
-               join(EORA21_VA) |> 
-               colorder(country, sector, sector_name = sect_name, VA, pos = "after") |> 
-               transform(I2E = gvcb / gexp, 
-                         E2R = gvcf / gexp) |> 
-               subset(sector %!in% RM_EORA_SEC) |> 
-               droplevels()
-  
-EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
-
-EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
-        group_by(year, country = from_region, sector = from_sector) |> 
-        select(gexp:gvcf) |> fsum() |> 
-        join(EM_VA) |> 
-        colorder(country, sector, VA, pos = "after") |> 
-        transform(I2E = gvcb / gexp, 
-                  E2R = gvcf / gexp)
-        
-# names(y) <- y
-# data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc * X) (I checked)
-#   value2df("VA") %>%
-#   merge(value2df(lapply(y, function(i) VA[, , i]))) %>% # Disaggregated VA
-#   tfm(VA_SUM = COE + TAX + SUB + NOS + NMI + COF, 
-#       COE_NOS = COE + NOS) %>%
-#   tfm(slt(., COE, TAX, SUB, NOS, NMI, COF, COE_NOS) %c/% 
-#         VA_SUM %>% add_stub("_S", FALSE)) %>% # Adding Shares
-#   merge(VS_df) %>% 
-#   merge(VS1_df) %>%
-#   merge(exports) %>%
-#   tfm(DVA_Exports = Exports - i2e)
-# 
-# 
-# all.equal(unattrib(data %$% (I2E * Exports)), unattrib(data$i2e))
-# all.equal(unattrib(data %$% (E2R * Exports)), unattrib(data$e2r))
-  
-# Plot Data ----------------------------------
-
-EORA21_DATA |> with({
-  # Histograms: https://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r
-  oldpar <- par(mfrow = c(1, 3), mar = c(2.5, 4, 2.1, 0), lwd = 0.5) # bottom, left, top, right
-  # VA
-  VA <- replace_outliers(VA, 1, "clip", single = "min")
-  hist(log10(VA), xlab = NA, main = expression('log'[10](VA))) # , breaks = seq(2.5,7.5,0.2), xlim = c(2.5, 7.5))
-  hist(log10(VA[sector %in% MAN]), xlab = NA, # , breaks = seq(2.5,7.5,0.2), xlim = c(2.5, 7.5), 
-       col = "orange", add = TRUE)
-  abline(v = fmedian(log10(VA)), lwd = 1.5)
-  abline(v = fmedian(log10(VA[sector %in% MAN])), col = "red", lwd = 1.5)
-  legend("topleft", c("Overall", "Manufacturing"), lty = 1, lwd = 1.5,
-         col = c("black", "red"), bty = "n", y.intersp = 2, seg.len = 1)
-  # I2E
-  I2E <- replace_outliers(I2E, c(0,1))
-  hist(I2E, breaks = seq(0, 1, 0.025), xlab = NA, main = expression('I2E'), xaxt = 'n')
-  axis(side = 1, at = seq(0, 0.1, 0.10)) # https://stackoverflow.com/questions/25997337/in-r-how-to-set-the-breaks-of-x-axis
-  hist(I2E[sector %in% MAN], breaks = seq(0,1,0.025), xlab = NA, xlim = c(0, 0.75), 
-       col = "orange", add = TRUE)
-  abline(v = fmedian(I2E), lwd = 1.5)
-  abline(v = fmedian(I2E[sector %in% MAN]), col = "red", lwd = 1.5)
-  # E2R
-  E2R <- replace_outliers(E2R, c(0,0.75))
-  hist(E2R, breaks = seq(0,0.75,0.025), xlab = NA, main = expression('E2R'))
-  hist(E2R[sector %in% MAN], breaks = seq(0,0.75,0.025), xlab = NA, xlim = c(0, 0.75), 
-       col = "orange", add = TRUE)
-  abline(v = fmedian(E2R), lwd = 1.5)
-  abline(v = fmedian(E2R[sector %in% MAN]), col = "red", lwd = 1.5)
-  par(oldpar)
-})
-
-dev.copy(pdf, "Figures/REV/GROWTH_REG_Hists.pdf", width = 10.27, height = 4)
-dev.off()
-
-
-# TS Charts
-EORA21_DATA |> index_by(country, sector, year)  |> with({
-  oldpar <- par(mfrow = c(1, 3), mar = c(4.5, 2.5, 2.1, 1.5)) # bottom, left, top, right
-  mat <- psmat(log10(VA))
-  man_sec <- substr(rownames(mat), 5, 7) %in% MAN
-  colour <- ifelse(man_sec, "orange", "grey")
-  plot(mat, xlab = "Year", ylab = NA, main = expression('log'[10](VA)), colours = colour)  
-  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
-  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
-  legend("topleft", c("Overall Median", "Manufacturing Median"), lty = 1, lwd = 1.5,
-         col = c("black", "red"), bty = "n", y.intersp = 1.5, seg.len = 1)
-  mat <- psmat(I2E) |> replace_outliers(c(0, 1))
-  plot(mat, xlab = "Year", ylab = NA, main = expression('I2E'), colours = colour)  
-  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
-  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
-  mat <- psmat(E2R) |> replace_outliers(c(0, 1))
-  plot(mat, xlab = "Year", ylab = NA, main = expression('E2R'), colours = colour)  
-  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
-  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
-  par(oldpar)
-  rm(mat, man_sec, colour)
-})
-
-dev.copy(pdf, "Figures/REV/GROWTH_REG_TS.pdf", width = 10.27, height = 5)
-dev.off()
-
 
 # GVC Instrument following Kummritz (2016) ------------------------------------------------------------
 
@@ -1689,7 +1566,7 @@ U_ALL_BIL %$% pwcor(log(fvax+1), log(tij_imp_instr))
 
 # Now constructing the instrument
 fastverse_extend(fixest, install = TRUE)
-setFixest_nthreads(4)
+# setFixest_nthreads(4)
 
 predict_fvax <- function(stub) {
   fml <- sprintf("log(fvax+1) ~ 0 | source[log(instrument)] + source^%s_country^%s_sector + source^%s_country^year + source^%s_sector^year", stub, stub, stub, stub)
@@ -1699,29 +1576,29 @@ predict_fvax <- function(stub) {
 # Estimation
 gc()
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source * D_using)]
-U_ALL_BIL[, i2e_inddist := predict_fvax("using")]
-U_ALL_BIL[, e2r_inddist := predict_fvax("source")]
+U_ALL_BIL[, i2e_hat := predict_fvax("using")]
+U_ALL_BIL[, e2r_hat := predict_fvax("source")]
 # U_ALL_BIL[, instrument := tij_imp_instr / (U_source / U_using)] # -> Predictive power inferior to above
-# U_ALL_BIL[, i2e_inddist_U := predict_fvax("using")]
-# U_ALL_BIL[, e2r_inddist_U := predict_fvax("source")]
+# U_ALL_BIL[, i2e_hat_U := predict_fvax("using")]
+# U_ALL_BIL[, e2r_hat_U := predict_fvax("source")]
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv * D_using_tiv)]
-U_ALL_BIL[, i2e_inddist_tiv := predict_fvax("using")]
-U_ALL_BIL[, e2r_inddist_tiv := predict_fvax("source")]
+U_ALL_BIL[, i2e_hat_tiv := predict_fvax("using")]
+U_ALL_BIL[, e2r_hat_tiv := predict_fvax("source")]
 # U_ALL_BIL[, instrument := tij_imp_instr / (U_source_tiv / U_using_tiv)] # -> Predictive power inferior to above
-# U_ALL_BIL[, i2e_inddist_U_tiv := predict_fvax("using")]
-# U_ALL_BIL[, e2r_inddist_U_tiv := predict_fvax("source")]
+# U_ALL_BIL[, i2e_hat_U_tiv := predict_fvax("using")]
+# U_ALL_BIL[, e2r_hat_U_tiv := predict_fvax("source")]
 U_ALL_BIL[, instrument := NULL]
 gc()
 
 # Intelligible estimates
 
 est_i2e <- feols(log(fvax+1) ~ log(instrument) | using_country^using_sector + using_country^year + using_sector^year, 
-                 data = U_ALL_BIL, split = ~ source, subset = ~ using_country %in% c("UGA", "TZA", "KEN", "RWA", "BDI"), 
+                 data = U_ALL_BIL, split = ~ source, # subset = ~ using_country %in% c("UGA", "TZA", "KEN", "RWA", "BDI"), 
                  fixef.tol = 1e-7, mem.clean = TRUE) 
 esttable(est_i2e)
 
 est_e2r <- feols(log(fvax+1) ~ log(instrument) | source_country^source_sector + source_country^year + source_sector^year, 
-                 data = U_ALL_BIL, split = ~ source, subset = ~ source_country %in% c("UGA", "TZA", "KEN", "RWA", "BDI"),
+                 data = U_ALL_BIL, split = ~ source, # subset = ~ source_country %in% c("UGA", "TZA", "KEN", "RWA", "BDI"),
                  fixef.tol = 1e-7, mem.clean = TRUE)
 esttable(est_e2r)
 
@@ -1729,15 +1606,20 @@ esttex(est_i2e, est_e2r, digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simpl
 
 # TODO: Better Estimate with subset ??
 
+# Saving
+qsave(U_ALL_BIL, "Data/U_ALL_BIL.qs", compress_level = 5L)
+
 # Compute GVC indicators:
-GVC_DATA <- U_ALL_BIL |>
+GVC_DATA_INSTR <- U_ALL_BIL |>
   group_by(source, using_country, using_sector, year) |>
   gvr("^fvax$|i2e_") |> fsum() |> rename(fvax = i2e) |> rm_stub("using_") |> 
-  join(validate = "1:1",
+  join(validate = "1:1", how = "full", column = TRUE,
     U_ALL_BIL |>
       group_by(source, source_country, source_sector, year) |>
       gvr("^fvax$|e2r_") |> fsum() |> rename(fvax = e2r) |> rm_stub("source_")
   )
+
+qsave(GVC_DATA_INSTR, "Data/GVC_DATA_INSTR.qs", compress_level = 5L)
 
 ### Previous Effort: Running estimation by source contry-sector: too detailed, not what Kummritz does...
 #
@@ -1770,21 +1652,149 @@ GVC_DATA <- U_ALL_BIL |>
 #         data = U_ALL_BIL, fixef.tol = 1e-7, mem.clean = TRUE) %>% fitted() %>% exp() %-=% 1
 # }
 # U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source * D_using))]
-# U_ALL_BIL[, fvax_inddist := predict_fvax()]
+# U_ALL_BIL[, fvax_hat := predict_fvax()]
 # U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source / U_using))]
-# U_ALL_BIL[, fvax_inddist_U := predict_fvax()]
+# U_ALL_BIL[, fvax_hat_U := predict_fvax()]
 # U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source_tiv * D_using_tiv))]
-# U_ALL_BIL[, fvax_inddist_tiv := predict_fvax()]
+# U_ALL_BIL[, fvax_hat_tiv := predict_fvax()]
 # # Same as above
 # # U_ALL_BIL[, instrument := log(tij_imp_instr / (U_source_tiv / U_using_tiv))]
-# # U_ALL_BIL[, fvax_inddist_U_tiv := predict_fvax()]
+# # U_ALL_BIL[, fvax_hat_U_tiv := predict_fvax()]
 # U_ALL_BIL[, instrument := NULL]
-# U_ALL_BIL[, lapply(.SD, cor, fvax), .SDcols = fvax_inddist:fvax_inddist_tiv] |> raise_to_power(2)
+# U_ALL_BIL[, lapply(.SD, cor, fvax), .SDcols = fvax_hat:fvax_hat_tiv] |> raise_to_power(2)
 # U_ALL_BIL |> 
 #   group_by(source, using_country, using_sector, year) |> 
-#   select(fvax, fvax_inddist, fvax_inddist_U, fvax_inddist_tiv) |> 
+#   select(fvax, fvax_hat, fvax_hat_U, fvax_hat_tiv) |> 
 #   fsum() |> num_vars() |> pwcor() |> raise_to_power(2)
 # # -> Too high R^2. Kummritz does not put in source-sector FE and runs two different estimations
+
+
+# Data Construction ---------------------------------------------------------------
+
+
+# Checks:
+EORA_DET %$% sapply(y, function(i) all.equal(va[, i], decomps[[i]]$X * decomps[[i]]$Vc))
+
+# sapply(y, function(i) all.equal(sbt(VS_df, Year == as.integer(i), i2e)[[1]], 
+#                                 unattrib(collapv(leontief(decomps[[i]]), 1:2, fsum, cols = "FVAX")[[3]])))
+
+RM_EORA_SEC <- c("REC", "REI", "FIB", "EGW", "OTH", "PHH")  
+
+# Now constructing datasets at full sector resolution.   
+EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutate(VA = VA / 1000)
+
+EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
+  transformv(is.double, `*`, 1/1000) |> 
+  join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> 
+  group_by(year, country = from_region, sector = from_sector) |> 
+  num_vars() |> fsum() |> 
+  join(EORA21_VA) |> 
+  colorder(country, sector, VA, pos = "after") |> 
+  transform(I2E = gvcb / gexp, 
+            E2R = gvcf / gexp) |> 
+  subset(sector %!in% RM_EORA_SEC) |> 
+  droplevels()
+
+WDR_EORA15_DATA <- WDR_POS |> 
+  join(select(sec_class, id, sector = code), on = c("sect" = "id")) |> 
+  mutate(sect = NULL) |> 
+  subset(year >= 2000) |> 
+  join(EORA21_VA) |> 
+  colorder(country, sector, sector_name = sect_name, VA, pos = "after") |> 
+  transform(I2E = gvcb / gexp, 
+            E2R = gvcf / gexp) |> 
+  subset(sector %!in% RM_EORA_SEC) |> 
+  droplevels()
+
+EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
+
+EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
+  group_by(year, country = from_region, sector = from_sector) |> 
+  select(gexp:gvcf) |> fsum() |> 
+  join(EM_VA) |> 
+  colorder(country, sector, VA, pos = "after") |> 
+  transform(I2E = gvcb / gexp, 
+            E2R = gvcf / gexp)
+
+# names(y) <- y
+# data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc * X) (I checked)
+#   value2df("VA") %>%
+#   merge(value2df(lapply(y, function(i) VA[, , i]))) %>% # Disaggregated VA
+#   tfm(VA_SUM = COE + TAX + SUB + NOS + NMI + COF, 
+#       COE_NOS = COE + NOS) %>%
+#   tfm(slt(., COE, TAX, SUB, NOS, NMI, COF, COE_NOS) %c/% 
+#         VA_SUM %>% add_stub("_S", FALSE)) %>% # Adding Shares
+#   merge(VS_df) %>% 
+#   merge(VS1_df) %>%
+#   merge(exports) %>%
+#   tfm(DVA_Exports = Exports - i2e)
+# 
+# 
+# all.equal(unattrib(data %$% (I2E * Exports)), unattrib(data$i2e))
+# all.equal(unattrib(data %$% (E2R * Exports)), unattrib(data$e2r))
+
+# Plot Data ----------------------------------
+
+EORA21_DATA |> with({
+  # Histograms: https://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r
+  oldpar <- par(mfrow = c(1, 3), mar = c(2.5, 4, 2.1, 0), lwd = 0.5) # bottom, left, top, right
+  # VA
+  VA <- replace_outliers(VA, 1, "clip", single = "min")
+  hist(log10(VA), xlab = NA, main = expression('log'[10](VA))) # , breaks = seq(2.5,7.5,0.2), xlim = c(2.5, 7.5))
+  hist(log10(VA[sector %in% MAN]), xlab = NA, # , breaks = seq(2.5,7.5,0.2), xlim = c(2.5, 7.5), 
+       col = "orange", add = TRUE)
+  abline(v = fmedian(log10(VA)), lwd = 1.5)
+  abline(v = fmedian(log10(VA[sector %in% MAN])), col = "red", lwd = 1.5)
+  legend("topleft", c("Overall", "Manufacturing"), lty = 1, lwd = 1.5,
+         col = c("black", "red"), bty = "n", y.intersp = 2, seg.len = 1)
+  # I2E
+  I2E <- replace_outliers(I2E, c(0,1))
+  hist(I2E, breaks = seq(0, 1, 0.025), xlab = NA, main = expression('I2E'), xaxt = 'n')
+  axis(side = 1, at = seq(0, 0.1, 0.10)) # https://stackoverflow.com/questions/25997337/in-r-how-to-set-the-breaks-of-x-axis
+  hist(I2E[sector %in% MAN], breaks = seq(0,1,0.025), xlab = NA, xlim = c(0, 0.75), 
+       col = "orange", add = TRUE)
+  abline(v = fmedian(I2E), lwd = 1.5)
+  abline(v = fmedian(I2E[sector %in% MAN]), col = "red", lwd = 1.5)
+  # E2R
+  E2R <- replace_outliers(E2R, c(0,0.75))
+  hist(E2R, breaks = seq(0,0.75,0.025), xlab = NA, main = expression('E2R'))
+  hist(E2R[sector %in% MAN], breaks = seq(0,0.75,0.025), xlab = NA, xlim = c(0, 0.75), 
+       col = "orange", add = TRUE)
+  abline(v = fmedian(E2R), lwd = 1.5)
+  abline(v = fmedian(E2R[sector %in% MAN]), col = "red", lwd = 1.5)
+  par(oldpar)
+})
+
+dev.copy(pdf, "Figures/REV/GROWTH_REG_Hists.pdf", width = 10.27, height = 4)
+dev.off()
+
+
+# TS Charts
+EORA21_DATA |> index_by(country, sector, year)  |> with({
+  oldpar <- par(mfrow = c(1, 3), mar = c(4.5, 2.5, 2.1, 1.5)) # bottom, left, top, right
+  mat <- psmat(log10(VA))
+  man_sec <- substr(rownames(mat), 5, 7) %in% MAN
+  colour <- ifelse(man_sec, "orange", "grey")
+  plot(mat, xlab = "Year", ylab = NA, main = expression('log'[10](VA)), colours = colour)  
+  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
+  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
+  legend("topleft", c("Overall Median", "Manufacturing Median"), lty = 1, lwd = 1.5,
+         col = c("black", "red"), bty = "n", y.intersp = 1.5, seg.len = 1)
+  mat <- psmat(I2E) |> replace_outliers(c(0, 1))
+  plot(mat, xlab = "Year", ylab = NA, main = expression('I2E'), colours = colour)  
+  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
+  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
+  mat <- psmat(E2R) |> replace_outliers(c(0, 1))
+  plot(mat, xlab = "Year", ylab = NA, main = expression('E2R'), colours = colour)  
+  fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
+  fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
+  par(oldpar)
+  rm(mat, man_sec, colour)
+})
+
+dev.copy(pdf, "Figures/REV/GROWTH_REG_TS.pdf", width = 10.27, height = 5)
+dev.off()
+
 
 
 # Regressions ---------------------------------------------------------------
