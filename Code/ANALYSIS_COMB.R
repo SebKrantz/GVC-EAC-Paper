@@ -1415,7 +1415,7 @@ ESCAP |> group_by(reporter, partner) |>
   summarise(cor = cor(tij, year, use = "na.or.complete")) |> 
   with(fmean(abs(cor))) # Could do linear interpretation, but better use locf...
 
-mean_impfun <- function(x) if(fnobs.default(x) > 3L) frollmean(x, 3L, align = "center", na.rm = TRUE, hasNA = TRUE) |> na_locf(TRUE) |> na_focb(TRUE) else fmean.default(x, TRA = 1)
+mean_impfun <- function(x) frollmean(x, 3L, align = "center", na.rm = TRUE, hasNA = TRUE) |> na_locf(TRUE) |> na_focb(TRUE)
 
 ESCAP <- ESCAP |>
   roworder(reporter, partner, year) |>
@@ -1425,6 +1425,18 @@ ESCAP <- ESCAP |>
 
 # select(ESCAP, tij, geometric_avg_tariff, nontariff_tij) %<>% add_stub("_imp", FALSE)
 
+# Plot:
+ESCAP |>
+  subset(reporter %in% EAC5 & partner %in% EAC5 & year >= 2000) |>
+  pivot(c("reporter", "partner", "year"), c("tij", "tij_imp"), na.rm = TRUE) |>
+  mutate(variable = set_attr(variable, "levels", c("Raw", "3-Year MA + LOCF"))) |>
+  ggplot(aes(x = year, y = value, colour = partner)) +
+    geom_line() +
+    facet_grid(variable ~ reporter) +
+    labs(colour = "Partner:  ", y = "Tariff Equivalent Total Trade Cost (Percent)", x = NULL) +
+    theme_bw() + pretty_plot + rbsc2
+
+ggsave("Figures/REV/ESCAP_EAC5_Trade_Costs.pdf", width = 10, height = 5)
 
 BACI_BIL_AGG <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
                 group_by(iso3_o, iso3_d, year) |> summarise(exports = fsum(value, fill = TRUE))
@@ -1451,17 +1463,17 @@ ESCAP_REG <- ESCAP |>
 
 # Inner-EAC Trade Cost Matrix
 ESCAP_REG |> 
-  subset(region_o %in% EAC6 & region_d %in% EAC6 & between(year, 2010, 2020)) %$%
+  subset(region_o %in% EAC5 & region_d %in% EAC5 & between(year, 2010, 2020)) %$%
   table(region_o, region_d, w = tij_imp, wFUN = fmean)
 
 # Panel-Variation
 ESCAP_REG |> 
-  subset(region_o %in% EAC6 & region_d %in% EAC6) |> 
+  subset(region_o %in% EAC5 & region_d %in% EAC5) |> 
   qsu(pid = tij_imp ~ region_o + region_d)
 
 # Plot
 ESCAP_REG |> 
-  subset(region_o %in% EAC6 & region_d %in% EAC6) |> 
+  subset(region_o %in% EAC5 & region_d %in% EAC5) |> 
   psmat(tij_imp ~ region_o + region_d, ~ year) |> plot(legend = TRUE)
 
 # Now Kummritz Instrument: Exports weighted trade costs excluding bilateral partner
@@ -1474,20 +1486,19 @@ ESCAP_REG <- ESCAP_REG |>
 
 # Now: Upstreamness and Downstreamness
 
-# Panel-Variation
-U_DET |> qsu(U ~ source, pid = ~ country + sector) |> aperm()
-D_DET |> qsu(D ~ source, pid = ~ country + sector) |> aperm()
-# -> Substantially more between-variation, but there is some within variation
-# EAC vs ROW
-U_DET |> mutate(EAC = country %in% EAC) |> qsu(U ~  source + EAC, pid = ~ sector) #  + sector
-U_DET |> collap(U ~ source + year + sector) |> qsu(U ~ source, ~sector)
+# # Examine Panel-Variation
+# U_DET |> qsu(U ~ source, pid = ~ country + sector) |> aperm()
+# D_DET |> qsu(D ~ source, pid = ~ country + sector) |> aperm()
+# # -> Substantially more between-variation, but there is some within variation
+# # EAC vs ROW
+# U_DET |> mutate(EAC = country %in% EAC) |> qsu(U ~  source + EAC, pid = ~ sector) #  + sector
+# U_DET |> collap(U ~ source + year + sector) |> qsu(U ~ source, ~sector)
+# # 
+# U_DET |> collap(U ~ source + country + sector) |> subset(source == "EORA") |> with(fvar(W(U, sector))/fvar(B(U, sector)))
+# # Between within sectors
+# U_DET |> collap(U ~ source + year + sector) |> subset(source == "EORA") |> with(fvar(W(U, sector))/fvar(B(U, sector)))
 # 
-U_DET |> collap(U ~ source + country + sector) |> subset(source == "EORA") |> with(fvar(W(U, sector))/fvar(B(U, sector)))
-# Between within sectors
-U_DET |> collap(U ~ source + year + sector) |> subset(source == "EORA") |> with(fvar(W(U, sector))/fvar(B(U, sector)))
-
-
-# -> Not much between sector variation...
+# # -> Not much between sector variation...
 
 rem_SSD <- function(x) factor(copyv(as.character(x), "SSD", "SSA"), levels = REG)
 rem_SSD_IMP <- function(x, imp = TRUE) {
@@ -1498,14 +1509,14 @@ rem_SSD_IMP <- function(x, imp = TRUE) {
     collapv(ids, cols = col, w = "E", sort = TRUE, keep.col.order = FALSE) 
   if(!imp) return(x)
   # # Sector-level rolling average to smooth change... only method that has enough signal...
-  x <- transformv(x, col, BY, gv(x, ids[1:3]), mean_impfun)
+  # x <- transformv(x, col, BY, gv(x, ids[1:3]), mean_impfun)
   # # TODO: use simple average?? (technology in poor countries may be better represented)
   # # -> Kummritz uses simple average across countries and years: I do the same here... lets EAC have more weight
   # # Problem: having bilateral country information on source and using industry might induce endogeneity
   # fmean(x[[col]], gv(x, ids[-2L]), NULL, "fill", set = TRUE) # X$E
+  
   # New solution: time invariant, but at the bilateral sector-level
-  # fmean(x[[col]], gv(x, ids[1:3]), NULL, "fill", set = TRUE)
-  # -> Also not enough signal !!!
+  fmean(x[[col]], gv(x, ids[1:3]), NULL, "fill", set = TRUE)
   x
 }
 
@@ -1638,7 +1649,7 @@ feols(log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year
       data = GVC_INSTR_DATA[source == "EORA" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
 feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
       data = GVC_INSTR_DATA[source == "EMERGING" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
-feols(log(e2r) ~ log(e2r_hat) | country^sector + country^year + sector^year, 
+feols(log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year + sector^year, 
       data = GVC_INSTR_DATA[source == "EMERGING" & country %in% EAC5]) |> fitstat( ~ f + wf + wald)
 
 
@@ -1700,6 +1711,7 @@ EORA_DET %$% sapply(y, function(i) all.equal(va[, i], decomps[[i]]$X * decomps[[
 #                                 unattrib(collapv(leontief(decomps[[i]]), 1:2, fsum, cols = "FVAX")[[3]])))
 
 RM_EORA_SEC <- c("REC", "REI", "FIB", "EGW", "OTH", "PHH")  
+EM_MAN <- EM_SEC |> subset(broad_sector_code %in% MAN, code) |> unlist(use.names = FALSE) |> as.integer()
 
 # Now constructing datasets at full sector resolution.   
 EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutate(VA = VA / 1000)
@@ -1713,7 +1725,7 @@ EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EOR
   colorder(country, sector, VA, pos = "after") |> 
   transform(I2E = gvcb / gexp, 
             E2R = gvcf / gexp) |> 
-  subset(sector %!in% RM_EORA_SEC) |> 
+  # subset(sector %!in% RM_EORA_SEC) |> 
   droplevels()
 
 WDR_EORA15_DATA <- WDR_POS |> 
@@ -1724,7 +1736,7 @@ WDR_EORA15_DATA <- WDR_POS |>
   colorder(country, sector, sector_name = sect_name, VA, pos = "after") |> 
   transform(I2E = gvcb / gexp, 
             E2R = gvcf / gexp) |> 
-  subset(sector %!in% RM_EORA_SEC) |> 
+  # subset(sector %!in% RM_EORA_SEC) |> 
   droplevels()
 
 EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
@@ -1757,7 +1769,7 @@ EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_
 
 # Plot Data ----------------------------------
 
-EORA21_DATA |> with({
+EORA21_DATA[country %in% EAC5] |> with({
   # Histograms: https://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r
   oldpar <- par(mfrow = c(1, 3), mar = c(2.5, 4, 2.1, 0), lwd = 0.5) # bottom, left, top, right
   # VA
@@ -1767,19 +1779,19 @@ EORA21_DATA |> with({
        col = "orange", add = TRUE)
   abline(v = fmedian(log10(VA)), lwd = 1.5)
   abline(v = fmedian(log10(VA[sector %in% MAN])), col = "red", lwd = 1.5)
-  legend("topleft", c("Overall", "Manufacturing"), lty = 1, lwd = 1.5,
+  legend("topleft", c("Overall Median", "Manufacturing Median"), lty = 1, lwd = 1.5,
          col = c("black", "red"), bty = "n", y.intersp = 2, seg.len = 1)
   # I2E
   I2E <- replace_outliers(I2E, c(0,1))
-  hist(I2E, breaks = seq(0, 1, 0.025), xlab = NA, main = expression('I2E'), xaxt = 'n')
-  axis(side = 1, at = seq(0, 0.1, 0.10)) # https://stackoverflow.com/questions/25997337/in-r-how-to-set-the-breaks-of-x-axis
+  hist(I2E, breaks = seq(0, 1, 0.025), xlab = NA, main = expression('Backward GVC Integration (VS/I2E)'))
+  # axis(side = 1, at = seq(0, 0.1, 0.10)) # https://stackoverflow.com/questions/25997337/in-r-how-to-set-the-breaks-of-x-axis
   hist(I2E[sector %in% MAN], breaks = seq(0,1,0.025), xlab = NA, xlim = c(0, 0.75), 
        col = "orange", add = TRUE)
   abline(v = fmedian(I2E), lwd = 1.5)
   abline(v = fmedian(I2E[sector %in% MAN]), col = "red", lwd = 1.5)
   # E2R
   E2R <- replace_outliers(E2R, c(0,0.75))
-  hist(E2R, breaks = seq(0,0.75,0.025), xlab = NA, main = expression('E2R'))
+  hist(E2R, breaks = seq(0,0.75,0.025), xlab = NA, main = expression('Forward GVC Integration (VS1/E2R)'))
   hist(E2R[sector %in% MAN], breaks = seq(0,0.75,0.025), xlab = NA, xlim = c(0, 0.75), 
        col = "orange", add = TRUE)
   abline(v = fmedian(E2R), lwd = 1.5)
@@ -1787,12 +1799,12 @@ EORA21_DATA |> with({
   par(oldpar)
 })
 
-dev.copy(pdf, "Figures/REV/GROWTH_REG_Hists.pdf", width = 10.27, height = 4)
+dev.copy(pdf, "Figures/REV/EORA21_GROWTH_REG_Hists.pdf", width = 10.27, height = 4)
 dev.off()
 
 
 # TS Charts
-EORA21_DATA |> index_by(country, sector, year)  |> with({
+EORA21_DATA[country %in% EAC5] |> index_by(country, sector, year)  |> with({
   oldpar <- par(mfrow = c(1, 3), mar = c(4.5, 2.5, 2.1, 1.5)) # bottom, left, top, right
   mat <- psmat(log10(VA))
   man_sec <- substr(rownames(mat), 5, 7) %in% MAN
@@ -1803,18 +1815,18 @@ EORA21_DATA |> index_by(country, sector, year)  |> with({
   legend("topleft", c("Overall Median", "Manufacturing Median"), lty = 1, lwd = 1.5,
          col = c("black", "red"), bty = "n", y.intersp = 1.5, seg.len = 1)
   mat <- psmat(I2E) |> replace_outliers(c(0, 1))
-  plot(mat, xlab = "Year", ylab = NA, main = expression('I2E'), colours = colour)  
+  plot(mat, xlab = "Year", ylab = NA, main = expression('Backward GVC Integration (VS/I2E)'), colours = colour)  
   fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
   fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
   mat <- psmat(E2R) |> replace_outliers(c(0, 1))
-  plot(mat, xlab = "Year", ylab = NA, main = expression('E2R'), colours = colour)  
+  plot(mat, xlab = "Year", ylab = NA, main = expression('Forward GVC Integration (VS1/E2R)'), colours = colour)  
   fmedian(mat) %>% lines(as.integer(names(.)), ., lwd = 1.5)
   fmedian(mat[man_sec, ]) %>% lines(as.integer(names(.)), ., col = "red", lwd = 1.5)
   par(oldpar)
   rm(mat, man_sec, colour)
 })
 
-dev.copy(pdf, "Figures/REV/GROWTH_REG_TS.pdf", width = 10.27, height = 5)
+dev.copy(pdf, "Figures/REV/EORA21_GROWTH_REG_TS.pdf", width = 10.27, height = 5)
 dev.off()
 
 
@@ -1827,9 +1839,9 @@ fastverse_extend(fixest, robustbase)
 
 # Normal FEOLS
 feols(log(VA) ~ L(log(gvcb), 0:2) + L(log(gvcf), 0:2) | year^country + year^sector + country^sector, 
-      data = EORA21_DATA[country %in% EAC5])
+      data = WDR_EORA15_DATA[country %in% EAC5])
 
-feols(Dlog(VA) ~ L(Dlog(gvcb), 0:2) + L(Dlog(gvcf), 0:2), #  | country^sector 
+feols(Dlog(VA) ~ L(Dlog(gvcb), 0:2) + L(Dlog(gvcf), 0:2), # | year^country + year^sector,
       data = EORA21_DATA[country %in% EAC5])
 
 feols(log(VA) ~ L(log(I2E), 0:2) + L(log(E2R), 0:2) | year^country + year^sector + country^sector, 
@@ -1847,6 +1859,23 @@ lmrob(VA ~ I2E + L1.I2E + L2.I2E + E2R + L1.E2R + L2.E2R, #  | country^sector
       data = EORA21_DATA[country %in% EAC5, L(fdiff(list(VA = VA, I2E = I2E, E2R = E2R), log = TRUE), 0:2)] |> replace_inf(), setting = "KS2014", k.max = 10000)
 
 # Now EMERGING
+
+# No Dynamics
+
+feols(log(VA) ~ log(gvcb) + log(gvcf) | year^country + year^sector + country^sector, 
+      data = EM_DATA[country %in% EAC5])
+
+feols(Dlog(VA) ~ Dlog(gvcb) + Dlog(gvcf), 
+      data = EM_DATA[country %in% EAC5])
+
+feols(log(VA) ~ log(I2E) + log(E2R) | year^country + year^sector + country^sector, 
+      data = EM_DATA[country %in% EAC5])
+
+feols(Dlog(VA) ~ Dlog(I2E) + Dlog(E2R), 
+      data = EM_DATA[country %in% EAC5])
+
+
+# With Dynamics
   
 feols(log(VA) ~ L(log(gvcb), 0:2) + L(log(gvcf), 0:2) | year^country + year^sector + country^sector, 
       data = EM_DATA[country %in% EAC5])
@@ -1860,6 +1889,8 @@ feols(log(VA) ~ L(log(I2E), 0:2) + L(log(E2R), 0:2) | year^country + year^sector
 feols(Dlog(VA) ~ L(Dlog(I2E), 0:2) + L(Dlog(E2R), 0:2), 
       data = EM_DATA[country %in% EAC5])
   
+
+
 # Robust Difference Estimates
 
 lmrob(VA ~ gvcb + L1.gvcb + L2.gvcb + gvcf + L1.gvcf + L2.gvcf, setting = "KS2014", k.max = 10000,
@@ -1879,7 +1910,10 @@ GVC_INSTR_DATA <- qread("Data/GVC_INSTR_DATA.qs")
 
 EORA21_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join))
 WDR_EORA15_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join))
+EM_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EMERGING", -source, -.join)) # , how = "full", column = TRUE |> View()
 # EORA21_DATA |> num_vars() |> pwcor()
+
+EORA21_DATA[country %in% EAC5, pwcor(gvcf, e2r)]
 
 # First stages -> Weak IV for EAC, maybe need to run EAC specific regressions
 feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
@@ -1892,20 +1926,206 @@ feols(log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^yea
 feols(log(gvcf) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year + sector^year, 
       data = WDR_EORA15_DATA[country %in% EAC5])
 
-EM_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EMERGING", -source, -.join))
-
 feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
       data = EM_DATA[country %in% EAC5])
 
 
-# FULL 2SLS
+# FULL 2SLS Results --------------------------------------------------------------------------------------------------
+
+# No Dynamics: Backward GVC Integration
+models_I2E <- list(
+  full_sample = list(
+    OLS_I2E_EORA21 = feols(log(VA) ~ log(gvcb) | country^sector + country^year + sector^year, 
+                          data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_K_I2E_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_CS_I2E_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat), 
+                             data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_B_I2E_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    OLS_I2E_EORA15 = feols(log(VA) ~ log(gvcb) | country^sector + country^year + sector^year, 
+                           data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_K_I2E_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_CS_I2E_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat), 
+                            data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_B_I2E_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    OLS_I2E_EM = feols(log(VA) ~ log(gvcb) | country^sector + country^year + sector^year,
+                         data = EM_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_K_I2E_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat_tiv),
+                          data = EM_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_CS_I2E_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat),
+                          data = EM_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_B_I2E_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv),
+                          data = EM_DATA[country %in% EAC5], vcov = DK ~ year)
+  ),
+  manufacturing_sample = list(
+    OLS_I2E_EORA21 = feols(log(VA) ~ log(gvcb) | country^sector + country^year + sector^year, 
+                           data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_K_I2E_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_CS_I2E_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat), 
+                            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_B_I2E_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    OLS_I2E_EORA15 = feols(log(VA) ~ log(gvcb) | country^sector + country^year + sector^year, 
+                           data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_K_I2E_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_CS_I2E_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat), 
+                            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_B_I2E_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    OLS_I2E_EM = feols(log(VA) ~ log(gvcb) | country^sector + country^year + sector^year,
+                       data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_K_I2E_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat_tiv),
+                        data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_CS_I2E_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat),
+                        data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_B_I2E_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv),
+                        data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year)
+  )
+)
+
+etable(models_I2E$full_sample[1:8], headers = names(models_I2E$full_sample[1:8]), 
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p) #  + sargan.p
+etable(models_I2E$manufacturing_sample[1:8], headers = names(models_I2E$manufacturing_sample[1:8]), 
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p) #  + sargan.p
+
+# Exporting
+esttex(models_I2E$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, headers = names(models_I2E$full_sample[1:8]),
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p)
+esttex(models_I2E$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, headers = names(models_I2E$manufacturing_sample[1:8]),
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p)
+
+
+# No Dynamics: Forward GVC Integration
+models_E2R <- list(
+  full_sample = list(
+    OLS_E2R_EORA21 = feols(log(VA) ~ log(e2r) | country^sector + country^year + sector^year, 
+                           data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_K_E2R_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_CS_E2R_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat), 
+                             data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_B_E2R_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5], vcov = DK ~ year),
+    OLS_E2R_EORA15 = feols(log(VA) ~ log(e2r) | country^sector + country^year + sector^year, 
+                           data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_K_E2R_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_CS_E2R_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat), 
+                             data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_B_E2R_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5], vcov = DK ~ year),
+    OLS_E2R_EM = feols(log(VA) ~ log(e2r) | country^sector + country^year + sector^year,
+                       data = EM_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_K_E2R_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat_tiv),
+                        data = EM_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_CS_E2R_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat),
+                         data = EM_DATA[country %in% EAC5], vcov = DK ~ year),
+    IV_B_E2R_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv),
+                        data = EM_DATA[country %in% EAC5], vcov = DK ~ year)
+  ),
+  manufacturing_sample = list(
+    OLS_E2R_EORA21 = feols(log(VA) ~ log(e2r) | country^sector + country^year + sector^year, 
+                           data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_K_E2R_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_CS_E2R_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat), 
+                             data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_B_E2R_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+                            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    OLS_E2R_EORA15 = feols(log(VA) ~ log(e2r) | country^sector + country^year + sector^year, 
+                           data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_K_E2R_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_CS_E2R_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat), 
+                             data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    IV_B_E2R_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+                            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year),
+    OLS_E2R_EM = feols(log(VA) ~ log(e2r) | country^sector + country^year + sector^year,
+                       data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_K_E2R_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat_tiv),
+                        data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_CS_E2R_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat),
+                         data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_B_E2R_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv),
+                        data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year)
+  )
+)
+
+etable(models_E2R$full_sample[1:8], headers = names(models_E2R$full_sample[1:8]), 
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p) #  + sargan.p
+etable(models_E2R$manufacturing_sample[1:8], headers = names(models_E2R$manufacturing_sample[1:8]), 
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p) #  + sargan.p
+
+# Exporting
+esttex(models_E2R$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, headers = names(models_E2R$full_sample[1:8]),
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p)
+esttex(models_E2R$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, headers = names(models_E2R$manufacturing_sample[1:8]),
+       fitstat = ~ . + wh.p + ivfall + ivwaldall.p)
+
+
+
+
+
+
+
+## Experimental ----------------------------------------------------------------------------------------------------
+
+
 mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) + log(i2e_hat_tiv), 
-            data = WDR_EORA15_DATA, vcov = "threeway") # DK ~ year
+            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year)
 summary(mod, stage = 1:2)
 etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
 
-mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv), 
-            data = WDR_EORA15_DATA, vcov = "threeway")
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcf) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+            data = EORA21_DATA[country %in% EAC5 & sector %in% MAN], vcov = DK ~ year)
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) * log(i2e_hat_tiv), 
+            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = "threeway") # DK ~ year
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcf) ~ log(e2r_hat) * log(e2r_hat_tiv), 
+            data = WDR_EORA15_DATA[country %in% EAC5 & sector %in% MAN], vcov = "threeway")
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcb) ~ log(i2e_hat) * log(i2e_hat_tiv), 
+            data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = "threeway") # DK ~ year
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcf) ~ log(e2r_hat) * log(e2r_hat_tiv), 
+            data = EM_DATA[country %in% EAC5 & sector %in% EM_MAN], vcov = "threeway")
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+
+
+# With Dynamics
+mod = feols(Dlog(VA) ~ 0 | country^year + sector^year | L(Dlog(gvcb), 0:2) ~ L(Dlog(i2e_hat), 0:2) + L(Dlog(i2e_hat_tiv), 0:2), 
+            data = EORA21_DATA[country %in% EAC5], vcov = "threeway") # DK ~ year
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | L(log(gvcf), 0:1) ~ L(log(e2r_hat), 0:1) + L(log(e2r_hat_tiv), 0:1), 
+            data = EORA21_DATA[country %in% EAC5], vcov = "threeway")
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | L(log(gvcb), 0:1) ~ L(log(i2e_hat), 0:1) + L(log(i2e_hat_tiv), 0:1), 
+            data = EM_DATA[country %in% EAC5], vcov = "threeway") # DK ~ year
+summary(mod, stage = 1:2)
+etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
+
+mod = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvcf) ~ log(e2r_hat) + log(e2r_hat_tiv), 
+            data = EM_DATA[country %in% EAC5], vcov = "threeway")
 summary(mod, stage = 1:2)
 etable(summary(mod, stage = 1:2), fitstat = ~ . + ivfall + ivwaldall.p)
 
