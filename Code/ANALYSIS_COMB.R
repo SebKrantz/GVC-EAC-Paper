@@ -886,7 +886,7 @@ EAC_GVC_DATA_SEC |>
     labs(x = NULL, y = NULL) +
     theme_bw() + pretty_plot 
   
-ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 5)
+ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 6.5)
 
 
 
