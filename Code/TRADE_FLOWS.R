@@ -68,6 +68,16 @@ EM_ISO3 <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx")$ISO3
 BACI_2d <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
            subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) 
 
+# Examine detailed flows: Largest manufacturing exporter
+BACI_2d |> 
+  subset(between(year, 2010, 2019)) |> 
+  mutate(iso3_o = iif(iso3_o %in% EAC, as.character(iso3_o), "ROW"), 
+         iso3_d = iif(iso3_d %in% EAC, as.character(iso3_d), "ROW")) |> 
+  collap(~iso3_o + iso3_d + code_2d, fsum) |> 
+  subset(code_2d %!in% c(1:28, 71, 74) & iso3_d == "ROW") |> 
+  collap(value ~ iso3_o, fsum) |> 
+  roworder(value)
+
 # BACI_2d |> select(code_2d, product_description, section_code, section_fullname_english) |> 
 #  unique(sort = TRUE) |> View()
 # Sector Classifiction: same as EMERGING!!!
@@ -85,14 +95,15 @@ EAC_BACI_SEC <- BACI_2d |>
 EAC_BACI_MIG <- EAC_BACI_SEC |> subset(iso3_o != iso3_d) |> group_by(iso3_o, iso3_d, year) |> select(value, quantity) |> fsum()
 
 EAC_BACI_AGG <- EAC_BACI_MIG |> 
-  subset(between(year, 2010, 2015)) |> 
+  subset(between(year, 2010, 2019)) |> 
   group_by(iso3_o, iso3_d) |> 
   select(value, quantity) |> fmean() |> 
   transformv(c(value, quantity), `/`, 1e6) |> qDT()
 
 EAC5_BACI_AGG <- EAC_BACI_AGG |> 
   group_by(iso3_o = iif(iso3_o %in% EAC5, iso3_o, "ROW"),
-           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> qDT()
+           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> 
+  subset(iso3_o != iso3_d) |> qDT()
 
 # Ratios: ROW to EAC Trade
 # Imports
@@ -108,11 +119,11 @@ EAC5_BACI_AGG[iso3_o == "ROW" | iso3_d == "ROW", sum(value)] / EAC5_BACI_AGG[iso
 # Trade Flow Diagram
 # With ROW
 migest::mig_chord(EAC_BACI_AGG) # Billions of current USD
-dev.copy(pdf, "Figures/REV/BACI_MIG_2010_15_ROW.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/BACI_MIG_2010_19_ROW.pdf", width = 5, height = 5)
 dev.off()
 # Without ROW
 migest::mig_chord(subset(EAC_BACI_AGG, iso3_o != "ROW" & iso3_d != "ROW")) # Billions of current USD
-dev.copy(pdf, "Figures/REV/BACI_MIG_2010_15.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/BACI_MIG_2010_19.pdf", width = 5, height = 5)
 dev.off()
 
 # Also See Alluvial Plots: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
@@ -132,21 +143,22 @@ EAC_BACI_BSEC <- EAC_BACI_SEC |>
   select(value, quantity) |> 
   fsum(fill = TRUE)
 
-sec = "AGR"
+for (sec in c("AGR", "FBE", "MIN", "MAN")) {
 EAC_BACI_BSEC |> 
   subset(iso3_o != iso3_d) |> 
-  subset(broad_sec == sec & between(year, 2010, 2015)) |> 
+  subset(broad_sec == sec & between(year, 2010, 2019)) |> 
   subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
   group_by(iso3_o, iso3_d) |> 
   select(value, quantity) |> 
-  fmean() |> 
+  fmedian() |> 
   mutate(value = value / 1e6) |> 
-  migest::mig_chord()
+  migest::mig_chord(axis_size = 0.7) # 0.8 for ROW
   # ggplot(aes(y = value, axis1 = iso3_o, axis2 = iso3_d, fill = iso3_o)) +
   #   ggalluvial::geom_alluvium() # +
 
-dev.copy(pdf, sprintf("Figures/REV/BACI_MIG_%s_2010_15.pdf", sec), width = 5, height = 5)
+dev.copy(pdf, sprintf("Figures/REV/BACI_MIG_%s_2010_19.pdf", sec), width = 5, height = 5)
 dev.off()
+}
 
 ####################################
 # IMF DOTS
@@ -189,14 +201,15 @@ EAC_DOT_MIG <- EAC_DOT |>
   colorder(iso3_o, iso3_d)
 
 EAC_DOT_MIG_AGG <- EAC_DOT_MIG |> 
-  subset(between(year, 2010, 2015)) |> 
+  subset(between(year, 2010, 2019)) |> 
   collap(value ~ iso3_o + iso3_d) |> 
   mutate(value = value / 1000) |> 
   as_character_factor() |> qDT()
 
 EAC5_DOT_MIG_AGG <- EAC_DOT_MIG_AGG |> 
   group_by(iso3_o = iif(iso3_o %in% EAC5, iso3_o, "ROW"),
-           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> qDT()
+           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |>
+  subset(iso3_o != iso3_d) |> qDT()
 
 # Ratios: ROW to EAC Trade
 # Imports
@@ -213,12 +226,12 @@ EAC5_DOT_MIG_AGG[iso3_o == "ROW" | iso3_d == "ROW", sum(value)] / EAC5_DOT_MIG_A
 # library(migest)
 # With ROW
 migest::mig_chord(EAC_DOT_MIG_AGG) # Billions of Current USD
-dev.copy(pdf, "Figures/REV/DOT_MIG_2010_15_ROW.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/DOT_MIG_2010_19_ROW.pdf", width = 5, height = 5)
 dev.off()
 
 # Without ROW
 migest::mig_chord(subset(EAC_DOT_MIG_AGG, iso3_o != "ROW" & iso3_d != "ROW")) # Billions of Current USD
-dev.copy(pdf, "Figures/REV/DOT_MIG_2010_15.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/DOT_MIG_2010_19.pdf", width = 5, height = 5)
 dev.off()
 
 ####################################
@@ -242,14 +255,15 @@ EAC_EORA_MIG <- EAC_EORA |>
   subset(iso3_o != iso3_d)
 
 EAC_EORA_MIG_AGG <- EAC_EORA_MIG |> 
-  subset(between(year, 2010, 2015)) |> 
+  subset(between(year, 2010, 2019)) |> 
   collap(value ~ iso3_o + iso3_d) |> 
   mutate(value = value / 1e6) |> 
   as_character_factor() |> qDT()
 
 EAC5_EORA_MIG_AGG <- EAC_EORA_MIG_AGG |> 
   group_by(iso3_o = iif(iso3_o %in% EAC5, iso3_o, "ROW"),
-           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> qDT()
+           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> 
+  subset(iso3_o != iso3_d) |> qDT()
 
 # Ratios: ROW to EAC Trade
 # Imports
@@ -266,12 +280,12 @@ EAC5_EORA_MIG_AGG[iso3_o == "ROW" | iso3_d == "ROW", sum(value)] / EAC5_EORA_MIG
 # library(migest)
 # With ROW
 migest::mig_chord(EAC_EORA_MIG_AGG) # USD Billions at Basic Prices
-dev.copy(pdf, "Figures/REV/EORA_MIG_2010_15_ROW.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/EORA_MIG_2010_19_ROW.pdf", width = 5, height = 5)
 dev.off()
 
 # Without ROW
 migest::mig_chord(subset(EAC_EORA_MIG_AGG, iso3_o != "ROW" & iso3_d != "ROW"))
-dev.copy(pdf, "Figures/REV/EORA_MIG_2010_15.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/EORA_MIG_2010_19.pdf", width = 5, height = 5)
 dev.off()
 
 # Now looking at specific sectors
@@ -294,15 +308,15 @@ EAC_EORA_BSEC <- EORA$decomps |> get_elem("ESR") |>
   
 for (sec in c("AGR", "FBE", "MIN", "MAN", "SRV")) {
 EAC_EORA_BSEC |> 
-  subset(broad_sec == sec & between(year, 2010, 2015)) |> 
-  # subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
+  subset(broad_sec == sec & between(year, 2010, 2019)) |> 
+  subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
   group_by(iso3_o, iso3_d) |> 
   select(value) |> 
   fmean() |> 
   mutate(value = value / 1e6) |> 
-  migest::mig_chord()
+  migest::mig_chord(axis_size = 0.7) # 0.8 for ROW
 
-dev.copy(pdf, sprintf("Figures/REV/EORA_MIG_%s_2010_15_ROW.pdf", sec), width = 5, height = 5)
+dev.copy(pdf, sprintf("Figures/REV/EORA_MIG_%s_2010_19.pdf", sec), width = 5, height = 5)
 dev.off()
 }
 
@@ -327,14 +341,15 @@ EAC_EM_MIG <- EAC_EM |>
   subset(iso3_o != iso3_d)
 
 EAC_EM_MIG_AGG <- EAC_EM_MIG |> 
-  subset(between(year, 2010, 2015)) |> 
+  subset(between(year, 2010, 2019)) |> 
   collap(value ~ iso3_o + iso3_d) |> 
   mutate(value = value / 1e3) |> 
   as_character_factor() |> qDT()
 
 EAC5_EM_MIG_AGG <- EAC_EM_MIG_AGG |> 
   group_by(iso3_o = iif(iso3_o %in% EAC5, iso3_o, "ROW"),
-           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> qDT()
+           iso3_d = iif(iso3_d %in% EAC5, iso3_d, "ROW")) |> fsum() |> 
+  subset(iso3_o != iso3_d) |> qDT()
 
 # Ratios: ROW to EAC Trade
 # Imports
@@ -351,12 +366,12 @@ EAC5_EM_MIG_AGG[iso3_o == "ROW" | iso3_d == "ROW", sum(value)] / EAC5_EM_MIG_AGG
 # library(migest)
 # With ROW
 migest::mig_chord(EAC_EM_MIG_AGG) # USD Billions at Basic Prices
-dev.copy(pdf, "Figures/REV/EM_MIG_2010_15_ROW.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/EM_MIG_2010_19_ROW.pdf", width = 5, height = 5)
 dev.off()
 
 # Without ROW
 migest::mig_chord(subset(EAC_EM_MIG_AGG, iso3_o != "ROW" & iso3_d != "ROW"))
-dev.copy(pdf, "Figures/REV/EM_MIG_2010_15.pdf", width = 5, height = 5)
+dev.copy(pdf, "Figures/REV/EM_MIG_2010_19.pdf", width = 5, height = 5)
 dev.off()
 
 # Now looking at specific sectors
@@ -379,15 +394,15 @@ EAC_EM_BSEC <- EM$decomps |> get_elem("ESR") |>
 
 for (sec in c("AGR", "FBE", "MIN", "MAN", "SRV")) {
   EAC_EM_BSEC |> 
-    subset(broad_sec == sec & between(year, 2010, 2015)) |> 
+    subset(broad_sec == sec & between(year, 2010, 2019)) |> 
     subset(iso3_o != "ROW" & iso3_d != "ROW") |> 
     group_by(iso3_o, iso3_d) |> 
     select(value) |> 
     fmean() |> 
     mutate(value = value / 1e3) |> 
-    migest::mig_chord()
+    migest::mig_chord(axis_size = 0.7) # 0.8 for ROW
   
-  dev.copy(pdf, sprintf("Figures/REV/EM_MIG_%s_2010_15.pdf", sec), width = 5, height = 5)
+  dev.copy(pdf, sprintf("Figures/REV/EM_MIG_%s_2010_19.pdf", sec), width = 5, height = 5)
   dev.off()
 }
 
@@ -445,10 +460,10 @@ rowbind(BACI = EAC_BACI_MIG |> select(-quantity),
     geom_line() +
     # geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
     # scale_y_continuous(limits = c(10, 30)) + 
-    theme_bw() + labs(y = "EAC-ROW/Inner-EAC Trade, 5 Year MA", 
-                      x = "Year", colour = "Database")
+    theme_bw() + labs(y = "EAC5-ROW/Inner-EAC5 Trade, 5 Year MA", 
+                      x = NULL, colour = "Database")
 
-ggsave("Figures/REV/ROW_EAC5_Trade_Ratios_5YMA.pdf", width = 8, height = 4)  
+ggsave("Figures/REV/ROW_EAC5_Trade_Ratios_5YMA.pdf", width = 7, height = 3.3)  
   
 
 # Exports and Imports
@@ -466,7 +481,7 @@ EAC5_TRADE_Share <- rowbind(
         group_by(., source, iso3_o = iso3_o %in% EAC5, iso3_d = iso3_d %in% EAC5, year) |> fsum() |> 
           mutate(value = fsum(value, list(source, iso3_o, year), TRA = "/")) |> 
           subset(iso3_o & iso3_d, -iso3_o, -iso3_d) |> 
-          mutate(country = "EAC")
+          mutate(country = "EAC5")
       ),
       `Import Origin` = rowbind(
         mutate(., value = fsum(value, list(source, iso3_d, year), TRA = "/")) |>
@@ -475,7 +490,7 @@ EAC5_TRADE_Share <- rowbind(
         group_by(., source, iso3_o = iso3_o %in% EAC5, iso3_d = iso3_d %in% EAC5, year) |> fsum() |> 
           mutate(value = fsum(value, list(source, iso3_d, year), TRA = "/")) |> 
           subset(iso3_o & iso3_d, -iso3_o, -iso3_d) |> 
-          mutate(country = "EAC")
+          mutate(country = "EAC5")
       ),
       idcol = "share"
     )}
@@ -484,7 +499,7 @@ EAC5_TRADE_Share <- rowbind(
 EAC5_TRADE_Share |> 
   roworderv() |> 
   mutate(value = BY(value, list(share, source, country), frollmean, 5, na.rm = TRUE),
-         country = factor(country, levels = c(EAC5, "EAC"))) |> 
+         country = factor(country, levels = c(EAC5, "EAC5"))) |> 
   subset(year >= 2000) |> 
   ggplot(aes(x = year, y = value, color = country, linetype = source)) +
   geom_line() + 
@@ -494,7 +509,7 @@ EAC5_TRADE_Share |>
   scale_x_continuous(n.breaks = 6) +
   guides(color = guide_legend(title = "Country:  ", nrow = 1)) +
   scale_color_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
-  labs(x = NULL, y = "EAC Share, 5-Year MA", linetype = " Source:  ") +
+  labs(x = NULL, y = "EAC5 Trade Share, 5-Year MA", linetype = " Source:  ") +
   theme_bw() + pretty_plot 
 
 ggsave("Figures/REV/GT_EAC5_shares_ts.pdf", width = 8.5, height = 4)
@@ -510,20 +525,24 @@ rowbind(BACI = EAC_BACI_BSEC |> select(-quantity),
            inner_eac = iso3_o %in% EAC5 & iso3_d %in% EAC5) |> 
   num_vars() |> fsum() |>
   pivot(1:3, names = "inner_eac", how = "w") |> 
-  mutate(ratio = replace_outliers(`FALSE`/`TRUE`, 30, NA, "max")) |> # View()
+  mutate(ratio = `FALSE`/`TRUE`) |> # View()
   extract(data != "EMERGING", ratio := frollmean(ratio, 5, na.rm = TRUE), by = .(data, broad_sec)) |> 
   subset(year >= 2000 & year <= 2021 & broad_sec %in% c("AGR", "FBE", "MAN")) |> # "MIN"
+  mutate(broad_sec = recode_char(broad_sec, 
+                                 AGR = "Agriculture & Livestock", 
+                                 FBE = "Foods & Beverages", 
+                                 MAN = "Manufactured Goods")) |> 
   ggplot(aes(x = year, y = ratio, colour = data)) + 
     geom_line() + 
     # geom_smooth(se = FALSE, linewidth = 0.5, linetype = 2) +
-    facet_wrap(~broad_sec, scales = "fixed", nrow = 1) +
+    facet_wrap(~broad_sec, scales = "free_y", nrow = 1) +
     scale_colour_brewer(palette = "Paired", direction = -1) +
-    scale_y_continuous(n.breaks = 10) +
-    theme_bw() + labs(y = "EAC-ROW/Inner-EAC Trade, 5 Year MA", 
-                      x = "Year", colour = "Database:    ") +
+    scale_y_continuous(n.breaks = 10, limits = c(0, NA)) +
+    theme_bw() + labs(y = "     EAC5-ROW/Inner-EAC5 Trade, 5 Year MA", 
+                      x = NULL, colour = "Database:    ") +
     theme(legend.position = "top")
 
-ggsave("Figures/REV/ROW_EAC_Trade_Ratios_Sec_5YMA.pdf", width = 8, height = 4)  
+ggsave("Figures/REV/ROW_EAC_Trade_Ratios_Sec_5YMA.pdf", width = 8, height = 3.5)  
 
 
 # Separately by Country: Only BACI
@@ -535,12 +554,12 @@ EAC_BACI_BSEC_SH <- EAC_BACI_BSEC |>
         summarise(exports = fsum(value)) %>%
         rowbind(subset(., country %in% EAC5) |> 
                 collap(exports ~ broad_sec + year + inner_eac, fsum) |> 
-                mutate(country = "EAC")),      
+                mutate(country = "EAC5")),      
       group_by(., broad_sec, year, inner_eac, country = iso3_d) |> 
         summarise(imports = fsum(value)) %>% 
         rowbind(subset(., country %in% EAC5) |> 
                 collap(imports ~ broad_sec + year + inner_eac, fsum) |> 
-                mutate(country = "EAC")),
+                mutate(country = "EAC5")),
       how = "full") 
   } |> 
   # subset(GRPN(list(data, broad_sec, year, country)) == 2L) |> 
@@ -555,34 +574,38 @@ EAC_BACI_BSEC_SH <- EAC_BACI_BSEC |>
 
 # Plot
 EAC_BACI_BSEC_SH |> 
-  subset(year >= 2000 & year <= 2021 & country %in% c(EAC5, "EAC") & 
+  subset(year >= 2000 & year <= 2021 & country %in% c(EAC5, "EAC5") & 
            variable %in% c("exports_share_ma", "imports_share_ma")) |> 
   mutate(variable = set_attr(variable, "levels", recode_char(levels(variable), 
          exports_share_ma = "Exports", imports_share_ma = "Imports")), 
-         country = factor(country, levels = c(EAC5, "EAC"))) |> 
+         country = factor(country, levels = c(EAC5, "EAC5")), 
+         broad_sec = recode_char(broad_sec, 
+                                 AGR = "Agriculture & Livestock", 
+                                 FBE = "Foods & Beverages", 
+                                 MAN = "Manufactured Goods")) |> 
   
   ggplot(aes(x = year, y = value, colour = country)) + 
   geom_line() + 
   facet_grid(variable ~ broad_sec, scales = "free_y") +
   guides(color = guide_legend(title = "Country:  ", nrow = 1)) +
   scale_color_manual(values = c(brewer.pal(5, "Dark2"), "black")) +
-  scale_y_continuous(n.breaks = 10) +
-  theme_bw() + labs(y = "EAC Trade Share, 5 Year MA", 
-                    x = "Year", colour = "Country:    ") +
+  scale_y_continuous(n.breaks = 10, labels = percent) +
+  theme_bw() + labs(y = "EAC5 Trade Share, 5 Year MA", 
+                    x = NULL, colour = "Country:    ") +
   theme(legend.position = "top")
   
 ggsave("Figures/REV/GT_EAC5_shares_sec_ts.pdf", width = 8.5, height = 5)
 
 # Examine: 
 EAC_BACI_BSEC_SH |> 
-  subset((year == 2000 | year == 2020) & country %in% c(EAC5, "EAC") & 
+  subset((year == 2000 | year == 2020) & country %in% c(EAC5, "EAC5") & 
            variable %in% c("exports_share_ma", "imports_share_ma")) |> 
   pivot(c("broad_sec", "variable"), names = c("country", "year"), how = "w") |> 
   roworderv()
 
 # Stats:
 EAC_BACI_BSEC_SH |> 
-  subset(year >= 2010 & year <= 2020 & country %in% c(EAC5, "EAC") & 
+  subset(year >= 2010 & year <= 2020 & country %in% c(EAC5, "EAC5") & 
            variable %in% c("exports_share", "imports_share")) |> View()
   collap(value ~ broad_sec + country + variable) |> 
   pivot(c("broad_sec", "variable"), names = "country", how = "w")
