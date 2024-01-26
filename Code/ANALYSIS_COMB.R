@@ -618,7 +618,7 @@ VS_EAC <- VS_EAC_BIL |>
       subset(EAC_share, -EAC_share),
     collap(., value ~ source + year + EAC_share, fsum) |> 
       mutate(value = fsum(value, list(source, year), TRA = "/"), 
-             country = "EAC") |> 
+             country = "EAC5") |> 
       subset(EAC_share, -EAC_share)
   )}
 
@@ -633,7 +633,7 @@ VS1_EAC <- rowbind(EMERGING = EM$VS1_BIL,
     subset(EAC_importer, -EAC_importer, -VS1),
     collap(., VS1 ~ source + year + EAC_importer, fsum) |> 
     mutate(value = fsum(VS1, list(source, year), TRA = "/"), 
-           country = "EAC") |> 
+           country = "EAC5") |> 
     subset(EAC_importer, -EAC_importer, -VS1)
   )}
 
@@ -667,7 +667,7 @@ FD_exports_EAC_VA <- list(EORA = EORA_DET, EMERGING = EM_DET) %>%
         subset(EAC_exporter, -EAC_exporter),
       collap(., value ~ source + year + EAC_exporter, fsum) |> 
         mutate(value = fsum(value, list(source, year), TRA = "/"), 
-               importer = "EAC") |> 
+               importer = "EAC5") |> 
         subset(EAC_exporter, -EAC_exporter)
     )} |> 
   rename(importer = country)})
@@ -679,7 +679,7 @@ EAC_GVC_DATA <- rowbind(VS = VS_EAC,
                         VAFI = VAFI_EAC, idcol = "variable")
 # Plot as in current paper
 EAC_GVC_DATA |>
-  mutate(country = factor(country, levels = c(EAC5, "EAC"))) |>
+  mutate(country = factor(country, levels = c(EAC5, "EAC5"))) |>
   subset(source == "EMERGING") |> 
   # subset(source == "EORA" & between(year, 2005, 2015)) |>
 
@@ -692,7 +692,7 @@ EAC_GVC_DATA |>
 
 # Adding weighted linear trend
 EAC_GVC_DATA <- EAC_GVC_DATA |> 
-  mutate(country = factor(country, levels = c(EAC5, "EAC")), 
+  mutate(country = factor(country, levels = c(EAC5, "EAC5")), 
          weight = nif(source == "EMERGING" & year == 2010L, 2, source == "EORA" & year > 2015, 0.1, default = 1)) |> 
   group_by(variable, source, country) |> 
   mutate(as.list(set_names(coef(lm(value ~ year, weights = weight)), c("icpt", "slope")))) |>
@@ -701,8 +701,8 @@ EAC_GVC_DATA <- EAC_GVC_DATA |>
 
 # Improved plot
 EAC_GVC_DATA |> 
-  rename(value = Value, trend = "MM Trend") |> 
-  pivot(1:4, values = c("Value", "MM Trend"), names = list("measure", "value")) |> 
+  rename(value = Value, trend = "Trend") |> 
+  pivot(1:4, values = c("Value", "Trend"), names = list("measure", "value")) |> 
   ggplot(aes(x = year, y = value, color = country, linetype = measure)) +
   geom_line() + 
   facet_grid2(source ~ variable, scales = "free", independent = "all") + 
@@ -714,8 +714,7 @@ EAC_GVC_DATA |>
   labs(x = NULL, y = NULL, linetype = "        Measure:  ") +
   theme_bw() + pretty_plot 
 
-dev.copy(pdf, "Figures/REV/VA_EAC5_shares_ts.pdf", width = 11.69, height = 6)
-dev.off()
+ggsave("Figures/REV/VA_EAC5_shares_ts.pdf", width = 11.69, height = 6)
 
 # Plotting slope coefficients
 EAC_GVC_DATA |> 
@@ -733,11 +732,10 @@ EAC_GVC_DATA |>
     labs(x = NULL, y = NULL) +
     theme_bw() + pretty_plot 
 
-dev.copy(pdf, "Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
-dev.off()
+ggsave("Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
 
 
-# Analysis at the sector-level using broad-sector ICIO's: ----------------------------
+# Analysis at the sector-level using broad-sector ICIO's: 
 
 # (1) EAC Share in VS
 VS_EAC_BIL_SEC <- 
@@ -759,7 +757,7 @@ VS_EAC_SEC <- VS_EAC_BIL_SEC |>
         subset(EAC_share, -EAC_share),
       collap(., value ~ source + year + sector + EAC_share, fsum) |> 
         mutate(value = fsum(value, list(source, year, sector), TRA = "/"), 
-               country = "EAC") |> 
+               country = "EAC5") |> 
         subset(EAC_share, -EAC_share)
     )}
 
@@ -774,7 +772,7 @@ VS1_EAC_SEC <- rowbind(EMERGING = EM$VS1_BIL_SEC,
         subset(EAC_importer, -EAC_importer, -VS1),
       collap(., VS1 ~ source + year + sector + EAC_importer, fsum) |> 
         mutate(value = fsum(VS1, list(source, year, sector), TRA = "/"), 
-               country = "EAC") |> 
+               country = "EAC5") |> 
         subset(EAC_importer, -EAC_importer, -VS1)
     )}
 
@@ -808,7 +806,7 @@ FD_exports_EAC_VA_SEC <- list(EORA = EORA, EMERGING = EM) %>%
             subset(EAC_exporter, -EAC_exporter),
           collap(., value ~ source + year + sector + EAC_exporter, fsum) |> 
             mutate(value = fsum(value, list(source, year, sector), TRA = "/"), 
-                   importer = "EAC") |> 
+                   importer = "EAC5") |> 
             subset(EAC_exporter, -EAC_exporter)
         )} |> 
       rename(importer = country)})
@@ -824,7 +822,7 @@ EAC_GVC_DATA_SEC <- rowbind(VS = VS_EAC_SEC,
 
 # Plot as in current paper
 EAC_GVC_DATA_SEC |>
-  mutate(country = factor(country, levels = c(EAC5, "EAC"))) |>
+  mutate(country = factor(country, levels = c(EAC5, "EAC5"))) |>
   subset(source == "EMERGING") |> # & between(year, 2005, 2015)) |>
   
   ggplot(aes(x = year, y = value, color = variable)) +
@@ -837,7 +835,7 @@ EAC_GVC_DATA_SEC |>
 
 # Adding weighted linear trend
 EAC_GVC_DATA_SEC <- EAC_GVC_DATA_SEC |> 
-  mutate(country = factor(country, levels = c(EAC5, "EAC")),
+  mutate(country = factor(country, levels = c(EAC5, "EAC5")),
          weight = nif(source == "EMERGING" & year == 2010L, 2, source == "EORA" & year > 2015, 0.1, default = 1)) |> 
   group_by(variable, source, country, sector) |> 
   mutate(as.list(set_names(coef(lm(value ~ year, weights = weight)), c("icpt", "slope")))) |> 
@@ -847,8 +845,8 @@ EAC_GVC_DATA_SEC <- EAC_GVC_DATA_SEC |>
 # Improved plot
 EAC_GVC_DATA_SEC |> 
   subset(source == "EMERGING") |> 
-  rename(value = Value, trend = "MM Trend") |> 
-  pivot(1:5, values = c("Value", "MM Trend"), names = list("measure", "value")) |> 
+  rename(value = Value, trend = "Trend") |> 
+  pivot(1:5, values = c("Value", "Trend"), names = list("measure", "value")) |> 
   ggplot(aes(x = year, y = value, color = country, linetype = measure)) +
   geom_line() + 
   facet_grid2(sector ~ variable, scales = "free", independent = "all") + 
@@ -860,8 +858,7 @@ EAC_GVC_DATA_SEC |>
   labs(x = NULL, y = NULL, linetype = "        Measure:  ") +
   theme_bw() + pretty_plot 
 
-dev.copy(pdf, "Figures/REV/EM_VA_EAC5_shares_ts_sec.pdf", width = 11.69, height = 10)
-dev.off()
+ggsave("Figures/REV/EM_VA_EAC5_shares_ts_sec.pdf", width = 11.69, height = 10)
 
 # Plotting slope coefficients
 
@@ -884,8 +881,7 @@ EAC_GVC_DATA_SEC |>
     labs(x = NULL, y = NULL) +
     theme_bw() + pretty_plot 
   
-dev.copy(pdf, "Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 7)
-dev.off()
+ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 7)
 
 
 
