@@ -121,7 +121,7 @@ REG_AGG <- REG_SEC |> group_by(source, year, region) |> num_vars() |> fsum()
 # load("Data/EAC_EMERGING_data_broad_sec.RData", envir = EM)
 # EM$y <- colnames(EM$out_ag)
 
-# 5 broad sectors with full country resolution
+# 5 broad sectors with full country resolution: for Forward GVC Participation
 EM <- new.env()
 load("Data/EAC_EMERGING_data_Countries_Agg_Sectors.RData", envir = EM)
 
@@ -434,7 +434,7 @@ for (x in list(EM, EORA)) {
 }
 rm(x, i)
 
-# Joint Plot
+# Joint Plot (Traditional VS1 Measure)
 rowbind(EMERGING = EM$VS1_AGG |> select(year, country, E2R = VS1_Share),
         EORA = EORA$VS1_AGG |> select(year, country, E2R = VS1_Share),
         WDR_EORA = WDR_POS_AGG |> compute(E2R = gvcf / gexp, keep = .c(year, country)),
@@ -442,15 +442,15 @@ rowbind(EMERGING = EM$VS1_AGG |> select(year, country, E2R = VS1_Share),
   subset(country %in% EAC6 & year >= 2000) |> 
   ggplot(aes(x = year, y = E2R, colour = source, linetype = source)) +
   geom_line() +
+  scale_y_continuous(labels = percent) +
   facet_wrap( ~ country) + 
   labs(y = "Forward GVC Participation (VS1)", x = "Year", 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/VS1_shares_ag_ts.pdf", width = 10, height = 5)
-dev.off()
+ggsave("Figures/REV/VS1_shares_ag_ts.pdf", width = 10, height = 5)
 
-# Time Series Area Plot
+# Time Series Area Plot (Traditional VS1)
 EORA$VS1_BIL |> 
   subset(country %in% EAC6) %>% 
   ggplot(aes(x = year, y = VS1_Share, fill = importer)) +
@@ -461,20 +461,20 @@ EORA$VS1_BIL |>
   scale_x_continuous(expand = c(0,0)) + rbsc2 +
   theme_minimal() + pretty_plot + theme(legend.position = "right")
 
-# Now Joint Plot Using ICIO Data (Country-sector level decomposition with full country 5-sector tables)
+# Now Joint Plot Using ICIO Data (STATA) (Country-sector level decomposition with full country 5-sector tables)
 rowbind(REG_AGG |> compute(E2R = gvcf / gexp, keep = .c(source, year, region)),
         WDR_POS_AGG |> compute(E2R = gvcf / gexp, region = country, keep = .c(source, year))) |> 
   subset(region %in% EAC6 & year >= 2000) |> 
   mutate(region = factor(region, levels = EAC6)) |> 
   ggplot(aes(x = year, y = E2R, colour = source, linetype = source)) +
   geom_line() +
+  scale_y_continuous(labels = percent) +
   facet_wrap( ~ region) + 
-  labs(y = "Forward GVC Participation (VS1)", x = "Year", 
+  labs(y = "Forward GVC Participation (VS1)", x = NULL, 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/GVCF_shares_ag_ts.pdf", width = 10, height = 5)
-dev.off()
+ggsave("Figures/REV/GVCF_shares_ag_ts.pdf", width = 10, height = 5)
 
 # Correct Country-Level metric (EM Average)
 GVCF_EM_correct <- REG_AGG[source == "EMERGING" & year >= 2015, .(E2R = mean(gvcf / gexp)), by = region] |> qM(1) |> drop()
@@ -501,8 +501,7 @@ rowbind(EMERGING = EM$VS1_BIL |> select(year, country, importer, E2R = VS1_Share
   labs(x = "Database", y = "Share of Re-Exported Exports Content", fill = "Partner") +
   theme_bw() + pretty_plot + rbsc2 + theme(legend.position = "right")
 
-dev.copy(pdf, "Figures/REV/VS1_shares_ctry.pdf", width = 12, height = 5.3)
-dev.off()
+ggsave("Figures/REV/VS1_shares_ctry.pdf", width = 12, height = 5.3)
 
 # Bilateral Sector-Level Breakdown: Uganda and Kenya
 VS1_UGA_KEN_SEC <- EM$VS1_BIL_SEC |> 
@@ -585,7 +584,7 @@ EM$VS1_BIL_SEC |>
   # guides(fill = guide_legend(ncol = 1)) + 
   scale_y_continuous(labels = percent, 
                      breaks = extended_breaks(10), expand = c(0,0)) +  # , limits = c(0, 1)
-  labs(y = "Share of Re-Exported Content (VS1)", x = "Sector", fill = "Partner") +
+  labs(y = "Share of Re-Exported Content (VS1)", x = "Broad Sector (5-Sector Aggregation)", fill = "Partner") +
   theme_bw() + pretty_plot + rbsc2 + theme(legend.position = "right")
 
 dev.copy(pdf, "Figures/REV/VS1_shares_sec_ctry.pdf", width = 8, height = 5)
