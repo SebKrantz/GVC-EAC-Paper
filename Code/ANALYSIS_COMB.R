@@ -54,7 +54,8 @@ WDR_POS <- fread("/Users/sebastiankrantz/Documents/Data/WDR2020GVCdata/WDR2020_g
             sect_name = fmode(sect_name), 
             across(c(upstreamness, downstreamness), fmean, w = gexp)) |> 
   # collap(~ year + trade + sect, fsum) |> 
-  mutate(source = qF("WDR_EORA")) |> 
+  transform(source = qF("WDR_EORA"), 
+            trade = factor(trade, levels = REG)) |> 
   colorder(source, year, country = trade, sect, sect_name)
 
 WDR_POS_SEC <- WDR_POS |> 
@@ -264,13 +265,13 @@ WDR_POS_AGG |>
   transformv(c(gvc, gvcb, gvcf), `/`, gexp) |> 
   ggplot(aes(x = year, y = gvcb, colour = source, linetype = source)) +
   geom_line() +
+  scale_y_continuous(labels = percent) +
   facet_wrap(~country) + 
-  labs(y = "Backward GVC Participation (VS)", x = "Year", 
+  labs(y = "Backward GVC Participation (VS)", x = NULL, 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/VA_shares_ag_ts.pdf", width = 10, height = 5)
-dev.off()
+ggsave("Figures/REV/VA_shares_ag_ts.pdf", width = 10, height = 5)
 
 # Decomposition by Source
 vs_agg_share <- AGG[source == "EMERGING" & year >= 2015, .(VSS = mean(gvcb/gexp)), by = country] |> 
@@ -305,8 +306,7 @@ VS_EAC_BIL |>
     labs(x = "Database", y = "Share of Foreign Exports Content", fill = "Source") +
     theme_bw() + pretty_plot + rbsc2 + theme(legend.position = "right")
 
-dev.copy(pdf, "Figures/REV/VA_shares_ctry.pdf", width = 12, height = 5)
-dev.off()
+ggsave("Figures/REV/VA_shares_ctry.pdf", width = 12, height = 5)
 
 # Sector-Level decomposition
 VS_shares_sec <- BIL_SEC |> 
@@ -337,8 +337,7 @@ VS_shares_sec %>% {
       theme(legend.position = "right")
   }
 
-dev.copy(pdf, "Figures/REV/VA_shares_sec.pdf", width = 10, height = 5)
-dev.off()
+ggsave("Figures/REV/VA_shares_sec.pdf", width = 10, height = 5)
 
 # Sectoral foreign source shares
 VS_shares_sec_origin <- list(EORA = EORA_DET, EMERGING = EM_DET) |> 
@@ -371,11 +370,10 @@ VS_shares_sec_origin |>
   guides(fill = guide_legend(ncol = 1)) + 
   scale_y_continuous(labels = percent, 
                      breaks = extended_breaks(10), expand = c(0,0), limits = c(0, 1)) +  
-  labs(x = "Database", y = "Share of Foreign Exports Content", fill = "Source") +
+  labs(x = "Sector", y = "Share of Foreign Exports Content", fill = "Source") +
   theme_bw() + pretty_plot + rbsc2 + theme(legend.position = "right")
 
-dev.copy(pdf, "Figures/REV/VA_shares_sec_ctry.pdf", width = 10, height = 5)
-dev.off()
+ggsave("Figures/REV/VA_shares_sec_ctry.pdf", width = 10, height = 5)
 
 # Show EAC percentage share
 VS_shares_sec_origin |>
