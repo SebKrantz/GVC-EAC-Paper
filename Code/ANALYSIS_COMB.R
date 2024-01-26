@@ -701,8 +701,8 @@ EAC_GVC_DATA <- EAC_GVC_DATA |>
 
 # Improved plot
 EAC_GVC_DATA |> 
-  rename(value = Value, trend = "Trend") |> 
-  pivot(1:4, values = c("Value", "Trend"), names = list("measure", "value")) |> 
+  rename(value = Value, trend = "Linear Trend") |> 
+  pivot(1:4, values = c("Value", "Linear Trend"), names = list("measure", "value")) |> 
   ggplot(aes(x = year, y = value, color = country, linetype = measure)) +
   geom_line() + 
   facet_grid2(source ~ variable, scales = "free", independent = "all") + 
@@ -732,7 +732,7 @@ EAC_GVC_DATA |>
     labs(x = NULL, y = NULL) +
     theme_bw() + pretty_plot 
 
-ggsave("Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
+ggsave("Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 3.5)
 
 
 # Analysis at the sector-level using broad-sector ICIO's: 
@@ -845,8 +845,8 @@ EAC_GVC_DATA_SEC <- EAC_GVC_DATA_SEC |>
 # Improved plot
 EAC_GVC_DATA_SEC |> 
   subset(source == "EMERGING") |> 
-  rename(value = Value, trend = "Trend") |> 
-  pivot(1:5, values = c("Value", "Trend"), names = list("measure", "value")) |> 
+  rename(value = Value, trend = "Linear Trend") |> 
+  pivot(1:5, values = c("Value", "Linear Trend"), names = list("measure", "value")) |> 
   ggplot(aes(x = year, y = value, color = country, linetype = measure)) +
   geom_line() + 
   facet_grid2(sector ~ variable, scales = "free", independent = "all") + 
@@ -866,7 +866,12 @@ EAC_GVC_DATA_SEC |>
   subset(source == "EMERGING" & sector != "MIN") |> 
   group_by(variable, source, country, sector) |> 
   select(slope) |> ffirst() |> 
-  mutate(slope_tr = nif(slope > 0.01, 0.01 + (slope-0.01) * 0.1, slope < -0.01, -0.01 + (slope+0.01) * 0.1, default = slope)) |> 
+  mutate(slope_tr = nif(slope > 0.01, 0.01 + (slope-0.01) * 0.1, slope < -0.01, -0.01 + (slope+0.01) * 0.1, default = slope),
+         sector = recode_char(as.character(sector),
+                              AFF = "Agriculture & Livestock", 
+                              FBE = "Foods & Beverages", 
+                              MAN = "Manufactured Goods",
+                              SRV = "Services")) |> 
   
   ggplot(aes(x = variable, y = slope_tr, fill = country)) +
     geom_bar(stat = "identity", position = position_dodge(0.9)) + 
@@ -881,7 +886,7 @@ EAC_GVC_DATA_SEC |>
     labs(x = NULL, y = NULL) +
     theme_bw() + pretty_plot 
   
-ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 7)
+ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 5)
 
 
 
