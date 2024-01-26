@@ -112,7 +112,7 @@ REG_AGG <- REG_SEC |> group_by(source, year, region) |> num_vars() |> fsum()
 
 # Load Raw Decomposition Data -------------------------------------------
 
-# Broad Sector
+# # EAC + 11 World Regions, and 17 broad sectors
 # EORA <- new.env()
 # load("Data/EAC_EORA_2021_data_broad_sec.RData", envir = EORA)
 # 
@@ -120,20 +120,19 @@ REG_AGG <- REG_SEC |> group_by(source, year, region) |> num_vars() |> fsum()
 # load("Data/EAC_EMERGING_data_broad_sec.RData", envir = EM)
 # EM$y <- colnames(EM$out_ag)
 
+# 5 broad sectors with full country resolution
 EM <- new.env()
 load("Data/EAC_EMERGING_data_Countries_Agg_Sectors.RData", envir = EM)
 
 EORA <- new.env()
 load("Data/EAC_EORA_data_Countries_Agg_Sectors.RData", envir = EORA)
 
+# EAC + 11 World Regions, but with full sector resolution
 EORA_DET <- new.env()
 load("Data/EAC_EORA_2021_data.RData", envir = EORA_DET)
 
 EM_DET <- new.env()
 load("Data/EAC_EMERGING_data.RData", envir = EM_DET)
-
-# EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
-EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Broad_Sectors.qs")
 
 # Basic Comparison ------------------------------------------------------
 
@@ -164,9 +163,12 @@ rowbind(WDR_POS[country %in% EAC6, lapply(.SD, sum), by = .(source, country, yea
 # Gross Flows
 #############################
 
+# EM_Raw <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions.qs")
+EM_Agg <- qread("~/Documents/Data/EMERGING/EMERGING_EAC_Regions_Broad_Sectors.qs")
+
 # Heatmaps of Aggregated Gross Flows
 
-EM_T_ag_15_19 <- EM$T_ag[,, as.character(2015:2019)] |> rowMeans(dims = 2) |> extract(REG, REG)
+EM_T_ag_15_19 <- EM_Agg |> get_elem("T") |> extract(as.character(2015:2019)) |> pmean() |> mat_agg() |> extract(REG, REG)
 log10(EM_T_ag_15_19) |> 
   pheatmap(color = colorRampPalette(brewer.pal(n = 7, name ="YlOrRd"))(100),
            cluster_rows = FALSE, cluster_cols = FALSE, border_color = NA,
@@ -191,7 +193,7 @@ sum(EM_T_ag_15_19[EAC6, ROW]) / sum(`diag<-`(EM_T_ag_15_19[EAC6, EAC6], 0))
 
 
 # Summary of Gross Flows
-EM_FD_ag_15_19 <- EM$FD_ag[,, as.character(2015:2019)] |> rowMeans(dims = 2) |> extract(REG, REG)
+EM_FD_ag_15_19 <- EM_Agg |> get_elem("FD") |> extract(as.character(2015:2019)) |> pmean() |> mat_agg() |> extract(REG, REG)
 E_shares <- get_E_shares(EM_T_ag_15_19, EM_FD_ag_15_19) 
 
 # Aggregate
@@ -199,6 +201,7 @@ E_shares$Aggregate |>
   qDF("country") |> 
   pivot("country") |> 
   subset(country %in% EAC6) |> 
+  mutate(country = factor(country, levels = EAC6)) |> 
   ggplot(aes(x = country, y = value)) +
     facet_wrap( ~ variable, scales = "free_y") +
     geom_bar(stat = "identity") +
@@ -206,24 +209,23 @@ E_shares$Aggregate |>
     labs(y = "Percent", x = "EAC Member") +
     theme_bw() + pretty_plot
 
-dev.copy(pdf, "Figures/REV/EM_gross_shares_ag.pdf", width = 10, height = 4)
-dev.off()
+ggsave("Figures/REV/EM_gross_shares_ag.pdf", width = 10, height = 4)
 
 # Export / Import Shares
 E_shares$Shares |> 
   unlist2d("Variable", "Country") |> 
   pivot(1:2, names = list("Flow", "Value")) |> 
   subset(Country %in% EAC6) |> 
+  mutate(Country = factor(Country, levels = EAC6)) |> 
   ggplot(aes(x = Country, y = Value, fill = Flow)) +
   facet_wrap( ~ Variable, scales = "free_y") +
   geom_bar(stat = "identity", position = position_dodge(0.9)) +
   scale_y_continuous(labels = percent) +
-  labs(y = "EAC Share", x = "EAC Member") +
+  labs(y = "EAC6 Share", x = "EAC Member") +
   scale_fill_brewer(palette = "Paired") +
   theme_bw() + pretty_plot + theme(legend.position = "right")
 
-dev.copy(pdf, "Figures/REV/EM_gross_trade_shares_ag.pdf", width = 10, height = 4)
-dev.off()
+ggsave("Figures/REV/EM_gross_trade_shares_ag.pdf", width = 10, height = 4)
 
 # Largest Sector-Level intermediate flows. 
 EM_T_DT_Agg <- EM_Agg$DATA[as.character(2015:2019)] |> 
@@ -234,18 +236,18 @@ EM_T_DT_Agg <- EM_Agg$DATA[as.character(2015:2019)] |>
   colorder(value, pos = "end") |> 
   subset(from_region != to_region & (from_region %in% EAC6 | to_region %in% EAC6))
   
-# Largest 20 Flows: Broad Sectors
+# Largest 50 Flows: Broad Sectors
 add_vars(
   EM_T_DT_Agg |> 
     subset(from_region != "COD" & to_region != "COD") |> 
     select(from, to, value) |> 
     roworder(-value) |> 
-    head(20),
+    head(50),
   EM_T_DT_Agg |> 
-    subset(from_region %in% EAC6 & to_region %in% EAC6) |> 
+    subset(from_region %in% EAC5 & to_region %in% EAC5) |> 
     select(from, to, value) |> 
     roworder(-value) |> 
-    head(20)
+    head(50)
 ) |> 
   xtable::xtable() |> print(booktabs = TRUE)
   
@@ -1436,7 +1438,7 @@ ESCAP |>
     labs(colour = "Partner:  ", y = "Tariff Equivalent Total Trade Cost (Percent)", x = NULL) +
     theme_bw() + pretty_plot + rbsc2
 
-ggsave("Figures/REV/ESCAP_EAC5_Trade_Costs.pdf", width = 10, height = 5)
+# ggsave("Figures/REV/ESCAP_EAC5_Trade_Costs.pdf", width = 10, height = 5)
 
 BACI_BIL_AGG <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
                 group_by(iso3_o, iso3_d, year) |> summarise(exports = fsum(value, fill = TRUE))
@@ -1718,7 +1720,7 @@ EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutat
 
 EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
   transformv(is.double, `*`, 1/1000) |> 
-  join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> 
+  join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> # from_sector = broad_sector_code for broad sector sample
   group_by(year, country = from_region, sector = from_sector) |> 
   num_vars() |> fsum() |> 
   join(EORA21_VA) |> 
@@ -1728,7 +1730,7 @@ EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EOR
   # subset(sector %!in% RM_EORA_SEC) |> 
   droplevels()
 
-WDR_EORA15_DATA <- WDR_POS |> 
+WDR_EORA15_DATA <- WDR_POS |> # Use WDR_POS_SEC for broad sectors
   join(select(sec_class, id, sector = code), on = c("sect" = "id")) |> 
   mutate(sect = NULL) |> 
   subset(year >= 2000) |> 
@@ -1742,6 +1744,7 @@ WDR_EORA15_DATA <- WDR_POS |>
 EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
 
 EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
+  # BIL_SEC[source == "EMERGING"] |> 
   group_by(year, country = from_region, sector = from_sector) |> 
   select(gexp:gvcf) |> fsum() |> 
   join(EM_VA) |> 
@@ -1996,24 +1999,27 @@ models_I2E <- list(
   )
 )
 
-etable(models_I2E$full_sample[1:8], headers = names(models_I2E$full_sample[1:8]), # stage = 1,
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)#  + sargan.p
-etable(models_I2E$manufacturing_sample[1:8], headers = names(models_I2E$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+etable(models_I2E$full_sample[1:8], 
+       headers = names(models_I2E$full_sample[1:8]), # stage = 1,
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
+
+etable(models_I2E$manufacturing_sample[1:8], 
+       headers = names(models_I2E$manufacturing_sample[1:8]), 
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_I2E$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E$full_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E$full_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 # First Stages
 esttex(models_I2E$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 
@@ -2074,26 +2080,26 @@ models_E2R <- list(
 )
 
 etable(models_E2R$full_sample[1:8], headers = names(models_E2R$full_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 etable(models_E2R$manufacturing_sample[1:8], headers = names(models_E2R$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_E2R$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R$full_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R$manufacturing_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # First Stages
 esttex(models_E2R$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 # Dynamic Instrument Models ------------------------------
 # -> Experimental to see if first stage fit can be increased, but does not really work...
@@ -2158,23 +2164,23 @@ models_I2E_dynIV <- list(
 )
 
 etable(models_I2E_dynIV$full_sample[1:8], headers = names(models_I2E_dynIV$full_sample[1:8]), # stage = 1,
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)#  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)#  + sargan.p
 etable(models_I2E_dynIV$manufacturing_sample[1:8], headers = names(models_I2E_dynIV$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_I2E_dynIV$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E_dynIV$full_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dynIV$full_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E_dynIV$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E_dynIV$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dynIV$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 # First Stages
 esttex(models_I2E_dynIV$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E_dynIV$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dynIV$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E_dynIV$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E_dynIV$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dynIV$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # Forward GVC Integration
@@ -2234,27 +2240,27 @@ models_E2R_dynIV <- list(
 )
 
 etable(models_E2R_dynIV$full_sample[1:8], headers = names(models_E2R_dynIV$full_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 # -> These look better most of the time, but Wu-Hausmann r-value suggests no endogeneity ...
 etable(models_E2R_dynIV$manufacturing_sample[1:8], headers = names(models_E2R_dynIV$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_E2R_dynIV$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R_dynIV$full_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R_dynIV$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R_dynIV$manufacturing_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # First Stages
 esttex(models_E2R_dynIV$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R_dynIV$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R_dynIV$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R_dynIV$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R_dynIV$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R_dynIV$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 
@@ -2324,23 +2330,23 @@ models_I2E_diff <- list(
 )
 
 etable(models_I2E_diff$full_sample[1:8], headers = names(models_I2E_diff$full_sample[1:8]), # stage = 1,
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)#  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)#  + sargan.p
 etable(models_I2E_diff$manufacturing_sample[1:8], headers = names(models_I2E_diff$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_I2E_diff$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E_diff$full_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_diff$full_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E_diff$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E_diff$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_diff$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 # First Stages
 esttex(models_I2E_diff$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E_diff$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 
@@ -2401,26 +2407,26 @@ models_E2R_diff <- list(
 )
 
 etable(models_E2R_diff$full_sample[1:8], headers = names(models_E2R_diff$full_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 etable(models_E2R_diff$manufacturing_sample[1:8], headers = names(models_E2R_diff$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_E2R_diff$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R_diff$full_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R_diff$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R_diff$manufacturing_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # First Stages
 esttex(models_E2R_diff$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R_diff$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # Dynamic First-Difference Models --------------------------------------------------------------------------------------------------
@@ -2482,23 +2488,23 @@ models_I2E_dyn_diff <- list(
 )
 
 etable(models_I2E_dyn_diff$full_sample[1:8], headers = names(models_I2E_dyn_diff$full_sample[1:8]), # stage = 1,
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)#  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)#  + sargan.p
 etable(models_I2E_dyn_diff$manufacturing_sample[1:8], headers = names(models_I2E_dyn_diff$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_I2E_dyn_diff$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E_dyn_diff$full_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dyn_diff$full_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E_dyn_diff$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
-       headers = names(models_I2E_dyn_diff$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dyn_diff$manufacturing_sample[1:8]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 # First Stages
 esttex(models_I2E_dyn_diff$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E_dyn_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dyn_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_I2E_dyn_diff$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E_dyn_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_I2E_dyn_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # Forward GVC Integration
@@ -2558,26 +2564,26 @@ models_E2R_dyn_diff <- list(
 )
 
 etable(models_E2R_dyn_diff$full_sample[1:8], headers = names(models_E2R_dyn_diff$full_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 etable(models_E2R_dyn_diff$manufacturing_sample[1:8], headers = names(models_E2R_dyn_diff$manufacturing_sample[1:8]), 
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p) #  + sargan.p
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 # Exporting
 esttex(models_E2R_dyn_diff$full_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R_dyn_diff$full_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R_dyn_diff$manufacturing_sample[1:8], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
        headers = names(models_E2R_dyn_diff$manufacturing_sample[1:8]),
-       fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 # First Stages
 esttex(models_E2R_dyn_diff$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R_dyn_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R_dyn_diff$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 esttex(models_E2R_dyn_diff$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_E2R_dyn_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + ivf1 + ivwald1.p)
+       headers = names(models_E2R_dyn_diff$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 ## Experimental ----------------------------------------------------------------------------------------------------
