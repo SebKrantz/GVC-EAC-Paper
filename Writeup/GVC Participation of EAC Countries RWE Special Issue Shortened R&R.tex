@@ -21,7 +21,8 @@
 \usepackage{booktabs}
 \addto\captionsenglish{\renewcommand*\contentsname{Table of Contents}}
 
-\title{\textbf{Patterns of Global and Regional Value Chain Participation in the EAC}}
+% \title{\textbf{Patterns of Global and Regional Value Chain Participation in the EAC}}
+\title{\textbf{Patterns of EAC Global and Regional Integration through Trade and Value Chains}}
 % \author{Sebastian Krantz\footnote{Kiel Institute for the World Economy\\ \textit{Address:} Haus Welt-Club, Duesternbrooker Weg 148, D-24105 Kiel\\ \textit{E-mail:} sebastian.krantz@ifw-kiel.de}}
 % \date{July 30, 2021}
 \date{}
@@ -706,11 +707,14 @@ VAI$_u^{EAC}$ is thus a country-level measure of the VA by its EAC partners in i
 Both databases agree that EAC shares in members VS1 are substantially lower than in VS, VAI, and VAFI, but increased over the period, mainly driven by Kenya. They also agree that EAC forward linkages are driven by the larger economies, and smaller economies (Rwanda and Burundi) are more important in backward linkages (VS) and as importers of final goods (VAFI). Otherwise, there is not much agreement regarding the direction of the trend. To make Figure \ref{fig:VAEACshares} more intelligible, Figure \ref{fig:VAEACshares_bar} plots the slope coefficients. %As indicated, apart from Kenya's rising VS1 share with the EAC, and the resulting overall VS1 in crease in the EAC5 block, as well as a slight decrease in EAC share of Tanzanian imports (gross and final), and the fact that all of these slope estimates are small (less than 0.5 percentage points change per year), there is no common ground between the two databases at all regarding the evolution of EAC regional integration in VA terms. 
 The more reliable EM database suggests that, with few exceptions, EAC regional integration in VA terms is increasing in most countries according to most measures. Considering the EAC5 as a whole, the coefficients suggest the the EAC share in EAC VS is increasing by 0.5 percentage points per year, and the EAC shares in EAC VS1, VAI, and VAFI are increasing at a slower rate of around 0.15 percentage points per year. These trends mildly contrast those from gross trade (Figure \ref{fig:GTEACshares}) indicating declining import shares. 
 %
-\begin{figure}[h!] \vspace{-3mm}
+\begin{figure}[h!] \vspace{-5mm}
 \centering
 \caption{\label{fig:VAEACshares_bar}\textsc{Weighted Slope Estimates Measuring the Speed of Regional Integration}}
-\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/VA_EAC5_shares_slope_bar.pdf"} % "../Figures/VA_EAC_shares_ts".pdf
- \vspace{-8mm}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/VA_EAC5_shares_slope_bar.pdf"} \\ % "../Figures/VA_EAC_shares_ts".pdf
+\raggedright
+\scriptsize
+\emph{Notes:} Figure shows (weighted) linear slopes (dotted lines in Figure \ref{fig:VAEACshares}). In the estimation all obs. received a weight of $w=1$, except for EM 2010 ($w=2$) and EORA $>$ 2015 ($w=0.1$). These weights reflect data availability and quality.  
+  \vspace{-1mm}
 \end{figure}
 \FloatBarrier
 %
@@ -720,125 +724,105 @@ The more reliable EM database suggests that, with few exceptions, EAC regional i
 % 
 % In summary, the progression of these indicators over time suggests that, except for Kenya's increasing role as a supplier of inputs for re-export by EAC members, EAC regional integration through value chains is stagnant or in decline, even when measured relative to an also mostly stagnant or declining overall level of GVC integration of the EAC member countries. 
 
-As with gross trade, the weak put positive aggregate signal indicates that there may be more substantial developments at the sector level. I thus recompute all 4 indicators at the sector level using the EM database with full country dimension but only 5 broad sectors. Figure \ref{fig:VAEACshares_bar_sec} shows linear slope estimates at the sector level (excluding mining). 
+As with gross trade, the weak aggregate signal indicates that there may be more substantial sectoral developments. I thus recompute all 4 indicators at the sector level using the EM database with full country dimension but only 5 broad sectors. Figure \ref{fig:VAEACshares_bar_sec} shows weighted linear slope estimates at the sector level (excluding mining), using again a weight of $2$ for 2010 estimates. 
 %
-\begin{figure}[h!] \vspace{-3mm}
+\begin{figure}[h!] \vspace{-2mm}
 \centering
-\caption{\label{fig:VAEACshares_bar_sec}\textsc{EAC5 VA Shares in Members Sectoral VS, VS1, VAI, VAFI}}
+\caption{\label{fig:VAEACshares_bar_sec}\textsc{Weighted Slope Estimates of Members Sectoral Integration Speed}}
 \includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf"} \\ % "../Figures/VA_EAC_shares_ts".pdf
- \vspace{-7mm}
+\raggedright
+\scriptsize
+\emph{Notes:} Figure shows (weighted) linear slopes estimating the speed of regional integration (pp. per year) at the 5-sector level (excl. mining) based on EM (2010-2019). All obs. received a weight of $w=1$, except for EM 2010 ($w=2$).  
+\vspace{-5mm}
 \end{figure}
 \FloatBarrier
 %
-Broadly speaking, the aggregate EAC pattern from Figure \ref{fig:VAEACshares_bar} is reflected in agriculture, manufacturing and services. The FBE sector on the other hand experienced stronger integration through forward linkages (VA1) and imports. Kenya is a key economy driving these developments, followed by Uganda. It is also very evident in Figure \ref{fig:VAEACshares_bar_sec} that the regional integration in FBE through forward linkages is carried to almost equal shares by all 5 members, whereas the manufacturing expansion through forward linkages, proceeding at about half the speed as FBE, is driven almost completely by Kenya, with Tanzania contributing a little bit, and other members experiencing declining EAC shares in their manufacturing VS1. Overall the analysis of regional integration in VA terms complements (Figures \ref{fig:EAC_ROW_Ratios_Sec} and \ref{fig:GTEACsharesSec}), indicating that there is some momentum on regional integration in agriculture and FBE, but equitable integration in manufacturing is difficult, and Kenya has strengthened its already favourable trading position through forward GVC linkages. 
-\subsection{Positioning in GVCs}
-
-%A problem with the Leontief decomposition of gross exports into VA origins is that it also captures so-called pure double counted items\footnote{Double counted items are intermediates traded two or more times between the same trading partners. For example, if on a value chain for chemical products, an intermediate product would be first exported from Uganda to Kenya, processed further in Kenya, and then imported again by Uganda to produce a final good that is exported. The Leontief decomposition will correctly allocate the share of VA in this product to Uganda and Kenya, but Ugandan gross exports would overstate the amount of VA generated in either of the two countries because it includes both the export of the intermediate to Kenya and the export of the final good.}. %So this kind of double counting occurs whenever there exists two-way trade in intermediate goods.}  
-%To account for double-counted items and understand where and how the VA in exports is absorbed, \citep{koopman2014tracing} (henceforth KWW) decompose country-level gross exports into 9 VA components. \citet{borin2019measuring} have shown that this decomposition is inexact in allocating domestic VA and foreign double counted items\footnote{In particular: "their classification does not properly allocate the domestic value-added in exports between the part eventually absorbed by direct importers and the
-%part absorbed in third markets, and  a portion of the foreign content of exports
-%is erroneously classified as 'double counted' whereas it should be allocated to the
-%'foreign value-added'." \citep{borin2019measuring}}, and propose a refined KWW decomposition using a sink-based-world-level perspective. Appendix Figure \ref{fig:KWW} shows the refined breakdown, and 
-%%\begin{figure}[h!] % \vspace{-2mm}
-%%\centering
-%%\caption{\label{fig:KWW}\textsc{Koopman Wang Wei Decomposition of Gross Exports}}
-%%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW".PNG} %trim={<left> <lower> <right> <upper>}
-%%\raggedright
-%%\scriptsize
-%%\emph{Source:} \citet{koopman2014tracing}
-%%% \vspace{-1cm}
-%%\end{figure}
-%%\FloatBarrier
-%Figure \ref{fig:KWW_fill_ts} plots the decomposition of gross exports for each of the EAC members. It is helpful to connect this decomposition to the aggregate measures of GVC integration VS and VS1 discussed so far: VS, the share of FVA in gross exports, is the sum of FVA and FDC, whereas VS1 is the sum of NDAVAX, REF and DDC. The KWW decomposition enables a broad assessment of the position of countries in GVCs. According to EMERGING post 2015, in the average EAC member DAVAX accounts for 71\% of gross exports, NDAVAX for 12\%, FVA for 14\% and FDC for 3\%. The REF and DDC REF and DDC are close to 0 in all EAC countries, indicating that the GVC engagement of EAC countries is relatively upstream.  \newline 
-
-%Figure \ref{fig:KWW_fill_ts} reveals that foreign double-counted items constitute up to 10\% of gross exports in EAC countries. The domestic content in intermediate exports that finally returns home is practically 0 for all EAC members\footnote{This is prevalent in the export composition of high-income countries, see e.g. \citep{Kummritz20162}.}. In all EAC members, the largest share of exports is domestic VA in intermediate exports absorbed by direct importers. Only a small share of DVA in intermediate exports is re-exported, indicating that EAC countries predominantly export basic inputs to products manufactured for home consumption in the importing countries. In Uganda, around 40\% of exports constitute DVA in final goods exports, and in all members apart from Tanzania, the share of DVA in final goods exports has increased\footnote{Appendix Figures \ref{fig:KWW_fill_ts_EAC} and \ref{fig:KWW_fill_sec} show KWW decompositions of EAC exports to the EAC, and total exports at the sector level, building on the decomposition of \citet{wang2013quantifying}. Results imply more final goods trade between EAC members than between EAC countries and ROW, implying relatively more GVC engagement with ROW compared to EAC neighbors. Furthermore, manufacturing sectors have higher shares of FVA, including FDC, in all EAC countries.}. % \newline 
-%\begin{figure}[h!]
-%\centering
-%\caption{\label{fig:KWW_fill_ts}\textsc{KWW Decomposition of Gross Exports}}
-%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/KWW_fill_ts".pdf} %trim={<left> <lower> <right> <upper>}
-%% \vspace{-1cm}
-%\end{figure}
-%\FloatBarrier
-% \subsection{Upstreamness and Downstreamness in GVC Participation}
-% regardless of their overall level of GVC integration (VS and VS1).
-% According to \citet{Kummritz20162} and \citet{wang2013quantifying}, High FVA relative to total foreign content in exports indicates downstreamness (assembly tasks), while high DVA in intermediate relative to total domestic content in exports indicates upstreamness (specialization in tasks adding value to an unfinished product). I follow these authors in computing ratios as shown in Equations \ref{eq:US} and \ref{eq:DS}, and plot them in Figure \ref{fig:UP_DOWN_ag_ts}. 
-%\begin{equation} \label{eq:US}
-%\text{Upstreamness}\quad =\quad \frac{\text{NDAVAX} + \text{DDC}}{\text{DAVAX} + \text{NDAVAX} + \text{REF} + \text{DDC}}
-%\end{equation}
-%\begin{equation} \label{eq:DS}
-%\text{Downstreamness}\quad =\quad \frac{\text{FVA}}{\text{FVA} + \text{FDC}},
-%\end{equation}
-%Figure \ref{fig:UP_DOWN_ag_ts} discloses that, apart from Tanzania where the data is more distorted, all EAC members moved downstream, with less domestic content in intermediate exports and more FVA in final goods exports. To better expound this finding, Figure \ref{fig:UP_DOWN_ag_growth} provides the difference in the Upstreamness and Downstreamness ratios between 2005 and 2015. While all EAC countries apart from Tanzania moved downstream by up to 10 percentage points, the shift appears to be much smaller for Kenya. Shifting downstream suggests declining competitiveness in manufacturing since competitive manufacturing would allow increased integration in GVCs through high-quality intermediates, implying an upstream shift. 
-
-%\begin{figure}[h!] 
-%\centering
-%\caption{\label{fig:UP_DOWN_ag_ts}\textsc{Upstreamness and Downstreamness Ratios}}
-%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_ts".pdf} %trim={<left> <lower> <right> <upper>}
-%% \vspace{-1cm}
-%\end{figure} 
-%\begin{figure}[h!]
-%\centering
-%\caption{\label{fig:UP_DOWN_ag_growth}\textsc{Upstreamness and Downstreamness Ratios, Difference 2005-2015}}
-%\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/UP_DOWN_ag_growth".pdf} %trim={<left> <lower> <right> <upper>}
-%% \vspace{-1cm}
-%\end{figure}
-%\FloatBarrier
+The first thing to note in Figure \ref{fig:VAEACshares_bar_sec} is that regional integration in goods producing sectors proceeds substantially faster than in services. The aggregate pattern from Figure \ref{fig:VAEACshares_bar}, with faster integration through VS, is reflected in agriculture, manufacturing and services. The FBE sector on the other hand experienced stronger integration through forward linkages (VS1) and imports (VAI, VAFI), and overall greater integration speeds ($\geq 0.5$ pp. per year on all metrics). Uganda and Kenya are driving these developments. The regional integration in FBE through forward linkages (VS1) is also carried to almost equal shares by all 5 members, whereas the manufacturing expansion through forward linkages, proceeding at about half the speed as FBE, is driven almost completely by Kenya, with Tanzania contributing a little bit, and other members experiencing declining EAC shares in their manufacturing VS1. Overall the analysis of regional integration in VA terms complements Figures \ref{fig:EAC_ROW_Ratios_Sec} and \ref{fig:GTEACsharesSec}, indicating that there is some momentum on regional integration in agriculture and FBE, but equitable integration in manufacturing is difficult, and Kenya has strengthened its already favourable trading position through forward GVC linkages. 
 
 
-Following \citet{antras2012measuring, antras2022global}, a common measure of upstreamness $U_{oi} \ \in \ $ \textbf{u} is obtained by iterating forward the IO model in Eq. \ref{eq:io_model}, multiplying terms by the number of iterations needed to obtain them, and normalizing by gross output. In matrix notation: 
+\subsection{EAC Positioning in GVCs}
+
+Following \citet{antras2012measuring, antras2022global}, a common measure of upstreamness $U_{oi} \ \in \ $ \textbf{u} is obtained by iterating forward the IO model in Eq. \ref{eq:io_model}, multiplying terms by the number of production stages needed to obtain them, and normalizing by gross output. In matrix notation: 
 \begin{equation} \label{eq:upstreamness}
 \textbf{u}\textbf{x} = \textbf{d} + 2\textbf{Ad} + 3\textbf{AAd} + 4\textbf{AAAd} + \cdots = (\textbf{I}-\textbf{A})^{-2}\textbf{d}.
 \end{equation}
-The index is, by definition, greater than 1, and \citet{antras2012measuring} state that it can be interpreted as the dollar amount by which the output of all country-sectors combined increases following a one dollar increase in the VA of sector $i$ in country $o$. Intuitively, it measures the distance of the production stage performed by sector $i$ in country $o$ to the finally demanded product (\textbf{d}).\footnote{An equivalent measure of downstreamness can be computed by measuring the distance to value-added instead of final demand \citep{antras2022global, miller2017output, mancini2023positioning}, but, for the sake of brevity, this is omitted. The simplest way of computing this index is as \textbf{1}'\textbf{B}, i.e., it is simply the column-sum of the Leontief inverse matrix \citep{miller2017output, antras2022global}. It can be interpreted as the total increase in gross output in the world economy that would be generated by a unit increase in final demand in the respective country-sector. 
-At the world level these measures are equivalent and measure the length of GVCs \citep{mancini2023positioning}.} \citet{antras2012measuring} further find that $U$ is positively correlated with physical capital intensity and negatively correlated with skill intensity across US industries, and negatively correlated with rule of law, private credit to GDP, and education across a sample of OECD countries. Figure \ref{fig:EACUS_ag_ts} shows aggregate upstreamness for the EAC, calculated using regional OCIO tables with the full sectoral dimension, where sector-level $U_{oi}$ estimates were averaged using gross exports weights. \newline
+The index is, by definition, greater than 1, and \citet{antras2012measuring} state that it can be interpreted as the dollar amount by which the output of all country-sectors combined increases following a one dollar increase in the VA of sector $i$ in country $o$. Intuitively, it measures the distance of the production stage performed by sector $i$ in country $o$ to the finally demanded product (\textbf{d}).\footnote{An equivalent measure of downstreamness (\textbf{d}) can be computed measuring the distance to value-added instead of final demand \citep{antras2022global, miller2017output, mancini2023positioning}, but, for the sake of brevity, this is omitted. The simplest way of computing this index is as $\textbf{d}=\textbf{1}'\textbf{B}$, i.e., it is the column-sum of the Leontief inverse matrix \citep{miller2017output, antras2022global}. It can be interpreted as the total increase in gross output in the world economy that would be generated by a unit increase in final demand in the respective country-sector. At the world level \textbf{u} and \textbf{d} are identical and measure the length of GVCs \citep{mancini2023positioning}.} \citet{antras2012measuring} further find that $U$ is positively correlated with physical capital intensity and negatively correlated with skill intensity across US industries, and negatively correlated with rule of law, private credit to GDP, and education across a sample of OECD countries. Figure \ref{fig:EACUS_ag_ts} shows aggregate upstreamness for the EAC, calculated using the  regional MRIO tables with the full sector dimension, where sector-level $U_{oi}$ estimates were averaged using gross exports weights. \newline
 
 % While upstreamness following Eq. \ref{eq:upstreamness} is the most widely used GVC positioning measure, 
 \begin{figure}[h!]
 \centering
 \caption{\label{fig:EACUS_ag_ts}\textsc{Upstreamness Index for EAC Countries}}
-\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/Upstreamness_ag_ts.pdf"} %trim={<left> <lower> <right> <upper>}
+\includegraphics[width=1\textwidth, trim= {0 0 0 0}, clip]{"../Figures/REV/Upstreamness_ag_ts.pdf"} \\ %trim={<left> <lower> <right> <upper>}
+\raggedright
+\scriptsize
+\emph{Notes:} Figure shows upstreamness index following \citet{antras2012measuring}, computed at the sector-level and averaged across sectors using sectoral gross exports as weights. The EORA and EM MRIOs have EAC + 11 regions and all sectors.  
+\vspace{4mm}
 \end{figure}
 \FloatBarrier
 
-\todo[inline]{Compute position = upstreamness / downstreamness, and also create aggregate (exports weighted) EAC measure.}
+% \todo[inline]{Compute position = upstreamness / downstreamness, and also create aggregate (exports weighted) EAC measure.}
 
-Figure \ref{fig:EACUS_ag_ts} shows that the computed $U$ index closely tracks the version computed by \citep{mancini2023positioning} using the full EORA 26 database and also performing an inventories adjustment following \citet{antras2018measurement}. The data suggest that Congo as a large commodity exporter is very upstream, and that all EAC members apart from Uganda and Burundi, where the EMERGING estimates suggest a slight increase, moved more downstream since 2010. The most impressive development seems to have taken place in Rwanda during 2000-2010, but, since EORA does not have a Rwandan IO table, this trend must be interpreted with great skepticism. \newline
+Figure \ref{fig:EACUS_ag_ts} shows that the computed $U$ index closely tracks the version computed by \citep{mancini2023positioning} using the full EORA 26 database and also performing an inventories adjustment following \citet{antras2018measurement}. The data suggest that Congo as a large commodity exporter is very upstream, and that all EAC members apart from Uganda and Burundi, where the EM estimates suggest a slight increase, moved more downstream since 2010. The most impressive development seems to have taken place in Rwanda during 2000-2010, but, since EORA does not have a Rwandan IO table, this trend must be interpreted with skepticism. \newline
 
-To investigate developments at the sector level, I aggregate the data to broad sectors using export weights, combining all manufacturing sectors apart from FBE and all service sectors into broad categories. I also aggregate the time dimension over two intervals, 2010-2014 and 2015-2019, using the median to obtain a robust estimate. Table \ref{tab:U_BSEC} reports the results, including an estimate of the growth rate of $U$ between the two intervals. The most upstream sector according to both databases is mining, with $U>3$ indicating more than 3 production stages on average before final use. This is followed by manufacturing with $2 <U <3$ in most countries, foods and beverages and primary agriculture, forestry and fishing with $1.5 <U <2.5$ and services with $1 <U <2$. Except for services, this is broadly in-line with the world average sectoral upstreamness pattern of, according to EMERGING 2015-19, 3.32 (MIN), 2.86 (MAN), 2.65 (AFF), 2.25 (SRV) and 2.18 (FBE). The $U$ values of around 2/2.5 for EAC FBE/MAN industries indicates that these industries are typically located at least one step before final use. For FBE where more than 90\% of VS1 is through non-EAC GVC partners, this indicates that more processing steps could still be undertaken regionally to export products closer to final demand. The change between the two intervals indicates a downstream shift in almost all country-sectors. This was particularly pronounced in primary agriculture, manufacturing and FBE, but also in services. The shift indicates that all production processes are moving closer to final demand. The world average growth rate in $U$ between these intervals according to EMERGING was 3.3\% for AFF, 2.1\% for MIN, 0.85/0.82\% for FBE/MAN and -0.5\% for SRV, indicating that, except for services, EAC developments run against the global trend towards longer manufacturing GVCs (documented e.g. by \citet{antras2018measurement}). For all sectors apart from core manufacturing and services this appears to be good news, indicating that exports are closer to final demand and more local value is added. For core manufacturing this indicates a shift towards processing trade, which is generally not associated with industrial upgrading. The effect of services moving more downstream is unclear and depends very much on the type of service. For tourism, a more downstream shift also indicates more local value addition, whereas for telecommunications and financial intermediation, downstream shifts might indicate an insufficient quality of these services to be used as intermediates in more complicated production processes.    EAC data on these sectors are likely of questionable quality, also given that their trade flows are not recorded in Comtrade, and therefore Table \ref{tab:U_BSEC} aggregates them. Yet, a brief disaggregated appraisal using EMERGING indicates, notably, a 28\% downstream shift in financial intermediation (FIB) in Tanzania, a 27\% upstream shift in the same sector in Rwanda, and a 10\% downstream shift in transport (TRA) services (including tourism) in Kenya, whereas other EAC members saw a slight upstream shift in this sector. 
+To investigate developments at the sector level, I aggregate $U$ to broad sectors using export weights, combining all manufacturing sectors apart from FBE and all service sectors into broad categories. I also aggregate the time dimension over two intervals, 2010-2014 and 2015-2019, using the median to obtain a robust estimate. Table \ref{tab:U_BSEC} reports the results, including an estimate of the growth rate of $U$ between the two intervals and an export-weighted EAC5 average. \newline 
 
-
+ The most upstream sector according to both databases is MIN, with $U>3$ signifying more than 3 production stages on average before final use. This is followed by MAN with $2 <U <3$ in most countries, FBE and primary AFF with $1.5 <U <2.5$ and SRV with $1 <U <2$. Except for SRV, this is broadly in line with the world average sectoral upstreamness pattern of, according to EM 2015-19, 3.32 (MIN), 2.86 (MAN), 2.62 (AFF), 2.25 (SRV) and 2.18 (FBE). The $U$ values of around 2/2.5 for EAC FBE/MAN indicates that these sectors are located at least one step before final use. For FBE where more than 90\% of VS1 is through non-EAC GVC partners (Figure \ref{fig:EACVS1_ctry_sec}), this implies that more processing steps could still be undertaken regionally to export products closer to final demand. The change between the two intervals yields a downstream shift in almost all country-sectors. This was particularly pronounced in AFF, MAN, and FBE, but also in SRV. The shift suggests that all production processes are moving closer to final demand. The world average growth rate in $U$ between these intervals according to EM was 3.3\% for AFF, 2.1\% for MIN, 0.85/0.82\% for FBE/MAN and -0.5\% for SRV, revealing that, except for SRV, EAC developments run against a global trend towards longer manufacturing GVCs \citep{antras2018measurement}. 
 
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Wed Jan 17 11:14:36 2024
-\begin{table}[ht]
+\begin{table}[ht] \vspace{-2mm}
 \centering
-\caption{\label{tab:U_BSEC} EAC Trends in Upstreamness by Broad Sector (Aggregated)}
+\caption{\label{tab:U_BSEC} EAC5 Trends in Upstreamness by Broad Sector (Aggregated)}
 \vspace{2mm}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{llrrrrrrrrrrrr}
   \toprule
   && \multicolumn{6}{c}{WDR Estimates using EORA 2015} & \multicolumn{6}{c}{EMERGING Estimates} \\
-Sector & Year & UGA & TZA & KEN & RWA & BDI & COD & UGA & TZA & KEN & RWA & BDI & COD \\ 
+% Sector & Year & UGA & TZA & KEN & RWA & BDI & COD & UGA & TZA & KEN & RWA & BDI & COD \\ 
+Sector & Year & UGA & TZA & KEN & RWA & BDI & EAC5 & UGA & TZA & KEN & RWA & BDI & EAC5 \\ 
   \midrule
-AFF & 2010-2014 & 2.17 & 2.38 & 1.56 & 2.36 & 3.49 & 2.78 & 1.86 & 1.88 & 2.30 & 1.80 & 1.98 & 1.82 \\ 
-  AFF & 2015-2019 & 2.13 & 2.36 & 1.49 & 2.35 & 3.33 & 2.76 & 1.91 & 1.84 & 1.83 & 1.28 & 1.77 & 1.65 \\ 
-  AFF & Growth Rate & -1.72 & -0.94 & -4.11 & -0.49 & -4.75 & -0.77 & 2.85 & -2.08 & -20.64 & -29.25 & -10.73 & -9.58 \\ 
-  MIN & 2010-2014 & 3.07 & 3.53 & 3.49 & 3.39 & 2.89 & 3.86 & 2.13 & 3.23 & 3.28 & 3.29 &  & 2.53 \\ 
-  MIN & 2015-2019 & 3.02 & 3.37 & 3.45 & 3.32 & 2.81 & 3.77 & 3.22 & 3.28 & 3.12 & 1.54 & 1.63 & 2.35 \\ 
-  MIN & Growth Rate & -1.62 & -4.46 & -1.40 & -2.23 & -2.81 & -2.27 & 51.20 & 1.56 & -5.02 & -53.27 &  & -7.25 \\ 
-  FBE & 2010-2014 & 1.47 & 1.58 & 1.41 & 1.39 & 1.50 & 1.70 & 2.23 & 2.04 & 2.34 & 2.57 & 2.32 & 1.92 \\ 
-  FBE & 2015-2019 & 1.44 & 1.57 & 1.34 & 1.36 & 1.45 & 1.68 & 2.15 & 2.12 & 2.18 & 2.35 & 2.41 & 1.81 \\ 
-  FBE & Growth Rate & -2.26 & -0.88 & -5.32 & -1.87 & -2.81 & -1.18 & -3.21 & 3.81 & -6.57 & -8.54 & 4.25 & -5.61 \\ 
-  MAN & 2010-2014 & 2.20 & 2.09 & 2.30 & 2.19 & 2.03 & 2.97 & 2.38 & 3.28 & 2.41 & 3.84 & 3.17 & 2.59 \\ 
-  MAN & 2015-2019 & 2.14 & 2.06 & 2.18 & 2.15 & 1.97 & 2.92 & 2.47 & 2.89 & 2.24 & 3.16 & 2.73 & 2.52 \\ 
-  MAN & Growth Rate & -2.62 & -1.57 & -5.34 & -1.68 & -3.15 & -1.84 & 3.81 & -11.79 & -7.11 & -17.74 & -13.96 & -2.58 \\ 
-  SRV & 2010-2014 & 1.73 & 1.89 & 1.77 & 1.70 & 1.79 & 2.29 & 1.35 & 2.19 & 1.83 & 1.40 & 1.47 & 1.62 \\ 
-  SRV & 2015-2019 & 1.70 & 1.85 & 1.64 & 1.67 & 1.74 & 2.25 & 1.52 & 2.09 & 1.65 & 1.61 & 1.41 & 1.61 \\ 
-  SRV & Growth Rate & -1.40 & -1.89 & -7.02 & -1.78 & -2.85 & -1.49 & 12.27 & -4.84 & -9.75 & 15.11 & -4.01 & -0.64 \\ 
-   \bottomrule
+% Same Estimates Including COD, excluding EAC5   
+%  AFF & 2010-2014 & 2.17 & 2.38 & 1.56 & 2.36 & 3.49 & 2.78 & 1.86 & 1.88 & 2.30 & 1.80 & 1.98 & 1.82 \\ 
+%  AFF & 2015-2019 & 2.13 & 2.36 & 1.49 & 2.35 & 3.33 & 2.76 & 1.91 & 1.84 & 1.83 & 1.28 & 1.77 & 1.65 \\ 
+%  AFF & Growth Rate & -1.72 & -0.94 & -4.11 & -0.49 & -4.75 & -0.77 & 2.85 & -2.08 & -20.64 & -29.25 & -10.73 & -9.58 \\ 
+%  MIN & 2010-2014 & 3.07 & 3.53 & 3.49 & 3.39 & 2.89 & 3.86 & 2.13 & 3.23 & 3.28 & 3.29 &  & 2.53 \\ 
+%  MIN & 2015-2019 & 3.02 & 3.37 & 3.45 & 3.32 & 2.81 & 3.77 & 3.22 & 3.28 & 3.12 & 1.54 & 1.63 & 2.35 \\ 
+%  MIN & Growth Rate & -1.62 & -4.46 & -1.40 & -2.23 & -2.81 & -2.27 & 51.20 & 1.56 & -5.02 & -53.27 &  & -7.25 \\ 
+%  FBE & 2010-2014 & 1.47 & 1.58 & 1.41 & 1.39 & 1.50 & 1.70 & 2.23 & 2.04 & 2.34 & 2.57 & 2.32 & 1.92 \\ 
+%  FBE & 2015-2019 & 1.44 & 1.57 & 1.34 & 1.36 & 1.45 & 1.68 & 2.15 & 2.12 & 2.18 & 2.35 & 2.41 & 1.81 \\ 
+%  FBE & Growth Rate & -2.26 & -0.88 & -5.32 & -1.87 & -2.81 & -1.18 & -3.21 & 3.81 & -6.57 & -8.54 & 4.25 & -5.61 \\ 
+%  MAN & 2010-2014 & 2.20 & 2.09 & 2.30 & 2.19 & 2.03 & 2.97 & 2.38 & 3.28 & 2.41 & 3.84 & 3.17 & 2.59 \\ 
+%  MAN & 2015-2019 & 2.14 & 2.06 & 2.18 & 2.15 & 1.97 & 2.92 & 2.47 & 2.89 & 2.24 & 3.16 & 2.73 & 2.52 \\ 
+%  MAN & Growth Rate & -2.62 & -1.57 & -5.34 & -1.68 & -3.15 & -1.84 & 3.81 & -11.79 & -7.11 & -17.74 & -13.96 & -2.58 \\ 
+%  SRV & 2010-2014 & 1.73 & 1.89 & 1.77 & 1.70 & 1.79 & 2.29 & 1.35 & 2.19 & 1.83 & 1.40 & 1.47 & 1.62 \\ 
+%  SRV & 2015-2019 & 1.70 & 1.85 & 1.64 & 1.67 & 1.74 & 2.25 & 1.52 & 2.09 & 1.65 & 1.61 & 1.41 & 1.61 \\ 
+%  SRV & Growth Rate & -1.40 & -1.89 & -7.02 & -1.78 & -2.85 & -1.49 & 12.27 & -4.84 & -9.75 & 15.11 & -4.01 & -0.64 \\ 
+% Estimates with EAC5, excluding COD: 
+  AFF & 2010-2014 & 2.17 & 2.38 & 1.56 & 2.36 & 3.49 & 1.81 & 1.86 & 1.88 & 2.30 & 1.80 & 1.98 & 2.09 \\ 
+  AFF & 2015-2019 & 2.13 & 2.36 & 1.49 & 2.35 & 3.33 & 1.76 & 1.91 & 1.84 & 1.83 & 1.28 & 1.77 & 1.84 \\ 
+  AFF & Growth Rate & -1.72 & -0.94 & -4.11 & -0.49 & -4.75 & -2.68 & 2.85 & -2.08 & -20.64 & -29.25 & -10.73 & -12.06 \\ 
+  MIN & 2010-2014 & 3.07 & 3.53 & 3.49 & 3.39 & 2.89 & 3.48 & 2.13 & 3.23 & 3.28 & 3.29 &  & 3.25 \\ 
+  MIN & 2015-2019 & 3.02 & 3.37 & 3.45 & 3.32 & 2.81 & 3.41 & 3.22 & 3.28 & 3.12 & 1.54 & 1.63 & 3.17 \\ 
+  MIN & Growth Rate & -1.62 & -4.46 & -1.40 & -2.23 & -2.81 & -2.08 & 51.20 & 1.56 & -5.02 & -53.27 &  & -2.44 \\ 
+  FBE & 2010-2014 & 1.47 & 1.58 & 1.41 & 1.39 & 1.50 & 1.45 & 2.23 & 2.04 & 2.34 & 2.57 & 2.32 & 2.26 \\ 
+  FBE & 2015-2019 & 1.44 & 1.57 & 1.34 & 1.36 & 1.45 & 1.38 & 2.15 & 2.12 & 2.18 & 2.35 & 2.41 & 2.13 \\ 
+  FBE & Growth Rate & -2.26 & -0.88 & -5.32 & -1.87 & -2.81 & -4.37 & -3.21 & 3.81 & -6.57 & -8.54 & 4.25 & -5.59 \\ 
+  MAN & 2010-2014 & 2.20 & 2.09 & 2.30 & 2.19 & 2.03 & 2.25 & 2.38 & 3.28 & 2.41 & 3.84 & 3.17 & 2.89 \\ 
+  MAN & 2015-2019 & 2.14 & 2.06 & 2.18 & 2.15 & 1.97 & 2.15 & 2.47 & 2.89 & 2.24 & 3.16 & 2.73 & 2.63 \\ 
+  MAN & Growth Rate & -2.62 & -1.57 & -5.34 & -1.68 & -3.15 & -4.42 & 3.81 & -11.79 & -7.11 & -17.74 & -13.96 & -9.02 \\ 
+  SRV & 2010-2014 & 1.73 & 1.89 & 1.77 & 1.70 & 1.79 & 1.78 & 1.35 & 2.19 & 1.83 & 1.40 & 1.47 & 1.82 \\ 
+  SRV & 2015-2019 & 1.70 & 1.85 & 1.64 & 1.67 & 1.74 & 1.69 & 1.52 & 2.09 & 1.65 & 1.61 & 1.41 & 1.77 \\ 
+  SRV & Growth Rate & -1.40 & -1.89 & -7.02 & -1.78 & -2.85 & -4.82 & 12.27 & -4.84 & -9.75 & 15.11 & -4.01 & -2.66 \\ 
+   \bottomrule \\ [-0.9em]
+\multicolumn{14}{l}{\parbox{1.24\textwidth}{\scriptsize
+\textit{Notes:} Table shows median in upstreamness ($U$) following \citet{antras2012measuring} across 2010-14 and 2015-19, and the growth rate in percentage terms between these medians. MAN and SRV are broad categories combining sectors TEX-MAN and EGW-PAO in Table \ref{tab:sec}, respectively, via an export weighted average. The EAC5 is an export weighted average across the 5 countries (excl. COD) computed annually before taking the median.  }}
 \end{tabular}
 }
 \end{table}
 \FloatBarrier
+
+For all sectors apart from MAN and SRV this appears to be good news, indicating that exports are closer to final demand and more local value is added. For MAN this suggests a shift towards processing trade, which is generally not associated with industrial upgrading. The effect of SRV moving more downstream is unclear and depends very much on the type of service. For transport/tourism (TRA), a downstream shift posits more local value addition, whereas for telecommunications (PTE) and financial intermediation (FIB), downstream shifts might signify insufficient quality of these services to be used as intermediates in more complicated production processes. EAC data on these sectors are likely of questionable quality, yet, a brief disaggregated appraisal using EM yields, notably, a 28\% upstream/downstream shifts in FIB in Rwanda/Tanzania (EAC5 average is 5.3\% downstream), a 9.5/5.9\% downstream shift in PTE in Kenya/Rwanda (EAC5 average is 3\% downstream) and a 10.2/7.4\% downstream shift in TRA in Kenya/Burundi, whereas other EAC members saw a slight upstream shift (EAC5 average is 1.4\% downstream). 
+
 
 \subsection{(New) Revealed Comparative Advantage}
 
