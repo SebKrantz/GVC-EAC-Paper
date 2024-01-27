@@ -886,7 +886,7 @@ EAC_GVC_DATA_SEC |>
     labs(x = NULL, y = NULL) +
     theme_bw() + pretty_plot 
   
-ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 6.5)
+ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 5.5)
 
 
 
@@ -994,8 +994,9 @@ KWW_EAC6_USDS |>
   labs(x = NULL, y = NULL) +
   theme_bw() + pretty_plot 
 
-dev.copy(pdf, "Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
-dev.off()
+ggsave("Figures/REV/VA_EAC5_shares_slope_bar.pdf", width = 8, height = 4)
+
+
 
 # Now plotting Mancini et al's measures. 
 WDR_POS_AGG |> 
@@ -1015,7 +1016,7 @@ WDR_POS_AGG |>
   theme(axis.text.x = element_text(angle = 315, vjust = 0))
   
 
-# Upstreamness following Antras et al. 2013: (no nnventory correction yet as in mancini et al GVC Positioning database)
+# Upstreamness following Antras et al. 2013: (no inventory correction yet as in mancini et al GVC Positioning database)
 U <- list(EORA = EORA, EMERGING = EM) %>% 
   lapply(function(X) {
     lapply(X$decomps, function(o) {
@@ -1046,12 +1047,11 @@ U_DET_ALL |>
   ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
   geom_line() +
   facet_wrap(~ country, scales = "fixed", nrow = 2) +
-  labs(y = "Upstreamness Index", x = "Year", 
+  labs(y = "Upstreamness Index", x = NULL, 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/Upstreamness_ag_ts.pdf", width = 10, height = 5)
-dev.off()
+ggsave("Figures/REV/Upstreamness_ag_ts.pdf", width = 10, height = 5)
 
 
 # At the Broad Sector Level
@@ -1073,12 +1073,11 @@ U_DET_ALL_BSEC |>
   ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
   geom_line() +
   facet_grid2(sector ~ country, scales = "free", independent = "y") +
-  labs(y = "Upstreamness Index", x = "Year", 
+  labs(y = "Upstreamness Index", x = NULL, 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/Upstreamness_sec_ts.pdf", width = 10, height = 15)
-dev.off()
+ggsave("Figures/REV/Upstreamness_sec_ts.pdf", width = 10, height = 15)
 
 # Aggregate Sectors
 U_DET_ALL_BSEC |> 
@@ -1094,14 +1093,13 @@ U_DET_ALL_BSEC |>
   ggplot(aes(x = year, y = U, colour = source, linetype = source)) +
   geom_line() +
   facet_grid2(sector ~ country, scales = "free", independent = "y") +
-  labs(y = "Upstreamness Index", x = "Year", 
+  labs(y = "Upstreamness Index", x = NULL, 
        colour = "Source:   ", linetype = "Source:   ") +
   theme_bw() + pretty_plot + rbsc2
 
-dev.copy(pdf, "Figures/REV/Upstreamness_broad_sec_ts.pdf", width = 10, height = 8)
-dev.off()
+ggsave("Figures/REV/Upstreamness_broad_sec_ts.pdf", width = 10, height = 8)
 
-# Aggregating the Time Dimension 
+# Aggregating the Time Dimension: Simple changes 2010-2014 to 2015-2019 by sector
 U_DET_ALL_BSEC |> 
   subset(country %in% EAC6 & year >= 2000) |> 
   group_by(source, country, sector, 
@@ -1114,7 +1112,7 @@ U_DET_ALL_BSEC |>
   subset(year == "2015-2019") |> 
   pivot(c("source", "sector"), "U", "country", how = "w")
 
-# Both Sectors and Time Dimension
+# Both Sectors and Time Dimension: Changes + Growth Rate: Reported in Paper
 U_DET_ALL_BSEC |> 
   subset(country %in% EAC6 & year >= 2000) |> 
   mutate(country = factor(country, levels = EAC6), 
@@ -1126,7 +1124,12 @@ U_DET_ALL_BSEC |>
                       # sector == "PTE", "PTE",
                       # sector == "FIB", "FIB",
                       default = "SRV")) |> 
-  group_by(source, year, country, sector) |> fmean(sum.E) |> 
+  group_by(source, year, country, sector) |> fmean(sum.E) %>%
+  rowbind( # Adding EAC5
+    subset(., country %in% EAC5) |> 
+    collap(U ~ source + year + sector, w = ~ sum.sum.E) |> 
+    mutate(country = "EAC5")
+  ) |> 
   mutate(year = nif(year < 2010, "2000-2009", year < 2015, "2010-2014", year < 2020, "2015-2019")) |> 
   group_by(source, year, country, sector) |> fmedian() |> 
   subset(!is.na(year) & source != "EORA") |> 
@@ -1136,15 +1139,18 @@ U_DET_ALL_BSEC |>
           subset(year == "2015-2019") |> 
           mutate(year = "Growth Rate")) |> 
   roworder(sector, year) |> 
+  gvr("COD", invert = TRUE) |> 
   xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
 
-# Check Global Average Shift
+
+
+# Check Global Average Sectoral Changes in Upstreamness
 U_DET_ALL_BSEC |> 
   mutate(sector = nif(sector == "AFF", "AFF", 
                       sector == "MIN", "MIN", 
                       sector == "FBE", "FBE",
                       sector %in% c("TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN"), "MAN", 
-                      sector == "TRA", "TRA",
+                      # sector == "TRA", "TRA",
                       default = "SRV")) |> 
   group_by(source, year, sector) |> num_vars() |> fmean(sum.E) |> 
   # subset(between(year, 2015, 2019)) |> 
@@ -1187,6 +1193,9 @@ WDR_POS |>
 
 
 # Note: they are positively correlated !!!
+join(U, slt(D, -E), verbose = 0) %$% pwcor(U, D)
+join(U, slt(D, -E), verbose = 0) |> STD(~source+country+sector, stub =FALSE) %$% pwcor(U, D)
+
 join(U_DET, slt(D_DET, -E), verbose = 0) %$% pwcor(U, D)
 join(U_DET, slt(D_DET, -E), verbose = 0) |> STD(~source+country+sector, stub =FALSE) %$% pwcor(U, D)
 
