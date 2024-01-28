@@ -762,6 +762,8 @@ The index is, by definition, greater than 1, and \citet{antras2012measuring} sta
 
 % \todo[inline]{Compute position = upstreamness / downstreamness, and also create aggregate (exports weighted) EAC measure.}
 
+%\todo[inline]{A final useful metric is to combine import and export upstreamness to compute the domestic length of the value chain. A positive gap indicates that exports are relatively more downstream (or “closer to final demand”) compared with imports  \citep{engel2016sacu}}
+
 Figure \ref{fig:EACUS_ag_ts} shows that the computed $U$ index closely tracks the version computed by \citep{mancini2023positioning} using the full EORA 26 database and also performing an inventories adjustment following \citet{antras2018measurement}. The data suggest that Congo as a large commodity exporter is very upstream, and that all EAC members apart from Uganda and Burundi, where the EM estimates suggest a slight increase, moved more downstream since 2010. The most impressive development seems to have taken place in Rwanda during 2000-2010, but, since EORA does not have a Rwandan IO table, this trend must be interpreted with skepticism. \newline
 
 To investigate developments at the sector level, I aggregate $U$ to broad sectors using export weights, combining all manufacturing sectors apart from FBE and all service sectors into broad categories. I also aggregate the time dimension over two intervals, 2010-2014 and 2015-2019, using the median to obtain a robust estimate. Table \ref{tab:U_BSEC} reports the results, including an estimate of the growth rate of $U$ between the two intervals and an export-weighted EAC5 average. \newline 
@@ -828,48 +830,32 @@ For all sectors apart from MAN and SRV this appears to be good news, indicating 
 
 In international trade, including GVC-related trade, competitiveness is related to the concept of comparative advantage\footnote{A widely accepted theory of international trade developed by David Ricardo in 1817 stipulating that countries specialize in sectors where their productivity relative to the international average is greatest.}. 
 A popular way to empirically measure Ricardo's concept of comparative advantage is \citet{balassa1965trade}'s measure of revealed comparative advantage, defined as the share of a sector in gross country exports, divided by the share of that sector in gross world exports
+%
 \begin{equation}
 \text{RCA}_{oi} = \frac{E_{oi}}{\sum_i E_{oi}} \Bigg/ \frac{\sum_j E_{ji}}{\sum_{ji} E_{ji}}.
 \end{equation}
-$\text{RCA}_{oi}>1$ signifies a revealed comparative advantage of country $o$ in sector $i$. The traditional index based on gross exports however does not account for GVCs and double counting in exports. \citet{koopman2014tracing} therefore propose a new index based on the domestic VA in gross exports (DVA). \citet{borin2019measuring} show that the decomposition of \citet{koopman2014tracing} is inexact in allocating domestic VA and foreign double counted items\footnote{In particular: "their classification does not properly allocate the domestic value-added in exports between the part eventually absorbed by direct importers and the part absorbed in third markets, and  a portion of the foreign content of exports is erroneously classified as 'double counted' whereas it should be allocated to the 'foreign value-added'." \citep{borin2019measuring}}. Appendix Figure \ref{fig:KWW} shows the refined breakdown following \citet{borin2019measuring}, and Figure \ref{fig:KWW_fill_ts} plots the decomposition of gross exports for each of the EAC members. It is helpful to connect this decomposition to the aggregate measures of GVC integration VS and VS1 discussed so far: VS, the share of FVA in gross exports, is the sum of FVA and FDC, whereas VS1 is the sum of NDAVAX, REF and DDC. DVA is then the sum of DAVAX, NDAVAX and REF. According to EMERGING 2015-19, in the average EAC member DAVAX accounts for 71\% of gross exports, NDAVAX for 12\%, FVA for 14\% and FDC for 3\%. REF and DDC are close to 0 in all EAC countries, indicating that the GVCs these countries engage in are relatively short. Thus, in the EAC, DVA $\approx$ E $-$ VS, yielding an average 17\% downward adjustment of gross exports. This may appear small, but, as Table \ref{tab:EACVB_sec} shows, manufacturing sectors have higher VS of up to 50\% of exports. \newline
+%
+$\text{RCA}_{oi}>1$ signifies a revealed comparative advantage of country $o$ in sector $i$. The traditional index based on gross exports however does not account for GVCs and double counting in exports. \citet{koopman2014tracing} therefore propose a new index based on the domestic VA in gross exports (DVA). \citet{borin2019measuring} show that the decomposition of \citet{koopman2014tracing} is inexact in allocating domestic VA and foreign double counted items.%\footnote{In particular: "their classification does not properly allocate the domestic value-added in exports between the part eventually absorbed by direct importers and the part absorbed in third markets, and  a portion of the foreign content of exports is erroneously classified as 'double counted' whereas it should be allocated to the 'foreign value-added'." \citep{borin2019measuring}}. 
+Appendix Figure \ref{fig:KWW} shows the refined breakdown following \citet{borin2019measuring}, and Figure \ref{fig:KWW_fill_ts} plots the decomposition of gross exports for each of the EAC members.\footnote{To connect this to the aggregate measures of GVC integration VS and VS1 discussed so far: VS, the share of FVA in gross exports, is the sum of FVA and FDC, whereas VS1 is the sum of NDAVAX, REF and DDC.} DVA is the sum of DAVAX, NDAVAX and REF. According to EM 2015-19, in the average EAC member DAVAX accounts for 71\% of gross exports, NDAVAX for 12\%, FVA for 14\% and FDC for 3\%. REF and DDC are close to 0 in all EAC countries, implying that the GVCs these countries engage in are relatively short. Thus, in the EAC, DVA $\approx$ E $-$ VS, yielding an average 17\% downward adjustment of gross exports. This may appear small, but, as Table \ref{tab:EACVB_sec} shows, manufacturing sectors have higher VS of up to 50\%. \newline
  
-For comparison and verification, I compute both classical RCA using gross exports (GX) and NRCA using DVA in exports (VAX), using all available databases, including BACI (only available for goods producing sectors) and the WDR 2020 GVC indicators based on EORA 2015. Figure \ref{fig:NRCA} shows the median (N)RCA estimate across years 2010-19, and Appendix Table \ref{tab:NRCA} contains the corresponding values. Table \ref{tab:NRCA_corr} further reports pairwise Pearson's correlations of these median estimates. Both reassuringly indicate that all RCA measures are correlated. Whereas EORA based estimates have a correlation of around 0.57 with the BACI estimates, EMERGING estimates have a strong correlation of 0.93, confirming that these IO tables are very close to official trade data. In all IO tables RCA and NRCA estimates are also highly correlated ($r > 0.96$), suggesting that the foreign content shares in exported good within a sector are quite similar across different countries.   
-
+For comparison, I compute both classical RCA using gross exports (GX) and NRCA using DVA in exports (VAX), based on all available databases, including BACI (only available for goods producing sectors) and the WDR 2020 GVC indicators based on EORA 2015. Figure \ref{fig:NRCA} shows median (N)RCA estimates across years 2010-19 for the EAC5. 
+%
 \begin{figure}[h!]
 \centering
 \caption{\label{fig:NRCA}\textsc{(New) Revealed Comparative Advantage: 2010-19 Median}}
 \includegraphics[width=1\textwidth]{"../Figures/REV/NRCA_EAC5_ALL.pdf"} % trim={<left> <lower> <right> <upper>}
+\raggedright
+\scriptsize
+\emph{Notes:} Figure shows median 2010-19 (N)RCA indices based on DVA/gross exports according to different databases. DVA is computed following \citet{borin2019measuring}. Appendix Table \ref{tab:NRCA} contains the values and Table \ref{tab:NRCA_corr} their correlations.
 \end{figure}
 \FloatBarrier
+%
+Appendix Tables \ref{tab:NRCA} and \ref{tab:NRCA_corr} contains the corresponding values and correlations among different estimates, %Table  further reports pairwise Pearson's correlations of these median estimates. 
+reassuringly indicating that all RCA measures are correlated. Whereas EORA based estimates have a correlation of around 0.57 with the BACI estimates, EM estimates have a strong correlation of 0.93, confirming that these IO tables are very close to official trade data. In all IO tables RCA and NRCA estimates are also highly correlated ($r > 0.96$), suggesting that the foreign content shares in exported good within a sector are quite similar across different countries. \newline
 
-It is further notable that all estimates show that the EAC as a whole, and, according to estimates from EMERGING/BACI, also all the 5 countries individually, have a succinct (N)RCA in agriculture and food processing of, according to the EMERGING NCRA estimates 4.17 (AFF) and 5.01 (FBE). Similarly, all EAC countries individually and the EAC5 have a sizeable disadvantage in all core manufacturing sectors except for textiles and petrochemicals. Especially electrical machinery (EML: 0.05) and transport equipment (TEQ: 0.08), core drivers of GVC expension according to the WDR, have a strong revealed disadvantage. On the services side, all members have a (N)RCA in transport (and travel) services (TRA: 2.77), which is particularly strong in Kenya (3.12) and Tanzania (3.02), and all members apart from Burundi have a (N)RCA in sales, maintenance, and hotels (SMH: 2.84), particularly Uganda (4.36) and Rwanda (4.64). Furthermore, Uganda, with its powerful dams, has a large (N)RCA in exporting electricity (UGA EGW: 5.87). 
+All estimates show that the EAC5 as a whole, and, according to EM/BACI, also all the 5 countries individually, have a succinct (N)RCA in agriculture and food processing of, according to the EM NCRA estimates 4.17 (AFF) and 5.01 (FBE). Similarly, all countries have a sizeable disadvantage in all core manufacturing sectors except for textiles and petrochemicals. Especially electrical machinery (EML: 0.05) and transport equipment (TEQ: 0.08), core drivers of GVC expansion according to the WDR, have a strong revealed disadvantage. On the services side, all members have a (N)RCA in transport (and travel) services (TRA: 2.77), which is particularly strong in Kenya (3.12) and Tanzania (3.02), and all members apart from Burundi have a (N)RCA in sales, maintenance, and hotels (SMH: 2.84), particularly Uganda (4.36) and Rwanda (4.64). Furthermore, Uganda with its powerful dams, has a large (N)RCA in exporting electricity (5.87). EAC members thus exhibit similar patterns of revealed comparative advantage in agriculture, food processing and tourism, and a disadvantage in core manufacturing sectors. This is constitutive to forming a common trade block, supported by a monetary union as planned, and deepening regional tourism and food processing value chains to ensure that regional VA is maximized. Yet comparing the EAC with ROW masks rivalries and differences in (N)RCA between member countries. 
 
-
-% latex table generated in R 4.3.0 by xtable 1.8-4 package
-% Wed Jan 17 22:19:44 2024
-\begin{table}[ht]
-\centering
-\caption{\label{tab:NRCA_corr}\textsc{(New) Revealed Comparative Advantage: Correlations of 2010-19 Medians}}
-\vspace{2mm}
-\begin{tabular}{lrrrrrrr}
-  \toprule
-  & \multicolumn{2}{c}{WDR EORA} & \multicolumn{2}{c}{EORA} & \multicolumn{2}{c}{EMERGING} & BACI \\
- & GX & VAX & GX & VAX & GX & VAX & GX \\ 
-  \midrule
-  WDR\_EORA\_GX &    1   &  .962 &  .990 &  .987 &  .179 &  .186 &  .550 \\ 
-  WDR\_EORA\_VAX &  .962 &    1   &  .960 &  .967 &  .341 &  .362 &  .563 \\ 
-  EORA\_GX &  .990 &  .960 &    1   &  .995 &  .215 &  .223 &  .571 \\ 
-  EORA\_VAX &  .987 &  .967 &  .995 &    1   &  .217 &  .227 &  .570 \\ 
-  EMERGING\_GX &  .179 &  .341 &  .215 &  .217 &    1   &  .994 &  .925 \\ 
-  EMERGING\_VAX &  .186 &  .362 &  .223 &  .227 &  .994 &    1   &  .934 \\ 
-  BACI\_GX &  .550 &  .563 &  .571 &  .570 &  .925 &  .934 &    1   \\ 
-   \bottomrule \\ [-0.9em]
-\multicolumn{8}{l}{\parbox{0.7\textwidth}{\scriptsize
-\textit{Notes:} WDR EORA is only available for 2010-15, EMERGING misses years 2011-14.}}
-\end{tabular}
-\end{table}
-
- \todo[inline]{Changes !!}
+% \todo[inline]{Changes !!}
 
 %\begin{figure}[h!]
 %\centering
@@ -884,20 +870,17 @@ It is further notable that all estimates show that the EAC as a whole, and, acco
 
 
 
-\subsection{NRCA Relative to the EAC}
+\subsection{NRCA Relative to the EAC and in Inner-EAC Trade}
 
-EAC members thus exhibit similar patterns of revealed comparative advantage in agriculture, food processing and tourism, and a disadvantage in core manufacturing sectors. This is constitutive to forming a common trade block, supported by a monetary union as planned, and deepening regional tourism and food processing value chains to ensure that regional VA is maximized. \newline
-
-Yet comparing the EAC with ROW masks rivalries and differences in comparative advantage between member countries. To uncover these relative patterns, I also compute (N)RCA relative to the EAC, as the share of a sector in country exports to the share of the sector in EAC exports. Furthermore, regional trading itself may reveal comparative advantages that can either foster or block deeper RVCs. Thus I also compute (N)RCA of each member relative to the regional trade mix. Figure \ref{fig:EAC_NRCA} presents both estimates, and Appendix Table \ref{tab:EAC_NRCA} the corresponding values. While these is considerable heterogeneity, the estimates, broadly speaking, unveil that relative to other EAC members, Uganda, and, to a leaser extent, Tanzania, have a revealed comparative advantage in agriculture. Rwanda has a (N)RCA in mining, but this is not ostensible in inner-EAC trade. Kenya on the other hand has a slight comparative advantage in manufacturing sectors, including FBE, TEX, MPR, ELM, TEQ, and other manufactures (MAN). These estimates are even higher in inner-EAC trade, but all in the range between 1 and 2, and thus significantly lower than with ROW. Tanzania also has a (N)RCA in certain sectors such as PCM. Uganda also has a (N)RCA in FBE of 1.3-1.5, higher than that of Kenya. As mentioned earlier, Kenya, and, t a lesser extent, Tanzania, also have a slight (N)RCA in transport and travel services, both relative to the EAC and revealed in inner-EAC trade, and Uganda has a large (N)RCA in EGW.
-% , and Kenya in core manufacturing sectors such as wood and paper, petrochemicals, metal products, and electrical machinery. %In addition, it appears that Rwanda and Burundi, and to a weaker extent Uganda, have a comparative advantage in construction, maintenance and repairs, wholesale and retail trade, whereas Tanzania appears to have a comparative advantage in other manufacturing, recycling, and financial and business services. 
-% Other sectors are more heterogeneous. 
-% NRCA relative to the EAC is relatively stable since 2005, Appendix Figure \ref{fig:NRCA_EAC_growth} shows growth rates. %without major shifts within or across sectors between 2005 and 2015. 
+To uncover these differences, I also compute (N)RCA relative to the EAC, as the share of a sector in country exports to the share of the sector in EAC exports. Furthermore, regional trading itself reveals comparative advantages that can either foster or block deeper RVCs. Thus I also compute (N)RCA of each member relative to the regional trade mix. Figure \ref{fig:EAC_NRCA} presents both estimates, and Appendix Table \ref{tab:EAC_NRCA} the corresponding values. 
 
 \begin{figure}[h!]
 \centering
 \caption{\label{fig:EAC_NRCA}\textsc{NRCA Relative to EAC5}}
 \includegraphics[width=1\textwidth]{"../Figures/REV/EAC_NRCA_EAC5_ALL.pdf"} %trim={<left> <lower> <right> <upper>}
-% \vspace{-1cm}
+\raggedright
+\scriptsize
+\emph{Notes:} Figure shows median 2010-19 (N)RCA indices based on DVA/gross exports according to different databases, calculated w.r.t. EAC5 exports (top panel) and w.r.t. total inner EAC5 trade (bottom panel). DVA is computed following \citet{borin2019measuring}. Appendix Table \ref{tab:EAC_NRCA} contains the corresponding values.
 \end{figure}
 \FloatBarrier
 %\begin{figure}[h!]
@@ -908,21 +891,28 @@ Yet comparing the EAC with ROW masks rivalries and differences in comparative ad
 %\end{figure}
 %\FloatBarrier
 
-The trading patterns of different members in both gross and VA terms thus reveal differences in comparative advantage, but these are, with few exceptions such as Ugandan EGW, between 0.5 and 2, and thus moderate in size. It may however still require policy action to overcome these differences and foster more horizontal RVC's in critical sectors such as food processing and tourism. 
+The estimates unveil that relative to other EAC members, Uganda, Tanzania, and Kenya, have a slight (1-1.2) (N)RCA in agriculture, and Uganda, Kenya, and Burundi have a (N)RCA in FBE of (1.2-1.5). In inner-EAC trade, Kenya's (N)RCA drops to 0.26/0.78 in AFF/FBE in VAX terms, whereas Uganda's rises to 2/1.5, reflecting its stronger regional supplier role. Rwanda has a (N)RCA in mining, but this is not reflected in inner-EAC trade. Kenya has a slight comparative advantage in manufacturing sectors, including TEX, MPR, ELM, TEQ, and other manufactures (MAN). Exempting TEX, and including PCM, these estimates are even higher in inner-EAC trade, but all in the range between 1 and 2, and thus significantly lower than with ROW. Tanzania also has a (N)RCA in PCM according to both denomination. As mentioned earlier, Kenya, and, to a lesser extent, Tanzania, also have a slight (N)RCA in TRA (1-1.2), both relative to the EAC and revealed in inner-EAC trade, and Uganda has a large (N)RCA in EGW (4-5). \newline
+% , and Kenya in core manufacturing sectors such as wood and paper, petrochemicals, metal products, and electrical machinery. %In addition, it appears that Rwanda and Burundi, and to a weaker extent Uganda, have a comparative advantage in construction, maintenance and repairs, wholesale and retail trade, whereas Tanzania appears to have a comparative advantage in other manufacturing, recycling, and financial and business services. 
+% Other sectors are more heterogeneous. 
+% NRCA relative to the EAC is relatively stable since 2005, Appendix Figure \ref{fig:NRCA_EAC_growth} shows growth rates. %without major shifts within or across sectors between 2005 and 2015. 
+
+The trading patterns of different members in both gross and VA terms thus reveal differences in comparative advantage, but these are, with few exceptions such as Ugandan EGW, between 0.5 and 2, and thus moderate in size. It may however still require policy action to overcome these differences and foster more horizontal RVC's in critical sectors such as FBE and tourism (TRA). 
 
 \subsection{Trends in (N)RCA}
 
-A final question regards the direction and speed of shifts in RCA, both overall and inside the EAC. To measure this, I only use gross trade from BACI and DVA from EMERGING to compute (N)RCA between two periods: 2006-2010 and 2015-2019. I then compute the growth rate and report it in Figure \ref{fig:NRCA_GR}. Appendix Figure \ref{fig:NRCA_Diff} shows the estimates for both periods. 
+A final question regards the direction and speed of shifts in RCA, both overall and inside the EAC. To measure this, I only use gross trade from BACI and DVA from EM to compute (N)RCA medians over two periods: 2006-2010 and 2015-2019. I then compute the growth rate and report it in Figure \ref{fig:NRCA_GR}. Appendix Figure \ref{fig:NRCA_Diff} shows estimates for both periods, and Table \ref{tab:NRCA_Diff} holds all values. 
 
 \begin{figure}[h!]
 \centering
 \caption{\label{fig:NRCA_GR}\textsc{Growth of (N)RCA Between 2006-2010 and 2015-2019 (Medians)}}
 \includegraphics[width=1\textwidth]{"../Figures/REV/NRCA_EAC5_ALL_Growth.pdf"} %trim={<left> <lower> <right> <upper>}
-% \vspace{-1cm}
+\raggedright
+\scriptsize
+\emph{Notes:} Figure shows the growth rate in percentage terms between the 2006-10 and 2015-19 (N)RCA medians. EM estimates are based on DVA in exports, BACI on gross exports. Appendix Figure \ref{fig:NRCA_Diff} and Table \ref{tab:NRCA_Diff} show the values. 
 \end{figure}
 \FloatBarrier
 
-Both figures show that the EAC as a whole has lost some comparative advantage in agriculture, food processing and all core manufactoring sectors apart from PCM. On the services side there are overall gains in NRCA in construction and transport/travel, and losses in NRCA in telecommunications (PTE) and financial and business (FIB) services. Relative to the EAC, Kenya gained a bit in FBE, TEX, MPR, and ELM. For core manufacturing sectors this is even more reflected in inner-eac Trade i.e. Kenya's share of EAC manufacturing trade increased, as already noted in section 4.3. 
+The bottom right panel of Figure \ref{fig:NRCA_GR} shows that the EAC5 as a whole has lost some comparative advantage in AFF, FBE and, in GX terms, in all manufacturing sectors apart from PCM. On the services side there are overall gains in construction (CON), EGW, transport/travel (TRA), and losses in telecommunications (PTE) and financial and business (FIB) services. Relative to the EAC, Kenya gained a bit in FBE, TEX, MPR, and ELM. For core manufacturing sectors this is even more reflected in inner-EAC5 trade, i.e., Kenya's share of EAC manufacturing trade increased, as already noted in section 4.3. These patterns highlight that policy efforts might be needed to strengthen the regions comparative advantage in food processing and tourism, and to reverse the trend towards regional manufacturing trade and value chains that further strengthen Kenya's role as a supplier of intermediates and regional hegemon. 
 
 %In summary, NRCA data support the downstream shift in GVC integration, but the evidence that this is driven by a broad-based decline in manufacturing competitiveness is not as clear as initially presumed. On the other hand, the evidence is compelling insofar that Kenya has a stronger NRCA position in manufacturing than other EAC members, and was the only member able to sustain and slightly enhance its manufacturing position during 2005-2015, while also experiencing a substantially smaller downstream shift (Figure \ref{fig:UP_DOWN_ag_growth}). Other members therewhile became more competitive in agriculture and fishing, and certain services like maintenance and repair activities. \newline
 %
@@ -1636,6 +1626,31 @@ UGA & WDR\_EORA & GX & 16.07 & 0.14 & 2.49 & 0.24 & 0.29 & 0.18 & 0.39 & 0.18 & 
 
 
 % latex table generated in R 4.3.0 by xtable 1.8-4 package
+% Wed Jan 17 22:19:44 2024
+\begin{table}[ht]
+\centering
+\caption{\label{tab:NRCA_corr}\textsc{(New) Revealed Comparative Advantage: Correlations of 2010-19 Medians}}
+\vspace{2mm}
+\begin{tabular}{lrrrrrrr}
+  \toprule
+  & \multicolumn{2}{c}{WDR EORA} & \multicolumn{2}{c}{EORA} & \multicolumn{2}{c}{EMERGING} & BACI \\
+ & GX & VAX & GX & VAX & GX & VAX & GX \\ 
+  \midrule
+  WDR\_EORA\_GX &    1   &  .962 &  .990 &  .987 &  .179 &  .186 &  .550 \\ 
+  WDR\_EORA\_VAX &  .962 &    1   &  .960 &  .967 &  .341 &  .362 &  .563 \\ 
+  EORA\_GX &  .990 &  .960 &    1   &  .995 &  .215 &  .223 &  .571 \\ 
+  EORA\_VAX &  .987 &  .967 &  .995 &    1   &  .217 &  .227 &  .570 \\ 
+  EMERGING\_GX &  .179 &  .341 &  .215 &  .217 &    1   &  .994 &  .925 \\ 
+  EMERGING\_VAX &  .186 &  .362 &  .223 &  .227 &  .994 &    1   &  .934 \\ 
+  BACI\_GX &  .550 &  .563 &  .571 &  .570 &  .925 &  .934 &    1   \\ 
+   \bottomrule \\ [-0.9em]
+\multicolumn{8}{l}{\parbox{0.7\textwidth}{\scriptsize
+\textit{Notes:} WDR EORA is only available for 2010-15, EMERGING misses years 2011-14.}}
+\end{tabular}
+\end{table}
+
+
+% latex table generated in R 4.3.0 by xtable 1.8-4 package
 % Thu Jan 18 10:17:19 2024
 \begin{table}[ht]
 \centering
@@ -1647,7 +1662,7 @@ UGA & WDR\_EORA & GX & 16.07 & 0.14 & 2.49 & 0.24 & 0.29 & 0.18 & 0.39 & 0.18 & 
 Country & Source & Flow & AFF & MIN & FBE & TEX & WAP & PCM & MPR & ELM & TEQ & MAN & EGW & CON & SMH & TRA & PTE & FIB & PAO \\ 
   \midrule
  \multicolumn{10}{l}{Relative to the EAC} \\ \midrule
-UGA & WDR\_EORA & GX & 1.39 & 0.13 & 0.93 & 0.26 & 0.38 & 0.33 & 1.02 & 0.81 & 1.95 & 0.58 & 0.43 & 2.12 & 1.41 & 1.25 & 1.37 & 0.05 & 2.17 \\ 
+  UGA & WDR\_EORA & GX & 1.39 & 0.13 & 0.93 & 0.26 & 0.38 & 0.33 & 1.02 & 0.81 & 1.95 & 0.58 & 0.43 & 2.12 & 1.41 & 1.25 & 1.37 & 0.05 & 2.17 \\ 
   TZA & WDR\_EORA & GX & 0.91 & 1.32 & 0.91 & 1.71 & 0.74 & 0.38 & 0.52 & 0.54 & 2.04 & 2.80 & 1.90 & 0.93 & 0.70 & 0.65 & 0.71 & 2.12 & 1.16 \\ 
   KEN & WDR\_EORA & GX & 1.00 & 0.98 & 1.10 & 0.99 & 1.22 & 1.32 & 1.14 & 1.19 & 0.56 & 0.64 & 0.77 & 0.51 & 0.87 & 1.04 & 0.88 & 0.92 & 0.38 \\ 
   RWA & WDR\_EORA & GX & 0.39 & 4.06 & 0.11 & 0.30 & 0.45 & 0.29 & 0.84 & 0.50 & 0.69 & 0.40 & 2.35 & 4.57 & 2.47 & 1.04 & 2.56 & 0.24 & 5.20 \\ 
@@ -1657,11 +1672,11 @@ UGA & WDR\_EORA & GX & 1.39 & 0.13 & 0.93 & 0.26 & 0.38 & 0.33 & 1.02 & 0.81 & 1
   KEN & EORA & GX & 0.99 & 1.00 & 1.12 & 0.99 & 1.23 & 1.33 & 1.15 & 1.20 & 0.58 & 0.64 & 0.79 & 0.54 & 0.88 & 1.05 & 0.89 & 0.94 & 0.40 \\ 
   RWA & EORA & GX & 0.40 & 3.96 & 0.11 & 0.31 & 0.46 & 0.30 & 0.86 & 0.50 & 0.72 & 0.41 & 2.24 & 4.48 & 2.46 & 1.01 & 2.55 & 0.24 & 5.02 \\ 
   BDI & EORA & GX & 0.59 & 0.28 & 0.12 & 0.40 & 0.27 & 0.23 & 0.65 & 0.34 & 1.78 & 0.73 & 1.94 & 6.26 & 3.42 & 1.09 & 3.03 & 0.22 & 6.88 \\ \midrule
-    UGA & EMERGING & GX & 1.02 & 0.07 & 1.43 & 0.74 & 0.82 & 0.82 & 0.85 & 0.47 & 0.70 & 0.51 & 4.06 & 0.31 & 1.40 & 0.65 & 0.13 & 1.71 & 0.04 \\ 
-  TZA & EMERGING & GX & 1.12 & 1.83 & 0.56 & 0.80 & 1.08 & 1.48 & 1.14 & 0.73 & 0.50 & 0.59 & 0.03 & 2.71 & 0.97 & 1.17 & 1.27 & 0.22 & 0.03 \\ 
-  KEN & EMERGING & GX & 1.04 & 0.81 & 1.18 & 1.46 & 1.08 & 0.63 & 1.02 & 1.30 & 1.34 & 1.52 & 0.54 & 0.03 & 0.71 & 1.11 & 1.36 & 1.42 & 2.14 \\ 
+  UGA & EMERGING & GX & 1.02 & 0.07 & 1.43 & 0.74 & 0.82 & 0.82 & 0.85 & 0.47 & 0.70 & 0.51 & 4.06 & 0.31 & 1.40 & 0.65 & 0.13 & 1.71 & 0.04 \\ 
+  TZA & EMERGING & GX & 1.12 & 1.83 & 0.56 & 0.80 & 1.08 & 1.48 & 1.14 & 0.73 & 0.50 & 0.59 & 0.00 & 2.71 & 0.97 & 1.17 & 1.27 & 0.22 & 0.02 \\ 
+  KEN & EMERGING & GX & 1.04 & 0.81 & 1.18 & 1.46 & 1.08 & 0.63 & 1.02 & 1.30 & 1.34 & 1.52 & 0.54 & 0.00 & 0.71 & 1.11 & 1.36 & 1.42 & 2.14 \\ 
   RWA & EMERGING & GX & 0.18 & 0.17 & 1.02 & 0.31 & 0.10 & 1.34 & 0.34 & 0.77 & 0.70 & 0.30 & 0.33 & 0.81 & 1.88 & 0.69 & 0.07 & 0.14 & 0.74 \\ 
-  BDI & EMERGING & GX & 0.04 & 0.13 & 2.08 & 0.42 & 0.07 & 1.03 & 0.44 & 0.72 & 0.95 & 0.38 & 0.03 & 0.03 & 0.03 & 0.46 & 0.51 & 0.14 & 7.64 \\ \midrule
+  BDI & EMERGING & GX & 0.04 & 0.13 & 2.08 & 0.42 & 0.07 & 1.03 & 0.44 & 0.72 & 0.95 & 0.38 & 0.00 & 0.02 & 0.01 & 0.46 & 0.51 & 0.14 & 7.64 \\ \midrule
   UGA & BACI & GX & 0.97 & 0.29 & 1.43 & 0.78 & 0.96 & 0.44 & 1.21 & 1.14 & 1.87 & 0.89 &  &  &  &  &  &  &  \\ 
   TZA & BACI & GX & 0.97 & 0.65 & 0.53 & 0.75 & 0.87 & 1.57 & 0.97 & 0.83 & 0.51 & 0.63 &  &  &  &  &  &  &  \\ 
   KEN & BACI & GX & 1.13 & 1.49 & 1.28 & 1.42 & 1.28 & 0.48 & 0.99 & 1.16 & 0.98 & 1.43 &  &  &  &  &  &  &  \\ 
@@ -1677,42 +1692,125 @@ UGA & WDR\_EORA & GX & 1.39 & 0.13 & 0.93 & 0.26 & 0.38 & 0.33 & 1.02 & 0.81 & 1
   KEN & EORA & VAX & 0.97 & 1.00 & 1.12 & 1.09 & 1.25 & 1.33 & 1.10 & 1.17 & 0.61 & 0.80 & 0.84 & 0.48 & 0.89 & 1.02 & 0.87 & 0.92 & 0.47 \\ 
   RWA & EORA & VAX & 0.44 & 4.28 & 0.13 & 0.29 & 0.52 & 0.32 & 1.05 & 0.68 & 0.95 & 0.23 & 2.27 & 5.30 & 2.43 & 1.20 & 2.77 & 0.27 & 2.75 \\ 
   BDI & EORA & VAX & 0.62 & 0.22 & 0.13 & 0.33 & 0.29 & 0.25 & 0.87 & 0.51 & 2.64 & 0.65 & 1.74 & 6.94 & 3.19 & 1.21 & 3.13 & 0.23 & 6.76 \\ \midrule
-    UGA & EMERGING & VAX & 1.05 & 0.06 & 1.26 & 0.71 & 1.09 & 0.80 & 0.80 & 0.66 & 0.87 & 0.53 & 3.98 & 0.31 & 1.50 & 0.67 & 0.13 & 1.73 & 0.04 \\ 
-  TZA & EMERGING & VAX & 1.15 & 1.89 & 0.60 & 0.87 & 1.21 & 1.53 & 1.12 & 0.71 & 0.57 & 0.62 & 0.03 & 2.86 & 0.97 & 1.09 & 1.15 & 0.21 & 0.03 \\ 
-  KEN & EMERGING & VAX & 1.00 & 0.80 & 1.24 & 1.37 & 0.91 & 0.58 & 1.00 & 1.19 & 1.07 & 1.43 & 0.52 & 0.03 & 0.70 & 1.13 & 1.41 & 1.37 & 2.05 \\ 
+  UGA & EMERGING & VAX & 1.05 & 0.06 & 1.26 & 0.71 & 1.09 & 0.80 & 0.80 & 0.66 & 0.87 & 0.53 & 3.98 & 0.31 & 1.50 & 0.67 & 0.13 & 1.73 & 0.04 \\ 
+  TZA & EMERGING & VAX & 1.15 & 1.89 & 0.60 & 0.87 & 1.21 & 1.53 & 1.12 & 0.71 & 0.57 & 0.62 & 0.00 & 2.86 & 0.97 & 1.09 & 1.15 & 0.21 & 0.02 \\ 
+  KEN & EMERGING & VAX & 1.00 & 0.80 & 1.24 & 1.37 & 0.91 & 0.58 & 1.00 & 1.19 & 1.07 & 1.43 & 0.52 & 0.00 & 0.70 & 1.13 & 1.41 & 1.37 & 2.05 \\ 
   RWA & EMERGING & VAX & 0.19 & 0.19 & 0.93 & 0.37 & 0.15 & 1.60 & 0.41 & 1.03 & 0.88 & 0.42 & 0.44 & 0.88 & 1.63 & 0.75 & 0.09 & 0.15 & 0.80 \\ 
-  BDI & EMERGING & VAX & 0.04 & 0.11 & 2.06 & 0.53 & 0.10 & 0.75 & 0.41 & 0.76 & 0.86 & 0.57 & 0.03 & 0.03 & 0.03 & 0.54 & 0.63 & 0.15 & 8.59 \\ \midrule
+  BDI & EMERGING & VAX & 0.04 & 0.11 & 2.06 & 0.53 & 0.10 & 0.75 & 0.41 & 0.76 & 0.86 & 0.57 & 0.00 & 0.03 & 0.01 & 0.54 & 0.63 & 0.15 & 8.59 \\ \midrule
   
    \multicolumn{10}{l}{In Inner-EAC Trade} \\ \midrule
-  UGA & EORA & GX & 5.74 & 0.03 & 0.89 & 0.18 & 0.21 & 0.25 & 0.41 & 0.33 & 1.26 & 0.47 & 0.07 & 0.94 & 0.71 & 0.85 & 0.64 & 0.03 & 2.13 \\ 
+  UGA & EORA & GX & 5.74 & 0.02 & 0.89 & 0.18 & 0.21 & 0.25 & 0.41 & 0.33 & 1.26 & 0.47 & 0.07 & 0.94 & 0.71 & 0.85 & 0.64 & 0.00 & 2.13 \\ 
   TZA & EORA & GX & 1.14 & 0.37 & 3.74 & 0.92 & 0.49 & 0.38 & 0.24 & 0.71 & 1.49 & 2.81 & 1.62 & 0.98 & 0.63 & 0.85 & 0.90 & 2.88 & 2.64 \\ 
   KEN & EORA & GX & 0.13 & 1.22 & 0.86 & 1.15 & 1.18 & 1.18 & 1.15 & 1.14 & 0.93 & 0.98 & 1.11 & 0.94 & 1.06 & 1.03 & 1.06 & 1.07 & 0.66 \\ 
   RWA & EORA & GX & 1.64 & 0.33 & 0.66 & 0.43 & 0.24 & 0.36 & 0.43 & 0.38 & 0.75 & 0.54 & 7.71 & 15.20 & 3.40 & 1.41 & 3.10 & 0.45 & 15.32 \\ 
   BDI & EORA & GX & 1.09 & 0.23 & 0.35 & 0.42 & 0.13 & 0.12 & 0.33 & 0.18 & 1.83 & 1.13 & 7.06 & 27.72 & 4.85 & 0.73 & 4.00 & 0.44 & 24.83 \\ \midrule
-     UGA & EMERGING & GX & 2.04 & 0.03 & 1.61 & 0.51 & 1.18 & 0.53 & 0.95 & 0.16 & 0.17 & 0.33 & 2.78 & 0.03 & 0.40 & 0.85 & 0.98 & 2.47 & 0.06 \\ 
-  TZA & EMERGING & GX & 1.47 & 2.92 & 0.61 & 1.90 & 1.38 & 0.75 & 0.48 & 0.84 & 0.29 & 0.19 &  & 4.11 & 0.64 & 1.34 & 1.87 & 0.09 & 0.03 \\ 
-  KEN & EMERGING & GX & 0.28 & 0.70 & 0.72 & 0.99 & 0.93 & 1.52 & 1.34 & 1.37 & 1.79 & 1.63 & 0.47 & 0.03 & 1.60 & 1.01 & 0.74 & 0.64 & 0.56 \\ 
-  RWA & EMERGING & GX & 0.87 & 0.64 & 2.00 & 1.38 & 0.06 & 0.49 & 0.19 & 0.88 & 0.53 & 0.46 & 0.51 & 0.03 & 0.84 & 0.25 & 0.03 & 0.05 & 13.67 \\ 
-  BDI & EMERGING & GX & 0.24 & 0.15 & 2.11 & 0.99 & 0.12 & 0.57 & 0.65 & 0.95 & 0.84 & 0.60 & 0.03 & 0.03 & 0.05 & 0.94 & 1.26 & 0.20 & 21.95 \\  \midrule
+  UGA & EMERGING & GX & 2.04 & 0.01 & 1.61 & 0.51 & 1.18 & 0.53 & 0.95 & 0.16 & 0.17 & 0.33 & 2.78 & 0.00 & 0.40 & 0.85 & 0.98 & 2.47 & 0.06 \\ 
+  TZA & EMERGING & GX & 1.47 & 2.92 & 0.61 & 1.90 & 1.38 & 0.75 & 0.48 & 0.84 & 0.29 & 0.19 &  & 4.11 & 0.64 & 1.34 & 1.87 & 0.09 & 0.01 \\ 
+  KEN & EMERGING & GX & 0.28 & 0.70 & 0.72 & 0.99 & 0.93 & 1.52 & 1.34 & 1.37 & 1.79 & 1.63 & 0.47 & 0.00 & 1.60 & 1.01 & 0.74 & 0.64 & 0.56 \\ 
+  RWA & EMERGING & GX & 0.87 & 0.64 & 2.00 & 1.38 & 0.06 & 0.49 & 0.19 & 0.88 & 0.53 & 0.46 & 0.51 & 0.00 & 0.84 & 0.25 & 0.02 & 0.05 & 13.67 \\ 
+  BDI & EMERGING & GX & 0.24 & 0.15 & 2.11 & 0.99 & 0.12 & 0.57 & 0.65 & 0.95 & 0.84 & 0.60 & 0.00 & 0.00 & 0.05 & 0.94 & 1.26 & 0.20 & 21.95 \\  \midrule
   UGA & BACI & GX & 1.67 & 0.52 & 1.70 & 0.44 & 0.89 & 0.66 & 1.04 & 0.70 & 0.55 & 0.28 &  &  &  &  &  &  &  \\ 
   TZA & BACI & GX & 2.07 & 0.94 & 0.58 & 1.83 & 1.36 & 0.84 & 0.50 & 0.59 & 0.70 & 0.63 &  &  &  &  &  &  &  \\ 
   KEN & BACI & GX & 0.24 & 1.10 & 0.76 & 0.92 & 0.97 & 1.32 & 1.23 & 1.25 & 1.31 & 1.48 &  &  &  &  &  &  &  \\ 
   RWA & BACI & GX & 0.50 & 1.07 & 2.08 & 1.96 & 0.11 & 0.21 & 0.58 & 0.73 & 1.04 & 0.55 &  &  &  &  &  &  &  \\ 
   BDI & BACI & GX & 0.44 & 0.03 & 1.24 & 0.97 & 0.15 & 0.61 & 1.33 & 0.98 & 0.95 & 0.46 &  &  &  &  &  &  &  \\ \midrule
-  UGA & EORA & VAX & 4.92 & 0.03 & 0.85 & 0.15 & 0.18 & 0.21 & 0.46 & 0.37 & 1.28 & 0.42 & 0.06 & 0.93 & 0.63 & 0.81 & 0.57 & 0.03 & 1.88 \\ 
+  UGA & EORA & VAX & 4.92 & 0.02 & 0.85 & 0.15 & 0.18 & 0.21 & 0.46 & 0.37 & 1.28 & 0.42 & 0.06 & 0.93 & 0.63 & 0.81 & 0.57 & 0.00 & 1.88 \\ 
   TZA & EORA & VAX & 1.20 & 0.39 & 3.80 & 0.86 & 0.43 & 0.29 & 0.23 & 0.60 & 1.17 & 2.32 & 1.72 & 1.09 & 0.62 & 0.86 & 0.96 & 3.27 & 2.42 \\ 
   KEN & EORA & VAX & 0.14 & 1.25 & 0.91 & 1.19 & 1.21 & 1.21 & 1.16 & 1.16 & 0.94 & 1.05 & 1.15 & 0.93 & 1.08 & 1.04 & 1.08 & 1.09 & 0.71 \\ 
   RWA & EORA & VAX & 1.64 & 0.32 & 0.72 & 0.34 & 0.24 & 0.36 & 0.52 & 0.49 & 0.83 & 0.17 & 6.53 & 18.05 & 3.11 & 1.53 & 3.15 & 0.47 & 6.67 \\ 
-  BDI & EORA & VAX & 1.47 & 0.18 & 0.39 & 0.33 & 0.14 & 0.13 & 0.42 & 0.27 & 2.31 & 0.88 & 5.84 & 30.00 & 3.95 & 0.78 & 3.89 & 0.46 & 19.08 \\ \midrule
-    UGA & EMERGING & VAX & 1.97 & 0.03 & 1.54 & 0.48 & 1.36 & 0.51 & 0.90 & 0.20 & 0.22 & 0.32 & 2.68 & 0.03 & 0.41 & 0.85 & 1.01 & 2.35 & 0.05 \\ 
-  TZA & EMERGING & VAX & 1.42 & 2.99 & 0.62 & 1.43 & 1.33 & 0.75 & 0.42 & 0.80 & 0.28 & 0.22 &  & 4.39 & 0.63 & 1.22 & 1.62 & 0.09 & 0.03 \\ 
-  KEN & EMERGING & VAX & 0.26 & 0.70 & 0.78 & 1.12 & 0.82 & 1.54 & 1.39 & 1.21 & 1.68 & 1.63 & 0.47 & 0.03 & 1.62 & 1.04 & 0.82 & 0.65 & 0.53 \\ 
-  RWA & EMERGING & VAX & 0.96 & 0.77 & 1.50 & 1.73 & 0.09 & 0.57 & 0.26 & 1.36 & 0.72 & 0.60 & 0.76 & 0.03 & 0.81 & 0.31 & 0.03 & 0.05 & 15.93 \\ 
-  BDI & EMERGING & VAX & 0.22 & 0.12 & 1.96 & 1.06 & 0.15 & 0.57 & 0.56 & 1.16 & 0.77 & 0.76 & 0.03 & 0.03 & 0.05 & 1.09 & 1.59 & 0.19 & 23.21 \\ 
+  BDI & EORA & VAX & 1.47 & 0.18 & 0.39 & 0.33 & 0.14 & 0.13 & 0.42 & 0.27 & 2.31 & 0.88 & 5.84 & 31.37 & 3.95 & 0.78 & 3.89 & 0.46 & 19.08 \\ \midrule
+  UGA & EMERGING & VAX & 1.97 & 0.01 & 1.54 & 0.48 & 1.36 & 0.51 & 0.90 & 0.20 & 0.22 & 0.32 & 2.68 & 0.00 & 0.41 & 0.85 & 1.01 & 2.35 & 0.05 \\ 
+  TZA & EMERGING & VAX & 1.42 & 2.99 & 0.62 & 1.43 & 1.33 & 0.75 & 0.42 & 0.80 & 0.28 & 0.22 &  & 4.39 & 0.63 & 1.22 & 1.62 & 0.09 & 0.01 \\ 
+  KEN & EMERGING & VAX & 0.26 & 0.70 & 0.78 & 1.12 & 0.82 & 1.54 & 1.39 & 1.21 & 1.68 & 1.63 & 0.47 & 0.00 & 1.62 & 1.04 & 0.82 & 0.65 & 0.53 \\ 
+  RWA & EMERGING & VAX & 0.96 & 0.77 & 1.50 & 1.73 & 0.09 & 0.57 & 0.26 & 1.36 & 0.72 & 0.60 & 0.76 & 0.00 & 0.81 & 0.31 & 0.03 & 0.05 & 15.93 \\ 
+  BDI & EMERGING & VAX & 0.22 & 0.12 & 1.96 & 1.06 & 0.15 & 0.57 & 0.56 & 1.16 & 0.77 & 0.76 & 0.00 & 0.00 & 0.05 & 1.09 & 1.59 & 0.19 & 23.21 \\
    \bottomrule
 \end{tabular}
 }
 \end{table}
+
+
+
+% latex table generated in R 4.3.0 by xtable 1.8-4 package
+% Thu Jan 18 10:17:19 2024
+\begin{table}[ht]
+\centering
+\caption{\label{tab:NRCA_Diff} (N)RCA Estimates from Figures \ref{fig:NRCA_Diff} and \ref{fig:NRCA_GR}}
+\vspace{2mm}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{llllrrrrrrrrrrrrrrrrr}
+  \toprule
+Country & Source & Flow & Period & AFF & MIN & FBE & TEX & WAP & PCM & MPR & ELM & TEQ & MAN & EGW & CON & SMH & TRA & PTE & FIB & PAO \\ 
+  \midrule
+ \multicolumn{11}{l}{Relative to the EAC} \\ \midrule
+ UGA & EM & VAX & 2006-2010 & 1.06 & 0.09 & 1.41 & 0.68 & 0.76 & 0.64 & 0.51 & 1.30 & 0.79 & 0.25 & 4.02 & 0.00 & 1.71 & 0.83 & 0.11 & 2.12 & 0.03 \\ 
+  UGA & EM & VAX & 2015-2019 & 1.04 & 0.05 & 1.22 & 0.73 & 1.14 & 0.82 & 1.09 & 0.53 & 0.94 & 0.73 & 3.94 & 0.36 & 1.46 & 0.65 & 0.13 & 1.66 & 0.04 \\ 
+  UGA & EM & VAX & Growth Rate & -1.39 & -46.65 & -13.86 & 6.01 & 50.98 & 27.69 & 112.59 & -59.19 & 18.23 & 196.66 & -2.04 & Inf & -15.04 & -21.60 & 23.52 & -21.53 & 35.46 \\ 
+  TZA & EM & VAX & 2006-2010 & 1.02 & 1.14 & 0.64 & 1.21 & 1.30 & 1.77 & 1.95 & 0.86 & 0.73 & 0.82 & 0.00 & 3.14 & 0.86 & 0.92 & 1.09 & 0.20 & 0.02 \\ 
+  TZA & EM & VAX & 2015-2019 & 1.21 & 2.01 & 0.60 & 0.87 & 1.14 & 1.50 & 0.68 & 0.56 & 0.41 & 0.61 & 0.00 & 2.79 & 0.98 & 1.10 & 1.18 & 0.22 & 0.02 \\ 
+  TZA & EM & VAX & Growth Rate & 18.19 & 75.99 & -6.40 & -27.84 & -12.20 & -15.45 & -65.06 & -35.41 & -43.39 & -24.94 &  & -11.18 & 13.80 & 20.31 & 8.45 & 12.72 & -19.63 \\ 
+  KEN & EM & VAX & 2006-2010 & 1.07 & 1.39 & 1.08 & 1.05 & 0.94 & 0.56 & 0.58 & 1.03 & 1.36 & 1.54 & 0.52 & 0.00 & 0.71 & 1.13 & 1.22 & 1.21 & 1.94 \\ 
+  KEN & EM & VAX & 2015-2019 & 0.94 & 0.67 & 1.27 & 1.39 & 0.89 & 0.61 & 1.07 & 1.34 & 0.77 & 1.43 & 0.50 & 0.00 & 0.68 & 1.12 & 1.42 & 1.41 & 2.09 \\ 
+  KEN & EM & VAX & Growth Rate & -11.93 & -51.73 & 17.33 & 31.73 & -5.04 & 7.90 & 83.87 & 29.57 & -43.19 & -7.11 & -3.87 & -46.04 & -4.20 & -0.80 & 16.61 & 16.47 & 7.66 \\ 
+  RWA & EM & VAX & 2006-2010 & 0.04 & 0.01 & 0.83 & 0.31 & 0.67 & 1.55 & 0.59 & 0.49 & 0.24 & 0.18 & 0.37 & 0.04 & 2.13 & 1.10 & 2.10 & 0.05 & 1.17 \\ 
+  RWA & EM & VAX & 2015-2019 & 0.21 & 0.19 & 0.96 & 0.37 & 0.12 & 1.65 & 0.39 & 1.07 & 0.93 & 0.49 & 0.48 & 0.90 & 1.56 & 0.72 & 0.05 & 0.18 & 0.73 \\ 
+  RWA & EM & VAX & Growth Rate & 443.79 & 1341.66 & 16.12 & 19.09 & -82.12 & 6.35 & -34.65 & 120.96 & 296.51 & 177.25 & 29.12 & 2082.03 & -26.75 & -34.81 & -97.83 & 251.07 & -37.38 \\ 
+  BDI & EM & VAX & 2006-2010 & 0.05 & 0.00 & 1.91 & 0.71 & 0.13 & 0.48 & 0.14 & 0.38 & 0.49 & 0.32 & 0.00 & 0.00 & 0.02 & 0.55 & 0.56 & 0.23 & 7.95 \\ 
+  BDI & EM & VAX & 2015-2019 & 0.04 & 0.00 & 2.20 & 0.43 & 0.09 & 0.87 & 0.48 & 0.95 & 1.24 & 0.58 & 0.00 & 0.05 & 0.01 & 0.53 & 0.66 & 0.14 & 9.05 \\ 
+  BDI & EM & VAX & Growth Rate & -28.04 &  & 15.16 & -39.62 & -30.48 & 80.02 & 252.01 & 148.31 & 155.41 & 80.37 & -100.00 & 1936.67 & -59.84 & -3.48 & 17.94 & -39.97 & 13.92 \\ 
+  UGA & BACI & GX & 2006-2010 & 1.07 & 0.29 & 1.37 & 0.74 & 0.60 & 0.49 & 1.13 & 1.16 & 1.86 & 0.64 &  &  &  &  &  &  &  \\ 
+  UGA & BACI & GX & 2015-2019 & 0.95 & 0.27 & 1.26 & 0.69 & 0.93 & 0.93 & 0.78 & 0.70 & 1.32 & 0.74 &  &  &  &  &  &  &  \\ 
+  UGA & BACI & GX & Growth Rate & -11.13 & -5.31 & -8.41 & -6.84 & 54.78 & 88.34 & -31.09 & -39.41 & -28.98 & 16.22 &  &  &  &  &  &  &  \\ 
+  TZA & BACI & GX & 2006-2010 & 1.01 & 0.89 & 0.53 & 0.95 & 0.95 & 1.68 & 0.89 & 0.90 & 0.64 & 0.37 &  &  &  &  &  &  &  \\ 
+  TZA & BACI & GX & 2015-2019 & 1.09 & 0.67 & 0.48 & 0.74 & 0.94 & 1.43 & 1.23 & 0.74 & 0.50 & 0.49 &  &  &  &  &  &  &  \\ 
+  TZA & BACI & GX & Growth Rate & 8.17 & -25.00 & -9.91 & -22.37 & -0.75 & -14.85 & 38.13 & -17.42 & -22.21 & 32.79 &  &  &  &  &  &  &  \\ 
+  KEN & BACI & GX & 2006-2010 & 1.06 & 1.35 & 1.17 & 1.18 & 1.22 & 0.68 & 1.11 & 1.06 & 0.82 & 1.30 &  &  &  &  &  &  &  \\ 
+  KEN & BACI & GX & 2015-2019 & 1.10 & 1.42 & 1.38 & 1.49 & 1.26 & 0.51 & 1.03 & 1.37 & 1.21 & 1.62 &  &  &  &  &  &  &  \\ 
+  KEN & BACI & GX & Growth Rate & 3.24 & 5.28 & 18.32 & 25.93 & 3.24 & -26.02 & -7.38 & 29.15 & 48.27 & 24.73 &  &  &  &  &  &  &  \\ 
+  RWA & BACI & GX & 2006-2010 & 0.17 & 0.28 & 1.30 & 0.26 & 0.20 & 1.53 & 0.30 & 0.80 & 0.76 & 0.56 &  &  &  &  &  &  &  \\ 
+  RWA & BACI & GX & 2015-2019 & 0.26 & 2.00 & 0.96 & 0.41 & 0.26 & 1.52 & 0.35 & 0.53 & 0.76 & 0.77 &  &  &  &  &  &  &  \\ 
+  RWA & BACI & GX & Growth Rate & 57.96 & 607.63 & -26.33 & 54.71 & 29.28 & -0.60 & 15.23 & -33.97 & 0.35 & 37.42 &  &  &  &  &  &  &  \\ 
+  BDI & BACI & GX & 2006-2010 & 0.08 & 0.50 & 1.57 & 0.71 & 0.14 & 0.97 & 0.38 & 1.55 & 1.92 & 0.42 &  &  &  &  &  &  &  \\ 
+  BDI & BACI & GX & 2015-2019 & 0.03 & 0.23 & 1.24 & 0.28 & 0.07 & 1.59 & 0.62 & 0.58 & 0.68 & 0.44 &  &  &  &  &  &  &  \\ 
+  BDI & BACI & GX & Growth Rate & -55.95 & -53.77 & -20.90 & -60.08 & -46.96 & 64.66 & 63.99 & -62.93 & -64.74 & 5.04 &  &  &  &  &  &  &  \\ \midrule
+ \multicolumn{11}{l}{In Inner-EAC Trade} \\ \midrule
+ UGA & EM & VAX & 2006-2010 & 1.94 & 0.05 & 1.52 & 0.50 & 0.82 & 0.60 & 0.94 & 1.24 & 0.78 & 0.29 & 2.52 & 0.00 & 0.30 & 0.59 & 0.68 & 2.34 & 0.06 \\ 
+  UGA & EM & VAX & 2015-2019 & 2.00 & 0.01 & 1.57 & 0.45 & 1.50 & 0.43 & 0.86 & 0.19 & 0.19 & 0.36 & 2.84 & 0.00 & 0.41 & 0.87 & 1.03 & 2.36 & 0.04 \\ 
+  UGA & EM & VAX & Growth Rate & 3.49 & -90.65 & 3.57 & -10.48 & 83.04 & -28.89 & -9.28 & -84.33 & -75.23 & 24.96 & 12.66 & Inf & 36.54 & 47.02 & 51.20 & 0.86 & -21.50 \\ 
+  TZA & EM & VAX & 2006-2010 & 1.73 & 1.93 & 0.61 & 2.50 & 1.83 & 0.81 & 0.50 & 0.62 & 0.26 & 1.56 & 0.00 & 0.00 & 0.61 & 1.21 & 1.99 & 0.11 & 0.05 \\ 
+  TZA & EM & VAX & 2015-2019 & 1.11 & 3.15 & 0.63 & 1.13 & 1.30 & 0.69 & 0.33 & 0.98 & 0.30 & 0.21 & 0.00 & 4.39 & 0.66 & 1.22 & 1.41 & 0.08 & 0.01 \\ 
+  TZA & EM & VAX & Growth Rate & -35.87 & 63.25 & 3.48 & -54.80 & -29.22 & -15.67 & -33.43 & 59.41 & 14.99 & -86.53 &  & Inf & 7.54 & 0.41 & -29.39 & -27.59 & -84.28 \\ 
+  KEN & EM & VAX & 2006-2010 & 0.18 & 1.26 & 0.82 & 0.65 & 0.83 & 1.34 & 1.19 & 0.99 & 1.42 & 1.24 & 0.47 & 0.72 & 1.56 & 1.17 & 0.81 & 0.56 & 0.56 \\ 
+  KEN & EM & VAX & 2015-2019 & 0.29 & 0.65 & 0.76 & 1.14 & 0.82 & 1.56 & 1.41 & 1.42 & 1.76 & 1.71 & 0.45 & 0.00 & 1.67 & 1.00 & 0.82 & 0.71 & 0.51 \\ 
+  KEN & EM & VAX & Growth Rate & 67.56 & -48.48 & -7.78 & 74.19 & -0.82 & 16.84 & 18.37 & 43.50 & 24.12 & 37.23 & -4.84 & -100.00 & 6.69 & -14.63 & 1.69 & 26.88 & -8.42 \\ 
+  RWA & EM & VAX & 2006-2010 & 0.64 & 0.00 & 1.23 & 3.12 & 0.28 & 0.33 & 1.95 & 1.25 & 0.67 & 0.33 & 0.95 & 0.00 & 1.33 & 0.74 & 0.93 & 0.09 & 30.72 \\ 
+  RWA & EM & VAX & 2015-2019 & 1.11 & 0.43 & 1.69 & 1.72 & 0.08 & 0.78 & 0.24 & 1.46 & 0.78 & 0.69 & 0.56 & 0.00 & 0.77 & 0.28 & 0.03 & 0.04 & 15.14 \\ 
+  RWA & EM & VAX & Growth Rate & 75.06 & Inf & 36.84 & -44.80 & -69.86 & 136.03 & -87.79 & 16.94 & 16.78 & 108.43 & -40.66 & Inf & -41.92 & -61.31 & -97.23 & -58.24 & -50.72 \\ 
+  BDI & EM & VAX & 2006-2010 & 0.57 & 0.00 & 1.51 & 2.93 & 0.16 & 0.31 & 1.25 & 0.65 & 1.06 & 0.79 & 0.00 & 167.36 & 0.02 & 1.75 & 2.70 & 0.24 & 54.71 \\ 
+  BDI & EM & VAX & 2015-2019 & 0.22 & 0.00 & 2.10 & 0.78 & 0.13 & 0.65 & 0.56 & 1.17 & 0.62 & 0.72 & 0.00 & 0.00 & 0.06 & 0.86 & 1.25 & 0.13 & 16.18 \\ 
+  BDI & EM & VAX & Growth Rate & -61.82 &  & 38.60 & -73.45 & -18.47 & 106.52 & -55.19 & 80.69 & -41.52 & -9.43 & -100.00 & -100.00 & 150.84 & -50.61 & -53.85 & -44.31 & -70.42 \\ 
+  UGA & BACI & GX & 2006-2010 & 1.97 & 0.45 & 1.70 & 0.65 & 0.51 & 0.61 & 1.25 & 0.91 & 0.51 & 0.21 &  &  &  &  &  &  &  \\ 
+  UGA & BACI & GX & 2015-2019 & 1.77 & 0.98 & 1.61 & 0.42 & 1.07 & 0.47 & 1.06 & 0.47 & 0.35 & 0.43 &  &  &  &  &  &  &  \\ 
+  UGA & BACI & GX & Growth Rate & -9.81 & 118.48 & -5.50 & -35.71 & 109.45 & -22.41 & -14.85 & -48.72 & -30.42 & 104.38 &  &  &  &  &  &  &  \\ 
+  TZA & BACI & GX & 2006-2010 & 2.42 & 0.51 & 0.74 & 1.68 & 1.67 & 0.93 & 0.38 & 0.90 & 1.10 & 0.34 &  &  &  &  &  &  &  \\ 
+  TZA & BACI & GX & 2015-2019 & 1.77 & 0.90 & 0.56 & 1.83 & 1.42 & 0.88 & 0.63 & 0.56 & 0.67 & 0.26 &  &  &  &  &  &  &  \\ 
+  TZA & BACI & GX & Growth Rate & -26.89 & 77.56 & -23.87 & 9.19 & -15.04 & -6.17 & 67.01 & -38.13 & -39.34 & -22.19 &  &  &  &  &  &  &  \\ 
+  KEN & BACI & GX & 2006-2010 & 0.23 & 1.44 & 0.74 & 0.85 & 1.03 & 1.23 & 1.11 & 1.09 & 1.07 & 1.33 &  &  &  &  &  &  &  \\ 
+  KEN & BACI & GX & 2015-2019 & 0.29 & 1.19 & 0.79 & 0.95 & 0.85 & 1.40 & 1.23 & 1.36 & 1.35 & 1.54 &  &  &  &  &  &  &  \\ 
+  KEN & BACI & GX & Growth Rate & 27.48 & -17.40 & 5.71 & 11.44 & -17.87 & 14.15 & 10.99 & 24.65 & 26.66 & 15.57 &  &  &  &  &  &  &  \\ 
+  RWA & BACI & GX & 2006-2010 & 1.07 & 0.20 & 2.95 & 0.36 & 0.15 & 0.20 & 0.29 & 1.10 & 1.16 & 0.16 &  &  &  &  &  &  &  \\ 
+  RWA & BACI & GX & 2015-2019 & 0.41 & 0.99 & 2.01 & 2.02 & 0.11 & 0.25 & 0.55 & 0.88 & 1.12 & 0.64 &  &  &  &  &  &  &  \\ 
+  RWA & BACI & GX & Growth Rate & -62.09 & 405.49 & -32.05 & 456.91 & -28.76 & 22.00 & 89.77 & -19.51 & -3.06 & 293.22 &  &  &  &  &  &  &  \\ 
+  BDI & BACI & GX & 2006-2010 & 0.51 & 0.00 & 1.34 & 2.10 & 0.04 & 0.51 & 0.93 & 1.45 & 1.83 & 0.73 &  &  &  &  &  &  &  \\ 
+  BDI & BACI & GX & 2015-2019 & 0.34 & 0.17 & 1.04 & 0.99 & 0.24 & 0.95 & 1.32 & 1.55 & 0.62 & 0.57 &  &  &  &  &  &  &  \\ 
+  BDI & BACI & GX & Growth Rate & -32.71 & 5411.76 & -22.22 & -52.85 & 434.09 & 84.86 & 41.59 & 7.56 & -66.14 & -21.93 &  &  &  &  &  &  &  \\ \bottomrule
+\end{tabular}
+}
+\end{table}
+
+
+
+
 
 \begin{figure}[h!]
 \centering
