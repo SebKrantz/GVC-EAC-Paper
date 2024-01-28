@@ -1262,6 +1262,7 @@ RCA_ALL |>
   subset(between(year, 2010, 2019) & country %in% c(EAC5, "EAC5") & RCA > 0) |> 
   collap(RCA ~ type + source + country + sector, fmedian, na.rm = TRUE) |> # with(range(RCA))
   mutate(source = factor(source, levels = c("WDR_EORA", "EORA", "EMERGING", "BACI"))) |> 
+  subset(type == "VAX" | source %in% c("EMERGING", "BACI")) |> 
   # # Print Numbers (Appendix)
   # pivot(c("country", "source", "type"), "RCA", "sector", how = "w") |>
   #     xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
@@ -1270,9 +1271,10 @@ RCA_ALL |>
   #     num_vars() |> pwcor() |>
   #     print(digits = 3, return = TRUE) |>
   #     xtable::xtable() |> print(booktabs = TRUE)
+  mutate(RCA = replace_outliers(RCA, c(0.01, 30), "clip")) |> 
   
   ggplot(aes(x = RCA, y = sector, colour = type, shape = source)) +
-  geom_vline(xintercept = 1) + geom_point(alpha = 0.7) +
+  geom_vline(xintercept = 1) + geom_point(alpha = 0.8) +
   facet_wrap( ~ country, scales = "free_y") +
   scale_x_continuous(trans = "log10", breaks = log_breaks(10), limits = c(0.01, 30),
                      expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
@@ -1321,6 +1323,7 @@ rowbind("Relative to EAC Exports" = EAC_RCA_ALL,
         idcol = "measure") |> 
   subset(between(year, 2010, 2019) & RCA > 0) |> 
   collap(RCA ~ measure + type + source + country + sector, fmedian, na.rm = TRUE) |> # with(range(RCA))
+  subset(type == "VAX" | source %in% c("EMERGING", "BACI")) |> 
   # pivot(c("measure", "country", "source", "type"), "RCA", "sector", how = "w") |> # View()
   #       subset(measure == "In Inner-EAC Trade", -measure) |> 
   #       xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
@@ -1329,7 +1332,7 @@ rowbind("Relative to EAC Exports" = EAC_RCA_ALL,
   
   ggplot(aes(x = RCA, y = sector, colour = type, shape = source)) +
   geom_vline(xintercept = 1) + 
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.8) +
   facet_grid(measure ~ country) +
   scale_x_continuous(trans = "log10", breaks = log_breaks(10), limits = c(0.03, 30),
                      expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
