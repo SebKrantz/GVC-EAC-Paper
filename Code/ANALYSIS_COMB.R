@@ -1204,6 +1204,8 @@ join(U_DET, slt(D_DET, -E), verbose = 0) |> STD(~source+country+sector, stub =FA
 # (New) Revealed Comparative Advantage
 #######################################
 
+# -> EAC_BACI_SEC is calculated in TRADE_FLOWS.R
+
 # Standard Comparative Advantage with BACI
 BACI_RCA <- EAC_BACI_SEC |> 
   group_by(year, country = iso3_o, sector = broad_sector_code) |> 
@@ -1211,7 +1213,7 @@ BACI_RCA <- EAC_BACI_SEC |>
   rowbind(subset(., country %in% EAC5) |> 
           collap(value ~ year + sector, fsum) |> 
           mutate(country = "EAC5")) |> 
-  mutate(SSH = fsum(value, list(year, country), TRA = "/"),                      # Share of Sector in country exports
+  mutate(SSH = fsum(value, list(year, country), TRA = "/"),          # Share of Sector in country exports
          SWSH = fsum(value, list(year, sector), TRA = "fill") %/=%   # Share of Sector in World Exports
                 fsum(value, year, TRA = "fill"),
          RCA = SSH / SWSH, # Revealed Comparative Advantage
@@ -1260,8 +1262,10 @@ RCA_ALL |>
   subset(between(year, 2010, 2019) & country %in% c(EAC5, "EAC5") & RCA > 0) |> 
   collap(RCA ~ type + source + country + sector, fmedian, na.rm = TRUE) |> # with(range(RCA))
   mutate(source = factor(source, levels = c("WDR_EORA", "EORA", "EMERGING", "BACI"))) |> 
+  # # Print Numbers (Appendix)
   # pivot(c("country", "source", "type"), "RCA", "sector", how = "w") |>
   #     xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
+  # # Print Correlations (Appendix)
   # pivot(names = c("source", "type"), values = "RCA", how = "w", sort = "names") |>
   #     num_vars() |> pwcor() |>
   #     print(digits = 3, return = TRUE) |>
@@ -1274,13 +1278,12 @@ RCA_ALL |>
                      expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
   scale_y_discrete(limits = rev) +
   theme_bw() + pretty_plot + 
-  labs(colour = "Flow: ", shape = "Source: ", y = "Sector", x = "(N)RCA") +
+  labs(colour = "Flow: ", shape = "Source: ", y = "Sector", x = "(New) Revealed Comparative Advantage") +
   scale_color_manual(values = c( "blue", "red")) +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5, margin = margin(t = 3.5)), 
         plot.margin = margin(r = 10))
   
-  dev.copy(pdf, "Figures/REV/NRCA_EAC5_ALL.pdf", width = 10, height = 7)
-  dev.off()
+ggsave("Figures/REV/NRCA_EAC5_ALL.pdf", width = 10, height = 7)
 
   
 # RCA relative to EAC
@@ -1318,10 +1321,11 @@ rowbind("Relative to EAC Exports" = EAC_RCA_ALL,
         idcol = "measure") |> 
   subset(between(year, 2010, 2019) & RCA > 0) |> 
   collap(RCA ~ measure + type + source + country + sector, fmedian, na.rm = TRUE) |> # with(range(RCA))
+  # pivot(c("measure", "country", "source", "type"), "RCA", "sector", how = "w") |> # View()
+  #       subset(measure == "In Inner-EAC Trade", -measure) |> 
+  #       xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
   mutate(source = factor(source, levels = c("WDR_EORA", "EORA", "EMERGING", "BACI")), 
          RCA = replace_outliers(RCA, c(0.03, 30), "clip")) |> 
-  pivot(c("measure", "country", "source", "type"), "RCA", "sector", how = "w") |>
-        xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
   
   ggplot(aes(x = RCA, y = sector, colour = type, shape = source)) +
   geom_vline(xintercept = 1) + 
@@ -1331,16 +1335,17 @@ rowbind("Relative to EAC Exports" = EAC_RCA_ALL,
                      expand = c(0, 0.02), labels = function(x) signif(x, 3)) +
   scale_y_discrete(limits = rev) +
   theme_bw() + pretty_plot + 
-  labs(colour = "Flow: ", shape = "Source: ", y = "Sector", x = "(N)RCA") +
+  labs(colour = "Flow: ", shape = "Source: ", y = "Sector", 
+       x = "(New) Revealed Comparative Advantage") +
   scale_color_manual(values = c( "blue", "red")) +
   theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 0), 
         plot.margin = margin(r = 10))
 
-dev.copy(pdf, "Figures/REV/EAC_NRCA_EAC5_ALL.pdf", width = 12, height = 7)
-dev.off()
+ggsave("Figures/REV/EAC_NRCA_EAC5_ALL.pdf", width = 12, height = 7)
 
 
 # Shifts in RCA 
+
 rowbind("Overall" = RCA_ALL,
         "Relative to EAC" = EAC_RCA_ALL,
         "In Inner-EAC Trade" = RCA_IEAC_ALL,
@@ -1349,7 +1354,15 @@ rowbind("Overall" = RCA_ALL,
   group_by(measure, type, source, country, sector, 
            period = nif(between(year, 2006, 2010), "2006-2010", between(year, 2015, 2019), "2015-2019")) |> 
   select(RCA) |> fmedian() |> na_omit(cols = "period") |> # select(type, source) |> table()
-  subset(GRPN(list(measure, type, source, country, sector)) == 2L) |> 
+  subset(GRPN(list(measure, type, source, country, sector)) == 2L) %>%
+  # rowbind(
+  #   G(., by = RCA ~ measure + type + source + country + sector, t = ~ period, stubs = FALSE) |> 
+  #     na_omit() |> mutate(period = "Growth Rate")    
+  # ) |> pivot(c("measure", "country", "source", "type", "period"), "RCA", "sector", how = "w") |> 
+  # roworder(measure, source, type, country, period) |> 
+  # subset(measure == "In Inner-EAC Trade", -measure) |> 
+  # xtable::xtable() |> print(booktabs = TRUE, include.r = FALSE)
+  mutate(RCA = replace_outliers(RCA, c(0.03, 30), "clip")) |> 
   
   ggplot(aes(x = RCA, y = sector, colour = period, shape = source)) +
   geom_vline(xintercept = 1) + 
@@ -1360,13 +1373,14 @@ rowbind("Overall" = RCA_ALL,
   scale_y_discrete(limits = rev) +
   scale_shape_manual(values = c("circle", "plus")) +
   theme_bw() + pretty_plot + 
-  labs(colour = "Flow: ", shape = "Source: ", y = "Sector", x = "(N)RCA") +
-  scale_color_manual(values = c( "blue", "red")) +
+  labs(colour = "Flow: ", shape = "Source: ", y = "Sector", x = "(New) Revealed Comparative Advantage") +
+  scale_color_brewer(palette = "Paired") +
+  # scale_color_manual(values = c( "blue", "red")) +
   theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 0), 
         plot.margin = margin(r = 10))
 
-dev.copy(pdf, "Figures/REV/NRCA_EAC5_DIFF_ALL.pdf", width = 10, height = 14)
-dev.off()
+ggsave("Figures/REV/NRCA_EAC5_DIFF_ALL.pdf", width = 10, height = 14)
+
 
 # Growth Rates
 
@@ -1390,15 +1404,15 @@ rowbind("Overall" = RCA_ALL,
   scale_shape_manual(values = c("circle", "plus")) +
   scale_y_discrete(limits = rev) +
   theme_bw() + pretty_plot + 
-  labs(colour = "Measure: ", shape = "Source: ", y = "Sector", x = "Growth Rate of (N)RCA") +
+  labs(colour = "Measure: ", shape = "Source: ", y = "Sector", x = "Growth Rate of (N)RCA (Percent)") +
   scale_color_brewer(palette = "Set1") +
   theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 0), 
         plot.margin = margin(r = 10))
 
-  dev.copy(pdf, "Figures/REV/NRCA_EAC5_ALL_Growth.pdf", width = 10, height = 7)
-  dev.off()
+ggsave("Figures/REV/NRCA_EAC5_ALL_Growth.pdf", width = 10, height = 7)
 
   
+
 ########################################################
 # GVC's and Industrial Development (Regression Analysis)
 ########################################################
