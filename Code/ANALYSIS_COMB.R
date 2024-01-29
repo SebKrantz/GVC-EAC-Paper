@@ -1727,6 +1727,93 @@ feols(log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year
 # # -> Too high R^2. Kummritz does not put in source-sector FE and runs two different estimations
 
 
+
+# Now: Instrument for Traditional Trade (Total and Final Goods), also using ESCAP ---------------------------------------------
+
+# TODO: Sector-level bilateral trade costs??
+
+gen_trade_instrument <- function(source = "ESR", name = "E") {
+  list(EORA = EORA_DET, EMERGING = EM_DET) |> 
+    lapply(function(X) X$decomps |> 
+             lapply(extract2, source) |> value2df()) |> 
+    rowbind(idcol = "source") |> 
+    # subset(country %iin% EAC5) |> 
+    pivot(1:4, names = list("importer", "E")) |> 
+    subset(country != importer) |> 
+    mutate(importer = rem_SSD(importer)) |> 
+    collap(E ~ source + year + country + sector + importer, fsum) |> 
+    join(select(ESCAP_REG, region_o, region_d, year, tij_imp), 
+         on = c("country" = "region_o", "importer" = "region_d", "year"), 
+         how = "inner") |> 
+    group_by(source, country, sector, year) |> 
+    mutate(tij_imp_instr = w_mean_excl(tij_imp, E)) |> 
+    ungroup() |> 
+    na_omit(cols = "tij_imp_instr") |> 
+    rename(E = name, 
+           tij_imp_instr = paste0("tij_imp_instr_", name), 
+           .nse = FALSE)
+}
+
+# Zero Stage Estimation
+TRADE_BIL <- gen_trade_instrument()
+mod <- feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = TRADE_BIL, split = ~ source)
+etable(mod)
+TRADE_BIL[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
+
+TRADE_BIL_FD <- gen_trade_instrument("Efd", "Efd")
+mod <- feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = TRADE_BIL_FD, split = ~ source)
+etable(mod)
+TRADE_BIL_FD[, Efd_hat := exp(fitted(feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
+rm(mod)
+
+# Using BACI
+BACI_2d_reg_EAC5 <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
+           subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) |> 
+           join(select(EM_CTRY, iso3_o = iso3, region_o = detailed_region_code)) |> 
+           join(select(EM_CTRY, iso3_d = iso3, region_d = detailed_region_code)) |> 
+           mutate(across(c(region_o, region_d), rem_SSD)) |> 
+           collap(value ~ year + region_o + region_d + code_2d + product_description, fsum, 
+                  fill = TRUE, keep.col.order = FALSE) |> 
+           subset(!(is.na(region_o) | is.na(region_d)) & region_o != region_d & year >= 2000) # |> 
+           # subset(region_o %in% EAC5)
+
+# BACI instrument
+BACI_2d_reg_EAC5 <- BACI_2d_reg_EAC5 |>
+  join(select(ESCAP_REG, region_o, region_d, year, tij_imp), 
+       on = c("region_o", "region_d", "year")) |> 
+  subset(GRPN(list(year, region_o, code_2d, year)) >= 2L) |> 
+  group_by(year, region_o, code_2d, year) |> 
+  mutate(tij_imp_instr = w_mean_excl(tij_imp, value)) |> 
+  ungroup() |> 
+  na_omit(cols = "tij_imp_instr") |> 
+  rename(value = E) 
+
+# Zero Stage Estimation
+mod <- feols(log(E+1) ~ log(tij_imp_instr) | region_o^code_2d + region_o^year + code_2d^year, data = BACI_2d_reg_EAC5)
+etable(mod)
+BACI_2d_reg_EAC5[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr) | region_o^code_2d + region_o^year + code_2d^year, data = BACI_2d_reg_EAC5)))] # -1: avoid zeros
+
+# Aggregation BACI
+BACI_2d_reg_EAC5_AGG <- BACI_2d_reg_EAC5 |> 
+  group_by(year, country = region_o, sector = code_2d) |> 
+  summarise(across(c(E, E_hat), fsum),
+            tij_imp = fmean(tij_imp, E),
+            tij_imp_instr = fmean(tij_imp_instr, E))
+
+# Joining 
+TRADE_BIL %<>% join(TRADE_BIL_FD |> select(-tij_imp), how = "full")
+rm(TRADE_BIL_FD)
+
+# Aggregation
+TRADE_BIL_AGG <- TRADE_BIL |> 
+  group_by(source, year, country, sector) |> 
+  summarise(across(c(E, Efd, E_hat, Efd_hat), fsum),
+            tij_imp = fmean(tij_imp, E),
+            tij_imp_instr_E = fmean(tij_imp_instr_E, E), 
+            tij_imp_instr_Efd = fmean(tij_imp_instr_Efd, Efd))
+
+
+
 # Data Construction ---------------------------------------------------------------
 
 
@@ -1794,6 +1881,8 @@ EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_
 # all.equal(unattrib(data %$% (I2E * Exports)), unattrib(data$i2e))
 # all.equal(unattrib(data %$% (E2R * Exports)), unattrib(data$e2r))
 
+# ESCAP
+
 # Plot Data ----------------------------------
 
 EORA21_DATA[country %in% EAC5] |> with({
@@ -1855,6 +1944,123 @@ EORA21_DATA[country %in% EAC5] |> index_by(country, sector, year)  |> with({
 
 dev.copy(pdf, "Figures/REV/EORA21_GROWTH_REG_TS.pdf", width = 10.27, height = 5)
 dev.off()
+
+
+
+
+# Join VA to Trade Data -----------------------------------------------------------------------
+
+TRADE_BIL_AGG %<>% join(rowbind(EORA21_VA, EM_VA))
+
+# Need EMERGING VA here...
+BACI_2d_reg_EAC5_AGG %<>% mutate(sector = as.integer(sector)) %>% 
+  join(EM_VA %>% mutate(sector = as.integer(sector))) %>% 
+  subset(is.finite(VA))
+
+# Gross Trade
+models_trade <- list(
+  full_sample = list(
+    OLS_EORA21 = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
+    IV_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat), 
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
+    OLS_EORA15 = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
+    IV_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat), 
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
+    OLS_EM = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year,
+                    data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
+    IV_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat),
+                   data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
+    OLS_BACI = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year,
+                   data = BACI_2d_reg_EAC5_AGG[country %in% EAC5], vcov = DK ~ year),
+    IV_BACI = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat),
+                  data = BACI_2d_reg_EAC5_AGG[country %in% EAC5], vcov = DK ~ year)
+  ),
+  manufacturing_sample = list(
+    OLS_EORA21 = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+    IV_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat), 
+                      data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+    OLS_EORA15 = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+    IV_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat), 
+                      data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+    OLS_EM = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year,
+                   data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat),
+                  data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+    OLS_BACI = feols(log(VA) ~ log(E) | country^sector + country^year + sector^year,
+                     data = BACI_2d_reg_EAC5_AGG[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_BACI = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) ~ log(E_hat),
+                    data = BACI_2d_reg_EAC5_AGG[country %in% EAC5 & sector %in% EM_MAN], vcov = DK ~ year)
+  )
+)
+
+etable(models_trade$full_sample, 
+       headers = names(models_trade$full_sample), # stage = 1,
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
+
+etable(models_trade$manufacturing_sample, 
+       headers = names(models_trade$manufacturing_sample), 
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
+
+# Exporting
+esttex(models_trade$full_sample[1:4], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(models_trade$full_sample[1:4]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+esttex(models_trade$manufacturing_sample[1:4], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(models_trade$manufacturing_sample[1:4]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+# First Stages
+esttex(models_I2E$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_I2E$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+esttex(models_I2E$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_I2E$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+
+
+# Trade in Final Goods
+models_fg_trade <- list(
+  full_sample = list(
+    OLS_EORA21 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[source == "EORA"], vcov = DK ~ year),
+    IV_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
+                      data = TRADE_BIL_AGG[source == "EORA"], vcov = DK ~ year),
+    OLS_EORA15 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[source == "EORA" & year <= 2015], vcov = DK ~ year),
+    IV_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
+                      data = TRADE_BIL_AGG[source == "EORA" & year <= 2015], vcov = DK ~ year),
+    OLS_EM = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year,
+                   data = TRADE_BIL_AGG[source == "EMERGING"], vcov = DK ~ year),
+    IV_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat),
+                  data = TRADE_BIL_AGG[source == "EMERGING"], vcov = DK ~ year)
+  ),
+  manufacturing_sample = list(
+    OLS_EORA21 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+    IV_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
+                      data = TRADE_BIL_AGG[source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+    OLS_EORA15 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
+                       data = TRADE_BIL_AGG[source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+    IV_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
+                      data = TRADE_BIL_AGG[source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+    OLS_EM = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year,
+                   data = TRADE_BIL_AGG[source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+    IV_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat),
+                  data = TRADE_BIL_AGG[source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
+  )
+)
+
+etable(models_fg_trade$full_sample, 
+       headers = names(models_trade$full_sample), # stage = 1,
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
+
+etable(models_fg_trade$manufacturing_sample, 
+       headers = names(models_trade$manufacturing_sample), 
+       fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
+
 
 
 
