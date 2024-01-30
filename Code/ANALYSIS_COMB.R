@@ -2013,11 +2013,11 @@ esttex(models_trade$manufacturing_sample[1:4], digits.stats = 4, fixef_sizes = T
        headers = names(models_trade$manufacturing_sample[1:4]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 # First Stages
-esttex(models_I2E$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E$full_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+esttex(models_trade$full_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_trade$full_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
-esttex(models_I2E$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_I2E$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+esttex(models_I2E$manufacturing_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_trade$manufacturing_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 
@@ -2025,42 +2025,68 @@ esttex(models_I2E$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_siz
 models_fg_trade <- list(
   full_sample = list(
     OLS_EORA21 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
-                       data = TRADE_BIL_AGG[source == "EORA"], vcov = DK ~ year),
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
     IV_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
-                      data = TRADE_BIL_AGG[source == "EORA"], vcov = DK ~ year),
+                      data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
     OLS_EORA15 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
-                       data = TRADE_BIL_AGG[source == "EORA" & year <= 2015], vcov = DK ~ year),
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
     IV_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
-                      data = TRADE_BIL_AGG[source == "EORA" & year <= 2015], vcov = DK ~ year),
+                      data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
     OLS_EM = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year,
-                   data = TRADE_BIL_AGG[source == "EMERGING"], vcov = DK ~ year),
+                   data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
     IV_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat),
-                  data = TRADE_BIL_AGG[source == "EMERGING"], vcov = DK ~ year)
+                  data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year)
   ),
   manufacturing_sample = list(
     OLS_EORA21 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
-                       data = TRADE_BIL_AGG[source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
     IV_EORA21 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
-                      data = TRADE_BIL_AGG[source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+                      data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
     OLS_EORA15 = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year, 
-                       data = TRADE_BIL_AGG[source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+                       data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
     IV_EORA15 = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat), 
-                      data = TRADE_BIL_AGG[source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+                      data = TRADE_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
     OLS_EM = feols(log(VA) ~ log(Efd) | country^sector + country^year + sector^year,
-                   data = TRADE_BIL_AGG[source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+                   data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
     IV_EM = feols(log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) ~ log(Efd_hat),
-                  data = TRADE_BIL_AGG[source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
+                  data = TRADE_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
   )
 )
 
 etable(models_fg_trade$full_sample, 
-       headers = names(models_trade$full_sample), # stage = 1,
+       headers = names(models_fg_trade$full_sample), # stage = 1,
        fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
 etable(models_fg_trade$manufacturing_sample, 
-       headers = names(models_trade$manufacturing_sample), 
+       headers = names(models_fg_trade$manufacturing_sample), 
        fitstat = ~ . + wh.p + kpr + ivwald1.p) #  + sargan.p
 
+# Exporting
+esttex(models_fg_trade$full_sample[1:4], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(models_fg_trade$full_sample[1:4]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+esttex(models_fg_trade$manufacturing_sample[1:4], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(models_fg_trade$manufacturing_sample[1:4]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+# First Stages
+esttex(models_fg_trade$full_sample[c(2, 4)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_fg_trade$full_sample[c(2, 4)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+esttex(models_fg_trade$manufacturing_sample[c(2, 4)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_fg_trade$manufacturing_sample[c(2, 4)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+
+# Combined Exports:
+esttex(c(models_trade$full_sample[1:4], models_fg_trade$full_sample[1:4]), 
+       digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(c(models_trade$full_sample[1:4], models_fg_trade$full_sample[1:4])), 
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+
+esttex(c(models_trade$manufacturing_sample[1:4], models_fg_trade$manufacturing_sample[1:4]), 
+       digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(c(models_trade$manufacturing_sample[1:4], models_fg_trade$manufacturing_sample[1:4])), 
+       fitstat = ~ . + wh.p + kpr + ivwald1.p)
 
 
 
