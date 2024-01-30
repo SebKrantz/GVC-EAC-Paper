@@ -95,10 +95,9 @@ Recent years have also seen some GVC and RVC related work on regional economic c
 %While some work has been done on RVCs in East Africa within specific industries, such as Maize value chains studied by \citet{daly2016maize}, and \citet{lwesya2022integration} provide a macroeconomic assessment, there has not yet been a detailed exposition of EAC regional integration and GVC participation using comprehensive data sources. \newline %Some landmark studies have however been conducted regarding the GVC integration of Africa and developing countries more broadly. \newline
 
 
-\citet{lwesya2022integration} studies GVC integration in the EAC with respect to economic upgrading using UNCTAD-Eora GVC Panel data from 2005 to 2018. This analyis is largely complimentary to the analysis carried out in this paper. The authors compute measures of backward and forward integration and find that Kenya, Tanzania and Uganda are relatively
-better integrated into GVCs, with Kenya having the deepest level of integration, expecially in terms of indirect VA and forward integration. Overall, the EAC's participation in GVCs is found to be in upstream low- and middle value-added production activities. Then, using a cross-country panel regression framework predicting domestic value added (DVA) in exports, which includes GVC indicators and other macroeconomic indicators, he finds that domestic credit, foreign direct investment, the quality of institutions and foreign value-added have significant positive effects, but observed no such effects for measures of human capital, infrastructure quality, and GDP per capita. The analysis is focused on the economic upgrading aspect, and does not provide a detailed bilateral and sector-level exposition of the regions integration into GVCs and RVCs. He also does not provide a detailed examination of how different forms of trade and GVC participation affect economic growth. The analysis also does not establish economic causality between any of the studied factors and DVA in exports. \newline
+\citet{lwesya2022integration} studies GVC integration in the EAC with respect to economic upgrading using UNCTAD-Eora GVC Panel data from 2005 to 2018. This analyis is largely complimentary to the analysis carried out in this paper. The author computes measures of backward and forward integration and finds that Kenya, Tanzania and Uganda are relatively better integrated into GVCs, with Kenya having the deepest level of integration, especially in terms of indirect VA and forward integration. Overall, the EAC's participation in GVCs is found to be in upstream low- and middle value-added production activities. Then, using a cross-country panel regression framework predicting domestic value added (DVA) in exports, which includes GVC indicators and other macroeconomic indicators, he finds that domestic credit, foreign direct investment, the quality of institutions and foreign value-added have significant positive effects, but observed no such effects for measures of human capital, infrastructure quality, and GDP per capita. The analysis is focused on the economic upgrading aspect, and does not provide a detailed bilateral and sector-level exposition of the regions integration into GVCs and RVCs. He also does not provide a detailed examination of how different forms of trade and GVC participation affect economic growth, and his analysis does not establish economic causality between any of the studied factors and DVA in exports. \newline
 
-This paper adds to our understanding of GVCs and regional integration in the EAC in the following significant respects: (1) it uses better data, including gross trade flows data and the EMERGING MRIO tables, which include IO/SUT/SAM tables for 4 EAC countries; (2) it conducts a detailed examination of EAC members global and regional integration using both gross trade flows and value added content shares, paying close attention to specific bilateral linkages and sector-level patterns; (4) it constructs metrics to track regional integration in both gross and VA terms and uses them to measure progress in recent years (4) It examines the positioning of EAC members and sectors in GVCs as well as revealed comparative advantage in gross and value-added terms; (5) It analyzes the effect of conventional trade, GVC, and RCV participation on domestic value added using a bilateral-sector-level regression framework with triple fixed effects and instrumental variables for GVC participation following \citep{Kummritz20161} (weighting third-party trade costs by industry distance in the value chain). Thus it attempts to present a rigorous and detailed study of the regions global and regional integration through trade and value chains using the best available data, and to establish economic causality between different forms of trade and value-added. 
+This paper adds to our understanding of GVCs and regional integration in the EAC in the following significant respects: (1) it uses better data, including gross trade flows data and the EMERGING MRIO tables, which include IO/SUT/SAM tables for 4 EAC countries; (2) it conducts a detailed examination of EAC members global and regional integration using both gross trade flows and value added content shares, paying close attention to specific bilateral linkages and sector-level patterns; (4) it constructs metrics to track regional integration in both gross and VA terms and uses them to measure progress in recent years (4) It examines the positioning of EAC members and sectors in GVCs as well as revealed comparative advantage in gross and value-added terms; (5) It analyzes the effect of conventional trade, GVC, and RCV participation on domestic value added using a bilateral-sector-level regression framework with triple fixed effects and instrumental variables for GVC participation following \citet{Kummritz20161} (weighting third-party trade costs by industry distance in the value chain). Thus it presents a rigorous and detailed study of the regions global and regional integration through trade and value chains using the best available data, and attempts to establish causality between different forms of trade and economic growth. 
 
 % lagged GVC indicators, and argues that this framework is better able to control for at least some of the endogeneity in GVC participation than a macro-level panel regression. \newline 
 
@@ -995,7 +994,14 @@ Another difference to \citet{Kummritz20161} is that I smooth bilateral trade cos
 Since the IV trade cost measure ($\tau_{out}$) is a weighted average of origin's ($o$) trade costs with third parties, and EAC members trade much more with ROW than with each other, an accurate and timely representation of regional trade costs is irrelevant for the IV. \newline
 % \todo[inline]{Country-sector-level upstreamness and downstreamness is endogeneous to country GVC integration, so need to use $\delta_{ijt}$ instead of $\delta_{oiujt}$!!}
 
-In addition to estimating returns to backward and forward GVC integration, I also consider returns to gross trade, trade in final goods, and measures of regional integration introduced in Section 4.3, in  particular VS$^\text{EAC}$ and VS1$^\text{EAC}$. Since these are components of VS and VS1, the construction of appropriate instruments is straightforward. For gross and final goods trade, I omit the industry distance component and instead construct a sector-level time-varying 3rd-party trade cost measure $\tau_{oiut}$ which is obtained as the exports-weighted average of sector $i$ in country $o$'s exports to all destination counties $k \neq u$. \newline 
+In addition to estimating returns to backward and forward GVC integration, I also consider returns to gross trade and trade in final goods. To instrument these, I omit the industry distance component and instead construct a sector-level time-varying 3rd-party trade cost measure $\tau_{oiut}$ which is obtained as the exports-weighted average of sector $i$ in country $o$'s exports to all destination counties $k \neq u$. This is then used to predict bilateral sector-level trade in gross and final goods using similar zero-stage equations to \ref{eq:predVS} and \ref{eq:predVS1}, and the predictions are summed across importers to yield appropriate instruments for gross and final goods exports, respectively. \newline 
+
+Finally, I also consider returns to regional integration in both gross and VA terms. For this, I use an alternative final stage model of the form
+\begin{equation} \label{eq:VA_HDFE_RI}
+\log(\text{VA}_{cst}) = \beta_1 \log(\text{GVC}_{cst}) + \beta_2 \text{SH}_{cst}^\text{EAC} \times \log(\text{GVC}_{cst}) + \alpha_{cs} + \beta_{ct} +\gamma_{st} + \epsilon_{cst},
+\end{equation}
+where $\text{SH}_{cst}^\text{EAC}$ is the EAC share in the $\text{GVC}_{cst}$ flow. Following Section 4.3, this is VS$^\text{EAC}$ and VS1$^\text{EAC}$ for GVC indicators, and the EAC share in gross/final exports for gross trade. The coefficent $\beta_2$ gives the additional impact when $\text{SH}_{cst}^\text{EAC}$ is increased by one unit (100\%), i.e., when the increase is through regional trade. This implies that a 1\% increase in regional trade yields a $\beta_1+\beta_2$\% increase in VA, whereas a 1\% increase in extra-regional trade has an impact of $\beta_1$\%. Since the regional share is a component of the flow in question, it is straightforward to obtain an instrument for it from the zero-stage predictions. The RHS of the first stages thus has the same functional form as Eq. \ref{eq:VA_HDFE_RI}, with $\text{SH}_{cst}^\text{EAC}$ and $\text{GVC}_{cst}$ replaced by their zero-stage predicted measures. \newline
+
 
 My default sample includes the full number of sectors (26 for EORA, 134 for EMERGING), for 5 EAC countries: Uganda, Rwanda, Tanzania, Kenya and Burundi. South Sudan is omitted because of data quality concerns, Congo because of lacking RVC integration with the EAC and different (more resource intense) trading patterns. The inclusion of Congo does not significantly alter the results\todo{Report in Appendix.}. Estimations are run using indicators computed on EORA 2021, the GVC indicators from the 2020 WDR using EORA 2015, and indicators computed using EMERGING. With each database, I run one set of estimations using the full set of sectors, and one using only manufacturing sectors (all sectors mapping to broad sectors FBE, TEX, WAP, PCM, MPR, ELM, TEQ, MAN, in Table \ref{tab:sec}). Unfortunately, in all estimations with EMERGING, the coefficients, both OLS and IV, are statistically insignificant and close to zero. This indicates that the full sectoral resolution of 134 sectors in these tables is not suitable to evaluate returns to trade and GVC particpation in the EAC5. Unfortunately, aggregating to broad sectors also yields insignificant results due to the short time dimension of only 6 years of data. Thus I do not report EMERGING results in the main paper. The following sections report the results based on EORA, starting with gross trade.
 
@@ -1013,15 +1019,14 @@ Table \ref{tab:FS_GT_RES} shows results for gross trade using the full sample of
    \begin{tabular}{lcccccccc}
       \tabularnewline \midrule \midrule
       Dependent Variable: & \multicolumn{8}{c}{log(VA)}\\
+      Exports Measure: & \multicolumn{4}{c}{Gross} & \multicolumn{4}{c}{Final Goods} \\
       Data: & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} \\
                                           & OLS    & IV            & OLS    & IV            & OLS    & IV    & OLS    & IV \\    
       Model:                              & (1)            & (2)                   & (3)            & (4)                   & (5)            & (6)           & (7)            & (8)\\  
       \midrule
       \emph{Variables}\\
-      log(E)                              & 0.2454$^{***}$ & 0.1072                & 0.1305$^{***}$ & 0.1503$^{*}$          &                &               &                &   \\   
-                                          & (0.0419)       & (0.0770)              & (0.0233)       & (0.0777)              &                &               &                &   \\   
-      log(Efd)                            &                &                       &                &                       & 0.1892$^{***}$ & 0.1931$^{**}$ & 0.1036$^{***}$ & 0.1776$^{**}$\\   
-                                          &                &                       &                &                       & (0.0353)       & (0.0818)      & (0.0207)       & (0.0719)\\   
+      log(E)                              & 0.2454$^{***}$ & 0.1072     & 0.1305$^{***}$ & 0.1503$^{*}$  & 0.1892$^{***}$   & 0.1931$^{**}$   & 0.1036$^{***}$   & 0.1776$^{**}$  \\   
+                                          & (0.0419)       & (0.0770)              & (0.0233)       & (0.0777)      & (0.0353)    &  (0.0818)     &   (0.0207)    &  (0.0719) \\    
       \midrule
       \emph{Fixed-effects}\\
       \# country-sector                   & 130            & 130                   & 129            & 129                   & 130            & 130           & 129            & 129\\  
@@ -1053,15 +1058,14 @@ Table \ref{tab:FS_GT_RES} shows results for gross trade using the full sample of
    \begin{tabular}{lcccccccc}
       \tabularnewline \midrule \midrule
       Dependent Variable: & \multicolumn{8}{c}{log(VA)}\\
+      Exports Measure: & \multicolumn{4}{c}{Gross} & \multicolumn{4}{c}{Final Goods} \\
       Data: & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} \\
                                           & OLS    & IV            & OLS    & IV            & OLS    & IV    & OLS    & IV \\    
       Model:                              & (1)            & (2)                   & (3)            & (4)                   & (5)            & (6)           & (7)            & (8)\\  
       \midrule
       \emph{Variables}\\
-      log(E)                              & 0.1015$^{***}$ & 0.9659      & 0.1175$^{***}$ & 0.2198      &              &             &                &   \\   
-                                          & (0.0324)       & (0.6435)    & (0.0299)       & (0.1746)    &              &             &                &   \\   
-      log(Efd)                            &                &             &                &             & -0.0566      & -0.1048     & 0.1075$^{***}$ & -0.0211\\   
-                                          &                &             &                &             & (0.0920)     & (0.5590)    & (0.0303)       & (0.0400)\\   
+      log(E)                              & 0.1015$^{***}$ & 0.9659      & 0.1175$^{***}$ & 0.2198      & -0.0566             & -0.1048            &  0.1075$^{***}$              & -0.0211  \\   
+                                          & (0.0324)       & (0.6435)    & (0.0299)       & (0.1746)    & (0.0920)            & (0.5590)           & (0.0303)               &  (0.0400) \\   
       \midrule
       \emph{Fixed-effects}\\
       \# country-sector                   & 40           & 40                   & 40            & 40                   & 40            & 40           & 40            & 40\\  
@@ -1091,7 +1095,7 @@ I then run both OLS and 2SLS fixed-effects regressions according to Eq. \ref{eq:
 I estimate 4 specifications: (1) OLS, (2) IV with the time-invariant ($\delta_{ij}$) industry-distance instrument,  (2) IV with the bilateral ($\delta_{oiuj}$) industry-distance instrument, and (4) IV with both instruments. \newline
 
 Table \ref{tab:FS_RES} shows the results on the full sample, and Table \ref{tab:MS_RES} the results for the manufacturing sample. Appendix Tables \ref{tab:FS_RES_F1} and \ref{tab:MS_RES_F1} report the corresponding first stages. % An analysis with aggregated sectors as in Table \ref{tab:sec} therefore follows, which is more fruitful. 
-The first stages are generally very weak, with many coefficients insignificant or of the wrong sign. Since the trade cost measure $\tau_{out}\times \delta_{oiuj}$ is negatively correlated with value added, these negative first-stage coefficients could indicate some overfitting at the zero stages (Tables \ref{tab:ZS_FULL} and \ref{tab:ZS_EAC}) which are also quite weak. In any case, this indicates that the 2SLS results in Tables \ref{tab:FS_RES} and \ref{tab:MS_RES} need to be treated with extreme caution and skepticism, even in cases where first-stage statistics at the bottom of these tables (such as a sizeable Kleinbergen \& Paap F-statistic) suggest that the first stages are valid. In all estimations, the instruments are very weak. Another notable fact is that coefficients from the full EORA 200-2021 sample are generally smaller and more often insignificant than those of WDR (EORA 2000-2015) sample. This appears to reflect a change in trends in the data update from 2016 (the structural break is absorbed by the fixed effects). Thus I consider the results on the WDR sample more reliable, as the data here at least reflect a consistent methodology and temporal variation over the entire sample. % \newline
+The first stages are generally very weak, with many coefficients insignificant or of the wrong sign. Since the trade cost measure $\tau_{out}\times \delta_{oiuj}$ is negatively correlated with value added, these negative first-stage coefficients could indicate some overfitting at the zero stages (Table \ref{tab:ZS_FULL}) which are also quite weak. In any case, this indicates that the 2SLS results in Tables \ref{tab:FS_RES} and \ref{tab:MS_RES} need to be treated with extreme caution and skepticism, even in cases where first-stage statistics at the bottom of these tables (such as a sizeable Kleinbergen \& Paap F-statistic) suggest that the first stages are valid. In all estimations, the instruments are very weak. Another notable fact is that coefficients from the full EORA 200-2021 sample are generally smaller and more often insignificant than those of WDR (EORA 2000-2015) sample. This appears to reflect a change in trends in the data update from 2016 (the structural break is absorbed by the fixed effects). Thus I consider the results on the WDR sample more reliable, as the data here at least reflect a consistent methodology and temporal variation over the entire sample. % \newline
 % \todo[inline]{Report Kleinbergen \& Paap robust F-statistic, eliminate conventional one}
 
 % \todo[inline]{Consider simple lag specification where both indicators are lagged one period (including IV, no contemporaneous term). Or: Dynamic IV, with simple contemporaneous first stage.  Or dynamic first stage?}
@@ -1196,6 +1200,95 @@ Larger productivity gains from forward integration (E2R) are also prevalent in t
 
 
 \subsection{Results: Regional Integration}
+
+\begin{table}[h!]
+   \caption{\label{tab:FS_RI_GT_RES} EAC5 Regional Integration through Trade: IV Regressions using EORA26}
+   \centering
+  \resizebox{\textwidth}{!}{
+   \centering
+   \begin{tabular}{lcccccccc}
+      \tabularnewline \midrule \midrule
+      Dependent Variable: & \multicolumn{8}{c}{log(VA)}\\
+      Exports Measure: & \multicolumn{4}{c}{Gross} & \multicolumn{4}{c}{Final Goods} \\
+      Data: & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} \\
+                                          & OLS    & IV            & OLS    & IV            & OLS    & IV    & OLS    & IV \\    
+      Model:                              & (1)            & (2)                   & (3)            & (4)                   & (5)            & (6)           & (7)            & (8)\\  
+      \midrule
+      \emph{Variables}\\
+      log(E)                                         & 0.2361$^{***}$ & 0.0290                 & 0.1034$^{***}$ & 0.1051                  & 0.1718$^{***}$ & -0.1314                & 0.0837$^{***}$ & 0.2198$^{**}$ \\   
+                                                     & (0.0463)       & (0.0910)               & (0.0202)       & (0.0988)                & (0.0378)       & (0.3728)               & (0.0195)       & (0.1026) \\   
+      log(E) $\times$ SH$^\text{EAC5}$               & 0.0555         & 0.0661$^{***}$         & 0.0749$^{**}$  & 0.0468                  & 0.0787$^{***}$ & 0.1437                 & 0.0531         & -0.0397  \\     
+                                                     & (0.0405)       & (0.0174)               & (0.0279)       & (0.0309)                & (0.0260)       & (0.0898)               & (0.0335)       & (0.0352)  \\  
+      \midrule
+      \emph{Fixed-effects}\\
+      \# country-sector                              & 130            & 130                    & 129            & 129                     & 130            & 130                    & 129            & 129\\  
+      \# country-year                                & 110            & 110                    & 80             & 80                      & 110            & 110                    & 80             & 80\\  
+      \# sector-year                                 & 572            & 572                    & 416            & 416                     & 572            & 572                    & 416            & 416\\ 
+            \midrule
+      \emph{Fit statistics}\\
+      Observations                                   & 2,740          & 2,740                  & 2,023          & 2,023                   & 2,740          & 2,740                  & 2,023          & 2,023\\  
+      R$^2$                                          & 0.9859         & 0.9854                 & 0.9929         & 0.9929                  & 0.9856         & 0.9846                 & 0.9928         & 0.9926\\  
+      Within R$^2$                                   & 0.0507         & 0.0166                 & 0.0307         & 0.0296                  & 0.0325         & -0.0340                & 0.0181         & -0.0071\\  
+      Wu-Hausman, p-value                            &                & 0.0001                 &                & 0.4127                  &                & 0.2302                 &                & 0.2113\\
+      \midrule \midrule
+      \multicolumn{9}{l}{\emph{Driscoll-Kraay (L=2) standard-errors in parentheses}}\\
+      \multicolumn{9}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \end{tabular}
+   }
+\end{table}
+\FloatBarrier
+
+
+
+\begin{table}[h!]
+   \caption{\label{tab:MS_RI_GT_RES} EAC5 Regional Integration through Trade: IV Regressions using EORA26: Manufacturing Sectors}
+   \centering
+  \resizebox{\textwidth}{!}{
+   \centering
+   \begin{tabular}{lcccccccc}
+      \tabularnewline \midrule \midrule
+      Dependent Variable: & \multicolumn{8}{c}{log(VA)}\\
+      Exports Measure: & \multicolumn{4}{c}{Gross} & \multicolumn{4}{c}{Final Goods} \\
+      Data: & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} & \multicolumn{2}{c}{EORA21} & \multicolumn{2}{c}{EORA15} \\
+                                          & OLS    & IV            & OLS    & IV            & OLS    & IV    & OLS    & IV \\    
+      Model:                              & (1)            & (2)                   & (3)            & (4)                   & (5)            & (6)           & (7)            & (8)\\  
+      \midrule
+      \emph{Variables}\\
+      log(E)                                         & 0.0923$^{***}$ & -0.4191                & 0.1154$^{***}$ & 0.2048                 & -0.0556      & 0.0411                 & 0.1087$^{***}$ & 0.0246 \\  
+                                                     & (0.0263)       & (0.3939)               & (0.0295)       & (0.1446)               & (0.0892)     & (0.1168)               & (0.0302)       & (0.1038) \\  
+      log(E) $\times$ SH$^\text{EAC5}$               & -0.0283        & -0.1999                & -0.0481        & 0.0073                 & 0.0037       & -0.0091                & -0.0360        & -0.0287  \\    
+                                                     & (0.0284)       &  (0.1367)              & (0.0360)       & (0.0362)               & (0.0196)     & (0.0300)               & (0.0338)       & (0.0418)  \\     
+      \midrule
+      \emph{Fixed-effects}\\
+      \# country-sector                              & 40             & 40                     & 40             & 40                     & 40           & 40                     & 40             & 40\\  
+      \# country-year                                & 110            & 110                    & 80             & 80                     & 110          & 110                    & 80             & 80\\  
+      \# sector-year                                 & 176            & 176                    & 128            & 128                    & 176          & 176                    & 128            & 128\\  
+            \midrule
+      \emph{Fit statistics}\\
+      Observations                                   & 859            & 859                    & 640            & 640                    & 859          & 859                    & 640            & 640\\  
+      R$^2$                                          & 0.9883         & 0.9860                 & 0.9952         & 0.9951                 & 0.9883       & 0.9882                 & 0.9952         & 0.9951\\  
+      Within R$^2$                                   & 0.0088         & -0.1884                & 0.0276         & 0.0078                 & 0.0022       & -0.0050                & 0.0252         & 0.0119\\  
+      Wu-Hausman, p-value                            &                & 0.2981                 &                & 0.7154                 &              & 0.8432                 &                & 0.8630\\ 
+      \midrule \midrule
+      \multicolumn{9}{l}{\emph{Driscoll-Kraay (L=2) standard-errors in parentheses}}\\
+      \multicolumn{9}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \end{tabular}
+   }
+\end{table}
+\FloatBarrier
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 It would, at this stage, be very useful to also investigate the effects of regional integration on domestic VA using the indicators from section 4.3, but, given the weak IV issues already for standard GVC indicators, it is unthinkable to use the same strategy to identify the causal effect of indicators expressed as a share of those standard indicators. Thus I leave a concrete evaluation of the potential benefits of regional integration through supply chain trade for future research. 
 
