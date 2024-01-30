@@ -1510,7 +1510,93 @@ ESCAP_REG <- ESCAP_REG |>
   mutate(tij_imp_instr = w_mean_excl(tij_imp, exports)) |> 
   ungroup()
 
-# Now: Upstreamness and Downstreamness
+# Instrument for Traditional Trade (Total and Final Goods) -----------------------------------------------
+
+rem_SSD <- function(x) factor(copyv(as.character(x), "SSD", "SSA"), levels = REG)
+
+gen_trade_instrument <- function(source = "ESR", name = "E") {
+  list(EORA = EORA_DET, EMERGING = EM_DET) |> 
+    lapply(function(X) X$decomps |> 
+             lapply(extract2, source) |> value2df()) |> 
+    rowbind(idcol = "source") |> 
+    # subset(country %iin% EAC5) |> 
+    pivot(1:4, names = list("importer", "E")) |> 
+    subset(country != importer) |> 
+    mutate(importer = rem_SSD(importer)) |> 
+    collap(E ~ source + year + country + sector + importer, fsum) |> 
+    join(select(ESCAP_REG, region_o, region_d, year, tij_imp), 
+         on = c("country" = "region_o", "importer" = "region_d", "year"), 
+         how = "inner") |> 
+    group_by(source, country, sector, year) |> 
+    mutate(tij_imp_instr = w_mean_excl(tij_imp, E)) |> 
+    ungroup() |> 
+    na_omit(cols = "tij_imp_instr") |> 
+    rename(E = name, 
+           tij_imp_instr = paste0("tij_imp_instr_", name), 
+           .nse = FALSE)
+}
+
+# Zero Stage Estimation
+TRADE_BIL <- gen_trade_instrument()
+mod <- feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = TRADE_BIL, split = ~ source)
+etable(mod)
+TRADE_BIL[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
+
+TRADE_BIL_FD <- gen_trade_instrument("Efd", "Efd")
+mod <- feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = TRADE_BIL_FD, split = ~ source)
+etable(mod)
+TRADE_BIL_FD[, Efd_hat := exp(fitted(feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
+rm(mod)
+
+# Using BACI
+BACI_2d_reg_EAC5 <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
+  subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) |> 
+  join(select(EM_CTRY, iso3_o = iso3, region_o = detailed_region_code)) |> 
+  join(select(EM_CTRY, iso3_d = iso3, region_d = detailed_region_code)) |> 
+  mutate(across(c(region_o, region_d), rem_SSD)) |> 
+  collap(value ~ year + region_o + region_d + code_2d + product_description, fsum, 
+         fill = TRUE, keep.col.order = FALSE) |> 
+  subset(!(is.na(region_o) | is.na(region_d)) & region_o != region_d & year >= 2000) # |> 
+# subset(region_o %in% EAC5)
+
+# BACI instrument
+BACI_2d_reg_EAC5 <- BACI_2d_reg_EAC5 |>
+  join(select(ESCAP_REG, region_o, region_d, year, tij_imp), 
+       on = c("region_o", "region_d", "year")) |> 
+  subset(GRPN(list(year, region_o, code_2d, year)) >= 2L) |> 
+  group_by(year, region_o, code_2d, year) |> 
+  mutate(tij_imp_instr = w_mean_excl(tij_imp, value)) |> 
+  ungroup() |> 
+  na_omit(cols = "tij_imp_instr") |> 
+  rename(value = E) 
+
+# Zero Stage Estimation
+mod <- feols(log(E+1) ~ log(tij_imp_instr) | region_o^code_2d + region_o^year + code_2d^year, data = BACI_2d_reg_EAC5)
+etable(mod)
+BACI_2d_reg_EAC5[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr) | region_o^code_2d + region_o^year + code_2d^year, data = BACI_2d_reg_EAC5)))] # -1: avoid zeros
+
+# Aggregation BACI
+BACI_2d_reg_EAC5_AGG <- BACI_2d_reg_EAC5 |> 
+  group_by(year, country = region_o, sector = code_2d) |> 
+  summarise(across(c(E, E_hat), fsum),
+            tij_imp = fmean(tij_imp, E),
+            tij_imp_instr = fmean(tij_imp_instr, E))
+
+# Joining 
+TRADE_BIL %<>% join(TRADE_BIL_FD |> select(-tij_imp), how = "full")
+rm(TRADE_BIL_FD)
+
+# Aggregation
+TRADE_BIL_AGG <- TRADE_BIL |> 
+  group_by(source, year, country, sector) |> 
+  summarise(across(c(E, Efd, E_hat, Efd_hat), fsum),
+            tij_imp = fmean(tij_imp, E),
+            tij_imp_instr_E = fmean(tij_imp_instr_E, E), 
+            tij_imp_instr_Efd = fmean(tij_imp_instr_Efd, Efd))
+
+
+
+# Adding Upstreamness and Downstreamness ---------------------------------------------------------------------------
 
 # # Examine Panel-Variation
 # U_DET |> qsu(U ~ source, pid = ~ country + sector) |> aperm()
@@ -1526,7 +1612,6 @@ ESCAP_REG <- ESCAP_REG |>
 # 
 # # -> Not much between sector variation...
 
-rem_SSD <- function(x) factor(copyv(as.character(x), "SSD", "SSA"), levels = REG)
 rem_SSD_IMP <- function(x, imp = TRUE) {
   col <- if(anyv(names(x), "U")) "U" else "D"
   ids <- c("source", "country", "sector", "year")
@@ -1602,8 +1687,18 @@ gc()
 
 if(anyNA(U_ALL_BIL)) stop("Missing values")
 
+# Also Adding Traditional Trade Instrument (Sector-Level)
+U_ALL_BIL |> varying(tij_imp_instr ~ source + source_country + using_country + year)
+U_ALL_BIL %<>% join(TRADE_BIL |> select(source:importer, E, tij_imp_instr_sec = tij_imp_instr_E), 
+                    on = c("source", "year", "source_country" = "country", "source_sector" = "sector", "using_country" = "importer")) # |> 
+# with(pwcor(tij_imp, tij_imp_sec)) # is 1
+
 # Check correlations
+U_ALL_BIL %$% pwcor(tij_imp_instr, tij_imp_instr_sec)
 U_ALL_BIL %$% pwcor(log(fvax+1), log(tij_imp_instr))
+U_ALL_BIL %$% pwcor(log(fvax+1), log(tij_imp_instr_sec))
+# -> Less correlated, first stages are weaker
+
 # U_ALL_BIL %$% fwithin(list(fvax = log(fvax), tij = tij_imp_instr), source_all) %$% cor(fvax, tij)
 # U_ALL_BIL %$% fwithin(list(fvax = fvax, tij = tij_imp_instr), list(source_all, using_country, using_sector)) %$% cor(fvax, tij)
 
@@ -1619,10 +1714,15 @@ SDcols <- function(stub) c("fvax", "instrument", paste0(stub, "_country"), paste
 
 
 # Estimation
+# # TODO: Better Estimate with subset ??
+# U_ALL_BIL %<>% subset(using_country %in% EAC5) # I2E
+# U_ALL_BIL %<>% subset(using_country %in% EAC5) # E2R
+# # -> Also results in weaker first stages
+
 gc()
 U_ALL_BIL[, instrument := tij_imp_instr / (U_source * D_using)]
-U_ALL_BIL[, i2e_hat := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
-U_ALL_BIL[, e2r_hat := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
+U_ALL_BIL[is.finite(instrument), i2e_hat := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
+U_ALL_BIL[is.finite(instrument), e2r_hat := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
 # U_ALL_BIL[, instrument := tij_imp_instr / (U_source / U_using)] # -> Predictive power inferior to above
 # U_ALL_BIL[, i2e_hat_U := predict_fvax(.SD, "using"), by = source, .SDcols = SDcols("using")]
 # U_ALL_BIL[, e2r_hat_U := predict_fvax(.SD, "source"), by = source, .SDcols = SDcols("source")]
@@ -1648,8 +1748,6 @@ est_e2r <- feols(log(fvax+1) ~ log(instrument) | source_country^source_sector + 
 esttable(est_e2r)
 
 esttex(est_i2e, est_e2r, digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE)
-
-# TODO: Better Estimate with subset ??
 
 # Saving
 qsave(U_ALL_BIL, "Data/U_ALL_BIL.qs", compress_level = 5L)
@@ -1728,91 +1826,6 @@ feols(log(e2r) ~ log(e2r_hat) + log(e2r_hat_tiv) | country^sector + country^year
 
 
 
-# Now: Instrument for Traditional Trade (Total and Final Goods), also using ESCAP ---------------------------------------------
-
-# TODO: Sector-level bilateral trade costs??
-
-gen_trade_instrument <- function(source = "ESR", name = "E") {
-  list(EORA = EORA_DET, EMERGING = EM_DET) |> 
-    lapply(function(X) X$decomps |> 
-             lapply(extract2, source) |> value2df()) |> 
-    rowbind(idcol = "source") |> 
-    # subset(country %iin% EAC5) |> 
-    pivot(1:4, names = list("importer", "E")) |> 
-    subset(country != importer) |> 
-    mutate(importer = rem_SSD(importer)) |> 
-    collap(E ~ source + year + country + sector + importer, fsum) |> 
-    join(select(ESCAP_REG, region_o, region_d, year, tij_imp), 
-         on = c("country" = "region_o", "importer" = "region_d", "year"), 
-         how = "inner") |> 
-    group_by(source, country, sector, year) |> 
-    mutate(tij_imp_instr = w_mean_excl(tij_imp, E)) |> 
-    ungroup() |> 
-    na_omit(cols = "tij_imp_instr") |> 
-    rename(E = name, 
-           tij_imp_instr = paste0("tij_imp_instr_", name), 
-           .nse = FALSE)
-}
-
-# Zero Stage Estimation
-TRADE_BIL <- gen_trade_instrument()
-mod <- feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = TRADE_BIL, split = ~ source)
-etable(mod)
-TRADE_BIL[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
-
-TRADE_BIL_FD <- gen_trade_instrument("Efd", "Efd")
-mod <- feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = TRADE_BIL_FD, split = ~ source)
-etable(mod)
-TRADE_BIL_FD[, Efd_hat := exp(fitted(feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
-rm(mod)
-
-# Using BACI
-BACI_2d_reg_EAC5 <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
-           subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) |> 
-           join(select(EM_CTRY, iso3_o = iso3, region_o = detailed_region_code)) |> 
-           join(select(EM_CTRY, iso3_d = iso3, region_d = detailed_region_code)) |> 
-           mutate(across(c(region_o, region_d), rem_SSD)) |> 
-           collap(value ~ year + region_o + region_d + code_2d + product_description, fsum, 
-                  fill = TRUE, keep.col.order = FALSE) |> 
-           subset(!(is.na(region_o) | is.na(region_d)) & region_o != region_d & year >= 2000) # |> 
-           # subset(region_o %in% EAC5)
-
-# BACI instrument
-BACI_2d_reg_EAC5 <- BACI_2d_reg_EAC5 |>
-  join(select(ESCAP_REG, region_o, region_d, year, tij_imp), 
-       on = c("region_o", "region_d", "year")) |> 
-  subset(GRPN(list(year, region_o, code_2d, year)) >= 2L) |> 
-  group_by(year, region_o, code_2d, year) |> 
-  mutate(tij_imp_instr = w_mean_excl(tij_imp, value)) |> 
-  ungroup() |> 
-  na_omit(cols = "tij_imp_instr") |> 
-  rename(value = E) 
-
-# Zero Stage Estimation
-mod <- feols(log(E+1) ~ log(tij_imp_instr) | region_o^code_2d + region_o^year + code_2d^year, data = BACI_2d_reg_EAC5)
-etable(mod)
-BACI_2d_reg_EAC5[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr) | region_o^code_2d + region_o^year + code_2d^year, data = BACI_2d_reg_EAC5)))] # -1: avoid zeros
-
-# Aggregation BACI
-BACI_2d_reg_EAC5_AGG <- BACI_2d_reg_EAC5 |> 
-  group_by(year, country = region_o, sector = code_2d) |> 
-  summarise(across(c(E, E_hat), fsum),
-            tij_imp = fmean(tij_imp, E),
-            tij_imp_instr = fmean(tij_imp_instr, E))
-
-# Joining 
-TRADE_BIL %<>% join(TRADE_BIL_FD |> select(-tij_imp), how = "full")
-rm(TRADE_BIL_FD)
-
-# Aggregation
-TRADE_BIL_AGG <- TRADE_BIL |> 
-  group_by(source, year, country, sector) |> 
-  summarise(across(c(E, Efd, E_hat, Efd_hat), fsum),
-            tij_imp = fmean(tij_imp, E),
-            tij_imp_instr_E = fmean(tij_imp_instr_E, E), 
-            tij_imp_instr_Efd = fmean(tij_imp_instr_Efd, Efd))
-
-
 
 # Data Construction ---------------------------------------------------------------
 
@@ -1829,59 +1842,41 @@ EM_MAN <- EM_SEC |> subset(broad_sector_code %in% MAN, code) |> unlist(use.names
 # Now constructing datasets at full sector resolution.   
 EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutate(VA = VA / 1000)
 
-EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
-  transformv(is.double, `*`, 1/1000) |> 
-  join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> # from_sector = broad_sector_code for broad sector sample
-  group_by(year, country = from_region, sector = from_sector) |> 
-  num_vars() |> fsum() |> 
-  join(EORA21_VA) |> 
-  colorder(country, sector, VA, pos = "after") |> 
-  transform(I2E = gvcb / gexp, 
-            E2R = gvcf / gexp) |> 
-  # subset(sector %!in% RM_EORA_SEC) |> 
-  droplevels()
+# EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
+#   transformv(is.double, `*`, 1/1000) |> 
+#   join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> # from_sector = broad_sector_code for broad sector sample
+#   group_by(year, country = from_region, sector = from_sector) |> 
+#   num_vars() |> fsum() |> 
+#   join(EORA21_VA) |> 
+#   colorder(country, sector, VA, pos = "after") |> 
+#   transform(I2E = gvcb / gexp, 
+#             E2R = gvcf / gexp) |> 
+#   # subset(sector %!in% RM_EORA_SEC) |> 
+#   droplevels()
 
-WDR_EORA15_DATA <- WDR_POS |> # Use WDR_POS_SEC for broad sectors
-  join(select(sec_class, id, sector = code), on = c("sect" = "id")) |> 
-  mutate(sect = NULL) |> 
-  subset(year >= 2000) |> 
-  join(EORA21_VA) |> 
-  colorder(country, sector, sector_name = sect_name, VA, pos = "after") |> 
-  transform(I2E = gvcb / gexp, 
-            E2R = gvcf / gexp) |> 
-  # subset(sector %!in% RM_EORA_SEC) |> 
-  droplevels()
+# WDR_EORA15_DATA <- WDR_POS |> # Use WDR_POS_SEC for broad sectors
+#   join(select(sec_class, id, sector = code), on = c("sect" = "id")) |> 
+#   mutate(sect = NULL) |> 
+#   subset(year >= 2000) |> 
+#   join(EORA21_VA) |> 
+#   colorder(country, sector, sector_name = sect_name, VA, pos = "after") |> 
+#   transform(I2E = gvcb / gexp, 
+#             E2R = gvcf / gexp) |> 
+#   # subset(sector %!in% RM_EORA_SEC) |> 
+#   droplevels()
 
 EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
 
-EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
-  # BIL_SEC[source == "EMERGING"] |> 
-  group_by(year, country = from_region, sector = from_sector) |> 
-  select(gexp:gvcf) |> fsum() |> 
-  join(EM_VA) |> 
-  colorder(country, sector, VA, pos = "after") |> 
-  transform(I2E = gvcb / gexp, 
-            E2R = gvcf / gexp)
+# EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
+#   # BIL_SEC[source == "EMERGING"] |> 
+#   group_by(year, country = from_region, sector = from_sector) |> 
+#   select(gexp:gvcf) |> fsum() |> 
+#   join(EM_VA) |> 
+#   colorder(country, sector, VA, pos = "after") |> 
+#   transform(I2E = gvcb / gexp, 
+#             E2R = gvcf / gexp)
 
 
-# names(y) <- y
-# data <- lapply(y, function(i) va[, i]) %>% # Same as: lapply(decomps, with, Vc * X) (I checked)
-#   value2df("VA") %>%
-#   merge(value2df(lapply(y, function(i) VA[, , i]))) %>% # Disaggregated VA
-#   tfm(VA_SUM = COE + TAX + SUB + NOS + NMI + COF, 
-#       COE_NOS = COE + NOS) %>%
-#   tfm(slt(., COE, TAX, SUB, NOS, NMI, COF, COE_NOS) %c/% 
-#         VA_SUM %>% add_stub("_S", FALSE)) %>% # Adding Shares
-#   merge(VS_df) %>% 
-#   merge(VS1_df) %>%
-#   merge(exports) %>%
-#   tfm(DVA_Exports = Exports - i2e)
-# 
-# 
-# all.equal(unattrib(data %$% (I2E * Exports)), unattrib(data$i2e))
-# all.equal(unattrib(data %$% (E2R * Exports)), unattrib(data$e2r))
-
-# ESCAP
 
 # Plot Data ----------------------------------
 
@@ -2168,19 +2163,22 @@ fastverse_extend(fixest)
 GVC_INSTR_DATA <- qread("Data/GVC_INSTR_DATA.qs") |> 
   join(mutate(EORA21_VA, source = "EORA"), on = c("source", "country", "sector", "year")) |> 
   join(mutate(EM_VA, source = "EMERGING"), on = c("source", "country", "sector", "year")) |> 
-  transform(VA = pfirst(VA, VA_y), VA_y = NULL)
+  transform(VA = pfirst(VA, VA_y), VA_y = NULL, .join = NA)
 
-EORA21_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join), on = c("country", "sector", "year"), how = "full", column = TRUE) %>%
-                transform(VA = pfirst(VA, VA_y), VA_y = NULL)
-WDR_EORA15_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join), on = c("country", "sector", "year"), how = "full", column = TRUE) %>%
-                     transform(VA = pfirst(VA, VA_y), VA_y = NULL) %>% subset(year <= 2015)
-EM_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EMERGING", -source, -.join) |> 
-                   mutate(sector = as.integer(levels(sector))[sector]), 
-                 on = c("year", "country", "sector"), how = "full", column = TRUE) %>%  # , how = "full", column = TRUE |> View()
-             transform(VA = pfirst(VA, VA_y), VA_y = NULL)
-# EORA21_DATA |> num_vars() |> pwcor()
+# EORA21_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join), on = c("country", "sector", "year"), how = "full", column = TRUE) %>%
+#                 transform(VA = pfirst(VA, VA_y), VA_y = NULL)
+# WDR_EORA15_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EORA", -source, -.join), on = c("country", "sector", "year"), how = "full", column = TRUE) %>%
+#                      transform(VA = pfirst(VA, VA_y), VA_y = NULL) %>% subset(year <= 2015)
+# EM_DATA %<>% join(subset(GVC_INSTR_DATA, source == "EMERGING", -source, -.join) |> 
+#                    mutate(sector = as.integer(levels(sector))[sector]), 
+#                  on = c("year", "country", "sector"), how = "full", column = TRUE) %>%  # , how = "full", column = TRUE |> View()
+#              transform(VA = pfirst(VA, VA_y), VA_y = NULL)
+# # EORA21_DATA |> num_vars() |> pwcor()
+# EORA21_DATA[country %in% EAC5, pwcor(gvcf, e2r)]
 
-EORA21_DATA[country %in% EAC5, pwcor(gvcf, e2r)]
+EORA21_DATA <- GVC_INSTR_DATA[source == "EORA"]
+WDR_EORA15_DATA <- GVC_INSTR_DATA[source == "EORA" & year <= 2015]
+EM_DATA <- GVC_INSTR_DATA[source == "EMERGING"]
 
 # First stages -> Weak IV for EAC, maybe need to run EAC specific regressions
 feols(log(i2e) ~ log(i2e_hat) + log(i2e_hat_tiv) | country^sector + country^year + sector^year, 
@@ -2356,6 +2354,9 @@ esttex(models_E2R$full_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE
 
 esttex(models_E2R$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
        headers = names(models_E2R$manufacturing_sample[c(2:4, 6:8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+
+
 
 # Dynamic Instrument Models ------------------------------
 # -> Experimental to see if first stage fit can be increased, but does not really work...
