@@ -2358,6 +2358,128 @@ esttex(models_E2R$manufacturing_sample[c(2:4, 6:8)], digits.stats = 4, fixef_siz
 
 
 
+
+# Regional Integration -----------------------------------------------------
+
+# Gross Trade ---------------------------------------------
+
+# Aggregation
+TRADE_RI_BIL_AGG <- TRADE_BIL |> 
+  subset(importer %in% EAC5) |> 
+  group_by(source, year, country, sector) |> 
+  summarise(across(c(E, Efd, E_hat, Efd_hat), list(reg = fsum), .names = TRUE)) |> 
+  join(TRADE_BIL_AGG) %>% 
+  transform(select(., E_reg:Efd_hat_reg) %c/% select(., E:Efd_hat) %>% add_stub("_sh", FALSE))
+
+# Estimations
+RI_model_est <- function(form_OLS, form_IV) {
+  list(
+    full_sample = list(
+      OLS_EORA21 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
+      IV_EORA21 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
+      OLS_EORA15 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
+      IV_EORA15 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
+      OLS_EM = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
+      IV_EM = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year)
+    ),
+    manufacturing_sample = list(
+      OLS_EORA21 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+      IV_EORA21 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+      OLS_EORA15 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+      IV_EORA15 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+      OLS_EM = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+      IV_EM = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
+    )
+  )
+}
+
+
+# Grosss Trade ---------
+models_reg_trade <- RI_model_est(form_OLS = log(VA) ~ log(E) + log(E_reg) | country^sector + country^year + sector^year,
+                                 form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) + log(E_reg)  ~ log(E_hat) + log(E_hat_reg))
+# Shares
+models_reg_trade <- RI_model_est(form_OLS = log(VA) ~ log(E) * E_reg_sh | country^sector + country^year + sector^year,
+                                 form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) * E_reg_sh  ~ log(E_hat) * E_hat_reg_sh)
+# Shares Reduced: Better (more sensible)
+models_reg_trade <- RI_model_est(form_OLS = log(VA) ~ log(E) + log(E):E_reg_sh | country^sector + country^year + sector^year,
+                                 form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(E) + log(E):E_reg_sh  ~ log(E_hat) + log(E_hat):E_hat_reg_sh) # log(E_hat) * E_hat_reg_sh
+
+# Final Goods Trade ---------
+models_reg_fg_trade <- RI_model_est(form_OLS = log(VA) ~ log(Efd) + log(Efd_reg) | country^sector + country^year + sector^year,
+                                 form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) + log(Efd_reg)  ~ log(Efd_hat) + log(Efd_hat_reg))
+# Shares
+models_reg_fg_trade <- RI_model_est(form_OLS = log(VA) ~ log(Efd) * Efd_reg_sh | country^sector + country^year + sector^year,
+                                 form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) * Efd_reg_sh  ~ log(Efd_hat) * Efd_hat_reg_sh)
+# Shares Reduced: Better (more sensible)
+models_reg_fg_trade <- RI_model_est(form_OLS = log(VA) ~ log(Efd) + log(Efd):Efd_reg_sh | country^sector + country^year + sector^year,
+                                 form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(Efd) + log(Efd):Efd_reg_sh  ~ log(Efd_hat) + log(Efd_hat):Efd_hat_reg_sh) # log(Efd_hat) * Efd_hat_reg_sh
+
+# Results
+etable(c(models_reg_trade$full_sample[1:4], models_reg_fg_trade$full_sample[1:4]), 
+       headers = names(c(models_reg_trade$full_sample[1:4], models_reg_fg_trade$full_sample[1:4])), # stage = 1,
+       fitstat = ~ . + wh.p + ivwald1.p) #  + kpr + sargan.p
+
+etable(c(models_reg_trade$manufacturing_sample[1:4], models_reg_fg_trade$manufacturing_sample[1:4]), 
+       headers = names(c(models_reg_trade$manufacturing_sample[1:4], models_reg_fg_trade$manufacturing_sample[1:4])), 
+       fitstat = ~ . + wh.p + ivwald1.p) #  + sargan.p
+
+# Exporting
+esttex(c(models_reg_trade$full_sample[1:4], models_reg_fg_trade$full_sample[1:4]), 
+       digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(c(models_reg_trade$full_sample[1:4], models_reg_fg_trade$full_sample[1:4])), 
+       fitstat = ~ . + wh.p + ivwald1.p) # + kpr
+
+
+esttex(c(models_reg_trade$manufacturing_sample[1:4], models_reg_fg_trade$manufacturing_sample[1:4]), 
+       digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(c(models_reg_trade$manufacturing_sample[1:4], models_reg_fg_trade$manufacturing_sample[1:4])), 
+       fitstat = ~ . + wh.p + ivwald1.p) # + kpr
+
+
+
+# First Stages
+esttex(models_reg_trade$full_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_reg_trade$full_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+esttex(models_reg_trade$manufacturing_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+       headers = names(models_reg_trade$manufacturing_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+
+
+
+
+
+
+
+
+
+
+GVC_RI_INSTR_DATA <- U_ALL_BIL |>
+  subset(source_country %in% EAC5) |> 
+  group_by(source, using_country, using_sector, year) |>
+  gvr("^fvax$|i2e_") |> fsum() |> rename(fvax = i2e) |> rm_stub("using_") |> 
+  join(validate = "1:1", how = "full", column = TRUE, 
+       U_ALL_BIL |>
+         subset(using_country %in% EAC5) |> 
+         group_by(source, source_country, source_sector, year) |>
+         gvr("^fvax$|e2r_") |> fsum() |> rename(fvax = e2r) |> rm_stub("source_")
+  )
+
+
+
+
+
+
+
+
+
+###########################
+# Rather Experimental Stuff
+###########################
+
+# TODO: Dnyamic instrument regression with separate dynamic first and final stages
+
+
+
 # Dynamic Instrument Models ------------------------------
 # -> Experimental to see if first stage fit can be increased, but does not really work...
 # Literature suggests LIML works better fith weak IV's, but where do I get a FE LIML estimator??
