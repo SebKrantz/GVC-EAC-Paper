@@ -2372,23 +2372,24 @@ TRADE_RI_BIL_AGG <- TRADE_BIL |>
   transform(select(., E_reg:Efd_hat_reg) %c/% select(., E:Efd_hat) %>% add_stub("_sh", FALSE))
 
 # Estimations
-RI_model_est <- function(form_OLS, form_IV) {
+RI_model_est <- function(data = TRADE_RI_BIL_AGG,
+                         form_OLS, form_IV) {
   list(
     full_sample = list(
-      OLS_EORA21 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
-      IV_EORA21 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
-      OLS_EORA15 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
-      IV_EORA15 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
-      OLS_EM = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
-      IV_EM = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year)
+      OLS_EORA21 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
+      IV_EORA21 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
+      OLS_EORA15 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
+      IV_EORA15 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
+      OLS_EM = feols(form_OLS, data = data[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
+      IV_EM = feols(form_IV, data = data[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year)
     ),
     manufacturing_sample = list(
-      OLS_EORA21 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
-      IV_EORA21 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
-      OLS_EORA15 = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
-      IV_EORA15 = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
-      OLS_EM = feols(form_OLS, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
-      IV_EM = feols(form_IV, data = TRADE_RI_BIL_AGG[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
+      OLS_EORA21 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+      IV_EORA21 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
+      OLS_EORA15 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+      IV_EORA15 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
+      OLS_EM = feols(form_OLS, data = data[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+      IV_EM = feols(form_IV, data = data[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
     )
   )
 }
@@ -2436,33 +2437,94 @@ esttex(c(models_reg_trade$manufacturing_sample[1:4], models_reg_fg_trade$manufac
        fitstat = ~ . + wh.p + ivwald1.p) # + kpr
 
 
-
-# First Stages
-esttex(models_reg_trade$full_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_reg_trade$full_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
-
-esttex(models_reg_trade$manufacturing_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
-       headers = names(models_reg_trade$manufacturing_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
-
-
+# # First Stages
+# esttex(models_reg_trade$full_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+#        headers = names(models_reg_trade$full_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+# 
+# esttex(models_reg_trade$manufacturing_sample[c(2, 4, 6, 8)], digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, stage = 1,
+#        headers = names(models_reg_trade$manufacturing_sample[c(2, 4, 6, 8)]), fitstat = ~ . + wh.p + kpr + ivwald1.p)
+# 
 
 
-
-
-
-
-
+# GVC Related Trade ---------------------------------------------
 
 GVC_RI_INSTR_DATA <- U_ALL_BIL |>
   subset(source_country %in% EAC5) |> 
   group_by(source, using_country, using_sector, year) |>
-  gvr("^fvax$|i2e_") |> fsum() |> rename(fvax = i2e) |> rm_stub("using_") |> 
-  join(validate = "1:1", how = "full", column = TRUE, 
+  gvr("^fvax$|i2e_hat") |> add_stub("_reg", FALSE) |> fsum() |> 
+  rename(fvax_reg = i2e_reg) |> rm_stub("using_") |> 
+  join(validate = "1:1", how = "full", 
        U_ALL_BIL |>
          subset(using_country %in% EAC5) |> 
          group_by(source, source_country, source_sector, year) |>
-         gvr("^fvax$|e2r_") |> fsum() |> rename(fvax = e2r) |> rm_stub("source_")
-  )
+         gvr("^fvax$|e2r_hat") |> add_stub("_reg", FALSE) |> fsum() |> 
+         rename(fvax_reg = e2r_reg) |> rm_stub("source_")
+  ) |> 
+  join(mutate(GVC_INSTR_DATA, .join = NULL)) %>%
+  transform(gvr(., "^i2e") %c+% gvr(., "^e2r") %>% rename(substr, 4, 100) %>% add_stub("gvc")) %>%
+  transform(gvr(., "_reg") %c/% gv(., sub("_reg", "", gvr(., "_reg", return = "names"))) %>% add_stub("_sh", FALSE))
+
+
+# I2E
+models_reg_I2E <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(i2e) + log(i2e_reg) | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(i2e) + log(i2e_reg)  ~ log(i2e_hat) + log(i2e_hat_reg))
+# Shares
+models_reg_I2E <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(i2e) * i2e_reg_sh | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(i2e) * i2e_reg_sh  ~ log(i2e_hat) * i2e_hat_reg_sh)
+# Shares Reduced: Better (more sensible)
+models_reg_I2E <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(i2e) + log(i2e):i2e_reg_sh | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(i2e) + log(i2e):i2e_reg_sh  ~ log(i2e_hat) + log(i2e_hat):i2e_hat_reg_sh) # log(i2e_hat) * i2e_hat_reg_sh
+
+# E2R
+models_reg_E2R <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(e2r) + log(e2r_reg) | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) + log(e2r_reg)  ~ log(e2r_hat) + log(e2r_hat_reg))
+# Shares
+models_reg_E2R <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(e2r) * e2r_reg_sh | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) * e2r_reg_sh  ~ log(e2r_hat) * e2r_hat_reg_sh)
+# Shares Reduced: Better (more sensible)
+models_reg_E2R <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(e2r) + log(e2r):e2r_reg_sh | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) + log(e2r):e2r_reg_sh  ~ log(e2r_hat) + log(e2r_hat):e2r_hat_reg_sh) # log(e2r_hat) * e2r_hat_reg_sh
+
+# GVC
+models_reg_GVC <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(gvc) + log(gvc_reg) | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvc) + log(gvc_reg)  ~ log(gvc_hat) + log(gvc_hat_reg))
+# Shares
+models_reg_GVC <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(gvc) * gvc_reg_sh | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvc) * gvc_reg_sh  ~ log(gvc_hat) * gvc_hat_reg_sh)
+# Shares Reduced: Better (more sensible)
+models_reg_GVC <- RI_model_est(data = GVC_RI_INSTR_DATA,
+                               form_OLS = log(VA) ~ log(gvc) + log(gvc):gvc_reg_sh | country^sector + country^year + sector^year,
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvc) + log(gvc):gvc_reg_sh  ~ log(gvc_hat) + log(gvc_hat):gvc_hat_reg_sh) # log(gvc_hat) * gvc_hat_reg_sh
+
+
+
+# Results
+etable(c(models_reg_I2E$full_sample[1:4], models_reg_E2R$full_sample[1:4]), 
+       headers = names(c(models_reg_I2E$full_sample[1:4], models_reg_E2R$full_sample[1:4])), # stage = 1,
+       fitstat = ~ . + wh.p + ivwald1.p) #  + kpr + sargan.p
+
+etable(c(models_reg_I2E$manufacturing_sample[1:4], models_reg_E2R$manufacturing_sample[1:4]), 
+       headers = names(c(models_reg_I2E$manufacturing_sample[1:4], models_reg_E2R$manufacturing_sample[1:4])), 
+       fitstat = ~ . + wh.p + ivwald1.p) #  + sargan.p
+
+# Exporting
+esttex(c(models_reg_I2E$full_sample[1:4], models_reg_E2R$full_sample[1:4]), 
+       digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(c(models_reg_I2E$full_sample[1:4], models_reg_E2R$full_sample[1:4])), 
+       fitstat = ~ . + wh.p + ivwald1.p) # + kpr
+
+esttex(c(models_reg_I2E$manufacturing_sample[1:4], models_reg_E2R$manufacturing_sample[1:4]), 
+       digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE, 
+       headers = names(c(models_reg_I2E$manufacturing_sample[1:4], models_reg_E2R$manufacturing_sample[1:4])), 
+       fitstat = ~ . + wh.p + ivwald1.p) # + kpr
 
 
 
