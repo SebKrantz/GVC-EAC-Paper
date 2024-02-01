@@ -1538,15 +1538,19 @@ gen_trade_instrument <- function(source = "ESR", name = "E") {
 
 # Zero Stage Estimation
 TRADE_BIL <- gen_trade_instrument()
-mod <- feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = TRADE_BIL, split = ~ source)
-etable(mod)
+mod_E <- feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = TRADE_BIL, split = ~ source)
+etable(mod_E)
 TRADE_BIL[, E_hat := exp(fitted(feols(log(E+1) ~ log(tij_imp_instr_E) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
 
 TRADE_BIL_FD <- gen_trade_instrument("Efd", "Efd")
-mod <- feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = TRADE_BIL_FD, split = ~ source)
-etable(mod)
+mod_Efd <- feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = TRADE_BIL_FD, split = ~ source)
+etable(mod_Efd)
 TRADE_BIL_FD[, Efd_hat := exp(fitted(feols(log(Efd+1) ~ log(tij_imp_instr_Efd) | country^sector + country^year + sector^year, data = .SD))), by = source] # -1: avoid zeros
-rm(mod)
+
+# Exporting 
+etable(mod_E, mod_Efd)
+esttex(mod_E, mod_Efd, digits.stats = 4, fixef_sizes = TRUE, fixef_sizes.simplify = TRUE)
+rm(mod_E, mod_Efd)
 
 # Using BACI
 BACI_2d_reg_EAC5 <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
