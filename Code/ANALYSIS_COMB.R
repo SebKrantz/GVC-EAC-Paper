@@ -2383,17 +2383,17 @@ RI_model_est <- function(data = TRADE_RI_BIL_AGG,
       OLS_EORA21 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
       IV_EORA21 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA"], vcov = DK ~ year),
       OLS_EORA15 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
-      IV_EORA15 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year),
-      OLS_EM = feols(form_OLS, data = data[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
-      IV_EM = feols(form_IV, data = data[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year)
+      IV_EORA15 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & year <= 2015], vcov = DK ~ year) #,
+      # OLS_EM = feols(form_OLS, data = data[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year),
+      # IV_EM = feols(form_IV, data = data[country %in% EAC5 & source == "EMERGING"], vcov = DK ~ year)
     ),
     manufacturing_sample = list(
       OLS_EORA21 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
       IV_EORA21 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & sector %in% MAN], vcov = DK ~ year),
       OLS_EORA15 = feols(form_OLS, data = data[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
-      IV_EORA15 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year),
-      OLS_EM = feols(form_OLS, data = data[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
-      IV_EM = feols(form_IV, data = data[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
+      IV_EORA15 = feols(form_IV, data = data[country %in% EAC5 & source == "EORA" & year <= 2015 & sector %in% MAN], vcov = DK ~ year) #,
+      # OLS_EM = feols(form_OLS, data = data[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year),
+      # IV_EM = feols(form_IV, data = data[country %in% EAC5 & source == "EMERGING" & sector %in% EM_MAN], vcov = DK ~ year)
     )
   )
 }
@@ -2480,7 +2480,7 @@ models_reg_I2E <- RI_model_est(data = GVC_RI_INSTR_DATA,
 # Shares Reduced: Better (more sensible)
 models_reg_I2E <- RI_model_est(data = GVC_RI_INSTR_DATA,
                                form_OLS = log(VA) ~ log(i2e) + log(i2e):i2e_reg_sh | country^sector + country^year + sector^year,
-                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(i2e) + log(i2e):i2e_reg_sh  ~ log(i2e_hat) + log(i2e_hat):i2e_hat_reg_sh) # log(i2e_hat) * i2e_hat_reg_sh
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(i2e) + log(i2e):i2e_reg_sh  ~ log(i2e_hat) + log(i2e_hat):i2e_hat_reg_sh + log(i2e_hat_tiv) + log(i2e_hat_tiv):i2e_hat_tiv_reg_sh) # log(i2e_hat) * i2e_hat_reg_sh
 
 # E2R
 models_reg_E2R <- RI_model_est(data = GVC_RI_INSTR_DATA,
@@ -2493,7 +2493,7 @@ models_reg_E2R <- RI_model_est(data = GVC_RI_INSTR_DATA,
 # Shares Reduced: Better (more sensible)
 models_reg_E2R <- RI_model_est(data = GVC_RI_INSTR_DATA,
                                form_OLS = log(VA) ~ log(e2r) + log(e2r):e2r_reg_sh | country^sector + country^year + sector^year,
-                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) + log(e2r):e2r_reg_sh  ~ log(e2r_hat) + log(e2r_hat):e2r_hat_reg_sh) # log(e2r_hat) * e2r_hat_reg_sh
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(e2r) + log(e2r):e2r_reg_sh  ~ log(e2r_hat) + log(e2r_hat):e2r_hat_reg_sh + log(e2r_hat_tiv) + log(e2r_hat_tiv):e2r_hat_tiv_reg_sh) # log(e2r_hat) * e2r_hat_reg_sh
 
 # GVC
 models_reg_GVC <- RI_model_est(data = GVC_RI_INSTR_DATA,
@@ -2506,7 +2506,7 @@ models_reg_GVC <- RI_model_est(data = GVC_RI_INSTR_DATA,
 # Shares Reduced: Better (more sensible)
 models_reg_GVC <- RI_model_est(data = GVC_RI_INSTR_DATA,
                                form_OLS = log(VA) ~ log(gvc) + log(gvc):gvc_reg_sh | country^sector + country^year + sector^year,
-                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvc) + log(gvc):gvc_reg_sh  ~ log(gvc_hat) + log(gvc_hat):gvc_hat_reg_sh) # log(gvc_hat) * gvc_hat_reg_sh
+                               form_IV = log(VA) ~ 0 | country^sector + country^year + sector^year | log(gvc) + log(gvc):gvc_reg_sh  ~ log(gvc_hat) + log(gvc_hat):gvc_hat_reg_sh + log(gvc_hat_tiv) + log(gvc_hat_tiv):gvc_hat_tiv_reg_sh) # log(gvc_hat) * gvc_hat_reg_sh
 
 
 
