@@ -176,7 +176,7 @@ log10(EM_T_ag_15_19) |>
            legend_breaks = 0:7, # legend_labels = 10^(0:7),
            display_numbers = TRUE)
 
-dev.copy(pdf, "Figures/REV/EM_heatmap_2015_19_AG.pdf", width = 7, height = 6)
+dev.copy(pdf, "Figures/REV/EM_heatmap_2015_19_AG.pdf", width = 7, height = 5)
 dev.off()
 
 # Share of VA
