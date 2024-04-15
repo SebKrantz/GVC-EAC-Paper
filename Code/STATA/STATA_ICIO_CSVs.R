@@ -7,9 +7,10 @@ fastverse_extend(qs, decompr)
 
 path <- "/Users/sebastiankrantz/Documents/Data/EMERGING"
 
-EM <- qread(paste(path, "EMERGING_EAC_Regions.qs", sep = "/")) # _Agg : Need sectoral detail for accurate GVC indicators
+EM <- qread(paste(path, "EMERGING_5_Sectors.qs", sep = "/")) # _Agg : Need sectoral detail for accurate GVC indicators
 
 ICIO_path <- paste(path, "ICIO_CSV", sep = "/")
+list.files(ICIO_path)
 unlink(ICIO_path, recursive = TRUE)
 dir.create(ICIO_path)
 

@@ -83,8 +83,8 @@ SEC_ALL <- list(EORA = sec_class, EMERGING = EM_SEC) |>
   rowbind(idcol = "source") |> 
   mutate(id = as.integer(id))
 
-BIL_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv"),
-                   EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
+BIL_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_EAC_Regions/EM_GVC_BIL_SEC_BM19.csv"),
+                   EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_EAC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
                           transformv(is.double, `*`, 1/1000), 
                    idcol = "source") |> 
            # Aggregating to Broad Sectors
@@ -98,11 +98,11 @@ BIL_AGG <- BIL_SEC |> group_by(source, year, from_region, to_region) |> select(-
 AGG <- BIL_AGG |> group_by(source, year, country = from_region) |> select(-from_region, -to_region) |> fsum()
 
 # These are computed from ICIO using 
-REG_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Countries_Agg_Sectors/EM_GVC_SEC_BM19.csv") |> 
+REG_SEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_5_Sectors/EM_GVC_SEC_BM19.csv") |> 
                       rm_stub("from_") |> 
                       mutate(sector = structure(sector, levels = c("AFF", "FBE", "MAN", "MIN", "SRV"), class = "factor"), 
                              sector = factor(sector, levels = c("AFF", "MIN", "FBE", "MAN", "SRV"))),
-                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Countries_Agg_Sectors/EORA_GVC_SEC_BM19.csv") |> 
+                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_5_Sectors/EORA_GVC_SEC_BM19.csv") |> 
                       transformv(is.double, `*`, 1/1000) |> rm_stub("from_") |> 
                       mutate(sector = structure(sector, levels = c("AFF", "MIN", "FBE", "MAN", "SRV"), class = "factor")), 
                     idcol = "source") |> 
@@ -123,10 +123,10 @@ REG_AGG <- REG_SEC |> group_by(source, year, region) |> num_vars() |> fsum()
 
 # 5 broad sectors with full country resolution: for Forward GVC Participation
 EM <- new.env()
-load("Data/EAC_EMERGING_data_Countries_Agg_Sectors.RData", envir = EM)
+load("Data/EMERGING_data_5_Sectors.RData", envir = EM)
 
 EORA <- new.env()
-load("Data/EAC_EORA_data_Countries_Agg_Sectors.RData", envir = EORA)
+load("Data/EORA_data_5_Sectors.RData", envir = EORA)
 
 # EAC + 11 World Regions, but with full sector resolution
 EORA_DET <- new.env()
@@ -896,13 +896,13 @@ ggsave("Figures/REV/EM_VA_EAC5_shares_slope_bar_sec.pdf", width = 9, height = 5.
 # KWW Decomposition
 #############################
 
-KWW <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_KWW_BM19.csv"),
-               EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_KWW_BM19.csv") |> 
+KWW <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_EAC_Regions/EM_GVC_KWW_BM19.csv"),
+               EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_EAC_Regions/EORA_GVC_KWW_BM19.csv") |> 
                  transformv(is.double, `*`, 1/1000), 
                idcol = "source")
 
-KWW_BSEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Countries_Agg_Sectors/EM_GVC_KWW_BM19.csv"),
-                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Countries_Agg_Sectors/EORA_GVC_KWW_BM19.csv") |> 
+KWW_BSEC <- rowbind(EMERGING = fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_5_Sectors/EM_GVC_KWW_BM19.csv"),
+                    EORA = fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_5_Sectors/EORA_GVC_KWW_BM19.csv") |> 
                            transformv(is.double, `*`, 1/1000), 
                     idcol = "source")
 
@@ -1846,7 +1846,7 @@ EM_MAN <- EM_SEC |> subset(broad_sector_code %in% MAN, code) |> unlist(use.names
 # Now constructing datasets at full sector resolution.   
 EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutate(VA = VA / 1000)
 
-# EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
+# EORA21_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EORA/GVC_EAC_Regions/EORA_GVC_BIL_SEC_BM19.csv") |> 
 #   transformv(is.double, `*`, 1/1000) |> 
 #   join(select(sec_class, id, from_sector = code), on = c("from_sector" = "id"), drop = "x") |> # from_sector = broad_sector_code for broad sector sample
 #   group_by(year, country = from_region, sector = from_sector) |> 
@@ -1871,7 +1871,7 @@ EORA21_VA <- EORA_DET$decomps |> lapply(with, X * Vc) |> value2df("VA") |> mutat
 
 EM_VA <- EM_DET$decomps |> lapply(with, X * Vc) |> value2df("VA")
 
-# EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
+# EM_DATA <- fread("/Users/sebastiankrantz/Documents/Data/EMERGING/GVC_EAC_Regions/EM_GVC_BIL_SEC_BM19.csv") |> 
 #   # BIL_SEC[source == "EMERGING"] |> 
 #   group_by(year, country = from_region, sector = from_sector) |> 
 #   select(gexp:gvcf) |> fsum() |> 

@@ -70,7 +70,7 @@ foreach y in $years {
 	}
 }
 
-outsheet using "GVC_Countries_Agg_Sectors/${data}_GVC_KWW_BM19.csv", comma replace
+outsheet using "GVC_5_Sectors/${data}_GVC_KWW_BM19.csv", comma replace
 
 
 *** Exporter-Sector Level Decomposition ***
@@ -131,7 +131,7 @@ foreach y in $years {
 }
 
 
-outsheet using "GVC_Countries_Agg_Sectors/${data}_GVC_SEC_BM19.csv", comma replace
+outsheet using "GVC_5_Sectors/${data}_GVC_SEC_BM19.csv", comma replace
 
 
 
@@ -205,7 +205,7 @@ foreach y in $years {
 }
 
 
-outsheet using "GVC_Countries_Agg_Sectors/${data}_GVC_BIL_SEC_BM19.csv", comma replace
+outsheet using "GVC_5_Sectors/${data}_GVC_BIL_SEC_BM19.csv", comma replace
 
 
 

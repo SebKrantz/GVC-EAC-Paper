@@ -1,10 +1,11 @@
 library(fastverse)
 fastverse_extend(qs, decompr)
 
-EM <- qread("/Users/sebastiankrantz/Documents/Data/EMERGING/EMERGING_EAC_Regions_Agg.qs")
+EM <- qread("/Users/sebastiankrantz/Documents/Data/EMERGING/EMERGING_5_Sectors.qs")
 
-k = EM$Regions$Detailed_Region_Code
-i = EM$Sectors$Broad_Sector_Code
+k = EM$Regions$ISO3 # $Detailed_Region_Code
+i = as.character(EM$Sectors$Agg_Sector_Code) # $Code)
+y = names(EM$DATA)
 
 decomps <- lapply(EM$DATA, function(x) {
   load_tables_vectors(x = x$T,
@@ -76,4 +77,4 @@ rm(list = setdiff(ls(), .c(decomps, T, FD, VA, out, va, va_VA, VB, T_ag, FD_ag, 
                            out_ag, va_ag, va_VA_ag, VB_ag, 
                            r, EAC, eac, i, i_long, v, rownam, y, g, cr, crm)))
 
-save.image("Data/EAC_EMERGING_data.RData")
+save.image("Data/EMERGING_data_5_Sectors.RData")
