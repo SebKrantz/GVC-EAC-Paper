@@ -64,7 +64,7 @@ EAC_DATA_YRC_USD15_SEC <- EAC_DATA_YRC |>
 # CEPII BACI
 ####################################
 
-EM_ISO3 <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx")$ISO3
+EM_ISO3 <- read_xlsx("~/Documents/Data/EMERGING/EMERGING_Country.xlsx")$ISO3
 BACI_2d <- qread("/Users/sebastiankrantz/Documents/Data/CEPII BACI 2023/BACI_HS96_V202301/BACI_HS96_2d.qs") |> 
            subset(iso3_o %in% EM_ISO3 | iso3_d %in% EM_ISO3) 
 
@@ -81,7 +81,7 @@ BACI_2d |>
 # BACI_2d |> select(code_2d, product_description, section_code, section_fullname_english) |> 
 #  unique(sort = TRUE) |> View()
 # Sector Classifiction: same as EMERGING!!!
-EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/Sector_EMERGING.xlsx") |> mutate(id = Code) |> rename(tolower)
+EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/EMERGING_Sector.xlsx") |> mutate(id = Code) |> rename(tolower)
 
 # Aggregating: EAC and ROW by broad sector
 EAC_BACI_SEC <- BACI_2d |> 

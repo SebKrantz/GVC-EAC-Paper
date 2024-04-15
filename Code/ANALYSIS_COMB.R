@@ -18,7 +18,6 @@ ROW <- c("SSA", "MEA", "EUU", "ECA", "NAC", "SAS", "ASE", "CHN", "ROA", "LAC", "
 REG <- c("UGA", "TZA", "KEN", "RWA", "BDI", "COD", ROW) #, "SSD")
 MAN <- c("FBE", "TEX", "WAP", "PCM", "MPR", "ELM", "TEQ", "MAN")
 
-
 trade_class <- read_xlsx("/Users/sebastiankrantz/Documents/Data/EORA/trade classification.xlsx", range = "A1:B220")
 sec_class <- read_xlsx("/Users/sebastiankrantz/Documents/Data/EORA/trade classification.xlsx", sheet = "Sectors") |> 
              mutate(id = seq_along(code)) |> rename(tolower)
@@ -70,8 +69,8 @@ WDR_POS_AGG <- WDR_POS |> group_by(source, year, country) |>
             across(c(upstreamness, downstreamness), fmean, w = gexp))
 
 
-EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/Sector_EMERGING.xlsx") |> mutate(id = Code) |> rename(tolower)
-EM_CTRY <- read_xlsx("~/Documents/Data/EMERGING/Country_EMERGING.xlsx") |> 
+EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/EMERGING_Sector.xlsx") |> mutate(id = Code) |> rename(tolower)
+EM_CTRY <- read_xlsx("~/Documents/Data/EMERGING/EMERGING_Country.xlsx") |> 
            transform(Detailed_Region_Code = iif(ISO3 %in% EAC6, ISO3, Detailed_Region_Code),
                      Detailed_Region = nif(ISO3 %in% EAC6, "East African Community", 
                                            Detailed_Region_Code == "SSA", "Sub-Saharan Africa (Excluding EAC)", 
