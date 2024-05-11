@@ -81,7 +81,7 @@ BACI_2d |>
 # BACI_2d |> select(code_2d, product_description, section_code, section_fullname_english) |> 
 #  unique(sort = TRUE) |> View()
 # Sector Classifiction: same as EMERGING!!!
-EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/EMERGING_Sector.xlsx") |> mutate(id = Code) |> rename(tolower)
+EM_SEC <- read_xlsx("~/Documents/Data/EMERGING/EMERGING_Sector.xlsx") |> mutate(id = Code, code = Code_HS2002, Code = NULL) |> rename(tolower)
 
 # Aggregating: EAC and ROW by broad sector
 EAC_BACI_SEC <- BACI_2d |> 
