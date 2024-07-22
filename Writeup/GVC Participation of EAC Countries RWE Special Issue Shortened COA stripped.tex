@@ -21,16 +21,17 @@
 \addto\captionsenglish{\renewcommand*\contentsname{Table of Contents}}
 
 \title{\textbf{Patterns of Global and Regional Integration\\ in the East African Community}}
-\date{}
+\author{Sebastian Krantz\footnote{Kiel Institute for the World Economy\\ \textit{Address:} Haus Welt-Club, Duesternbrooker Weg 148, D-24105 Kiel\\ \textit{E-mail:} sebastian.krantz@ifw-kiel.de\\\vspace{-10mm}}}
+\date{July 20, 2024}
 
 \begin{document}
 \maketitle
 
-
+\vspace{-5mm}
 \begin{abstract} 
 Using detailed global trade and novel Multi-Region Input-Output (MRIO) data, this paper examines the East African Community's (EAC) global and regional integration through trade, global, and regional value chains (GVCs and RVCs). With surgical attention to detail, the first part of the paper dissects key patterns and trends of EAC members' participation in global and regional trade and production networks at the aggregate, bilateral, sectoral, and bilateral-sectoral levels. The second part then provides causal reduced-form evidence for the economic benefits of EAC integration through trade, GVCs, and RVCs at the sector level. Findings imply that the region is moderately integrated into GVCs and RCVs but shows no overall trend towards greater integration. Regional integration is advancing in agriculture and food processing, and Kenya is becoming a more dominant regional supplier of manufactures. Integration through trade and GVCs positively affects economic development in the region, particularly deeper forward GVC linkages in manufacturing. Deepening regional trade and forward linkages yields additional economic benefits vis-a-vis global linkages. \\\\
 \noindent \textbf{Keywords:} GVCs, RVCs, EAC, trade, regional integration, economic development\\
-\textbf{JEL classification:} F14; F15; O11
+\textbf{JEL Classification:} F14; F15; O11
 \end{abstract}
 
 
@@ -70,10 +71,10 @@ The first is the EORA 26 Global MRIO \citep{lenzen2012mapping, lenzen2013buildin
 
 Due to the shortcomings of EORA in terms of accuracy and usage of national data for developing countries, I also employ the more recently introduced EMERGING (EM) MRIO tables \citep{huo2022full}. This impressive effort has created a global MRIO database covering 245 countries and territories in 135 sectors for the years 2015-2019. A recent update (v2) also provides a table for 2010. EM uses 111 national IO/SUT/SAM tables alongside detailed trade and macroeconomic data. In particular, the UN Comtrade database is utilized to the fullest extent to provide greater sectoral detail than EORA. Macroeconomic data from national statistical offices is used where available and reconciled (scaled) using World Bank data. The purpose of the MRIO is to provide greater detail and accuracy for emerging economies than EORA. From EAC countries, EM uses a SAM and sectoral GDP from Uganda up to 2016 and the same information up to 2019 for Rwanda and Kenya. For Tanzania, EM uses a SAM and an IO table up to 2017. For Burundi, Congo (DR), and South Sudan, only international data is available. Thus, EM incorporates, to the greatest extent possible, national data from these EAC countries in a harmonized global MRIO framework. EM is denominated in millions of current USD at basic prices. \newline
 
-The WDR also provides GVC indicators using EORA 2015, and \citet{mancini2023positioning} provide corresponding GVC positioning indicators following \citet{fally2012production}, \citet{antras2012measuring} and \citet{antras2013organizing, antras2018measurement}. These pre-computed indicators are used to verify manually computed indicators. This is important because I aggregate the non-EAC World and/or sectoral resolution for different indicators to lift computational constraints\footnote{EMERGING has 245 countries/territories and 134 sectors, implying 32,830 rows and columns or 1 billion records in the transaction matrix. It is computationally infeasible for me to compute GVC indicators directly on these tables, and also the full EORA database (186 x 26 = 4836 rows and columns observed over 21 years) strains my computing resources for non-trivial GVC indicators.} and enable comparisons across databases. In particular, for backward GVC indicators the non-EAC World is aggregated into 11 geographic and trade regions summarised in Table \ref{tab:ctry}, and, in more detail, in Appendix Table \ref{tab:ctrydet}. 
+The WDR also provides GVC indicators using EORA 2015, and \citet{mancini2023positioning} provide corresponding GVC positioning indicators following \citet{fally2012production}, \citet{antras2012measuring} and \citet{antras2013organizing, antras2018measurement}. These pre-computed indicators are used to verify manually computed indicators. This is important because I aggregate the non-EAC World and/or sectoral resolution for different indicators to lift computational constraints\footnote{EMERGING has 245 countries/territories and 134 sectors, implying 32,830 rows and columns or 1 billion records in the transaction matrix. It is computationally infeasible for me to compute GVC indicators directly on these tables, and also the full EORA database (186 x 26 = 4836 rows and columns observed over 21 years) strains my computing resources for non-trivial GVC indicators. \vspace{-7mm}} and enable comparisons across databases. In particular, for backward GVC indicators the non-EAC World is aggregated into 11 geographic and trade regions summarised in Table \ref{tab:ctry}, and, in more detail, in Appendix Table \ref{tab:ctrydet}. 
 
 
-\begin{table}[h!]
+\begin{table}[h!] \vspace{-2mm}
 \centering
 \caption{\label{tab:ctry}\textsc{Regional Aggregation}}
 \vspace{2mm}
@@ -95,6 +96,7 @@ OCE & Oceania & 6 & 22 \\ \midrule
 SUM: & 7 EAC Members + 11 World Regions & 188 & 245
  \\ \bottomrule
 \end{tabular}
+\vspace{-5mm}
 \end{table}
 \FloatBarrier
 
